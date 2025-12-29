@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>HTML viewer +</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-color: #f5f5f5;
+      --text-color: #007acc;
+      --glow-color: #00aaff;
+      --button-bg: #ffffff;
+      --shadow-color: rgba(0, 170, 255, 0.4);
+    }
+    body.dark {
+      --bg-color: #121212;
+      --text-color: #00c896;
+      --glow-color: #00c896;
+      --button-bg: #1e1e1e;
+      --shadow-color: rgba(0, 200, 150, 0.4);
+    }
+
+    body {
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      margin: 0;
+      padding: 24px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: var(--text-color);
+      transition: color 0.3s;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .device-button,
+    .action-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      border: none;
+      background: var(--button-bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 0 12px var(--shadow-color);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .device-button:hover,
+    .action-btn:hover {
+      transform: scale(1.15) rotate(-6deg);
+      box-shadow: 0 0 20px var(--glow-color);
+    }
+
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      bottom: -80px;
+      right: 0;
+      background: var(--button-bg);
+      border-radius: 8px;
+      box-shadow: 0 0 12px var(--shadow-color);
+      padding: 8px;
+      z-index: 10;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropdown-content button {
+      display: block;
+      width: 100%;
+      margin: 4px 0;
+      padding: 6px 10px;
+      font-size: 14px;
+      border: none;
+      background: var(--button-bg);
+      color: var(--text-color);
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .dropdown-content button:hover {
+      background: var(--glow-color);
+      color: #fff;
+    }
+
+    select {
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px solid var(--glow-color);
+      background: var(--button-bg);
+      color: var(--text-color);
+      font-size: 14px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--glow-color);
+      background: var(--button-bg);
+      color: var(--text-color);
+      font-family: monospace;
+      font-size: 14px;
+      resize: vertical;
+    }
+
+    iframe {
+      width: 100%;
+      height: 300px;
+      border-radius: 8px;
+      border: 1px solid var(--glow-color);
+      background: var(--button-bg);
+      margin-top: 20px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 13px;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body class="light">
+  <h1 id="title">HTML viewer +</h1>
+
+  <div class="toolbar">
+    <div style="display:flex;gap:10px">
+      <button class="device-button" onclick="openPreview('laptop')" title="لپ‌تاپ"><i class="fas fa-laptop"></i></button>
+      <button class="device-button" onclick="openPreview('tablet')" title="تبلت"><i class="fas fa-tablet-alt"></i></button>
+      <button class="device-button" onclick="openPreview('mobile')" title="موبایل"><i class="fas fa-mobile-alt"></i></button>
+    </div>
+
+    <div style="display:flex;gap:10px">
+      <button class="action-btn" onclick="renderHTML()" title="اجرای کد"><i class="fas fa-play"></i></button>
+      <button class="action-btn" onclick="copyToClipboard()" title="کپی"><i class="fas fa-copy"></i></button>
+
+      <div class="dropdown">
+        <button class="action-btn" title="دانلود"><i class="fas fa-download"></i></button>
+        <div class="dropdown-content">
+          <button onclick="downloadFile('html')">دانلود HTML</button>
+          <button onclick="downloadFile('txt')">دانلود TXT</button>
+        </div>
+      </div>
+
+      <select id="languageSelect" onchange="changeLanguage()">
+        <option value="fa">فارسی</option>
+        <option value="en">English</option>
+        <option value="ar">العربية</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+        <option value="zh">中文</option>
+        <option value="de">Deutsch</option>
+      </select>
+
+      <button class="action-btn" onclick="toggleTheme()" id="themeToggle" title="تغییر حالت"><i class="fas fa-moon"></i></button>
+    </div>
+  </div>
+
+  <textarea id="htmlInput" placeholder="کد HTML خود را اینجا بنویسید..."></textarea>
+  <iframe id="preview"></iframe>
+
+  <footer>© <span id="year">2025</span> ساخته شده توسط <strong>Nima.Sh</strong> 🚀</footer>
+
+  <script>
+    const translations = {
+      fa: { title: "HTML viewer +", placeholder: "کد HTML خود را اینجا بنویسید..." },
+      en: { title: "HTML viewer +", placeholder: "Write your HTML code here..." },
+      ar: { title: "HTML viewer +", placeholder: "اكتب كود HTML هنا..." },
+      fr: { title: "HTML viewer +", placeholder: "Écrivez votre code HTML ici..." },
+      es: { title: "HTML viewer +", placeholder: "Escribe tu código HTML aquí..." },
+      zh: { title: "HTML viewer +", placeholder: "在此处编写您的 HTML 代码..." },
+      de: { title: "HTML viewer +", placeholder: "Schreiben Sie hier Ihren HTML-Code..." }
+    };
+
+    function changeLanguage() {
+      const lang = document.getElementById('languageSelect').value;
+      const t = translations[lang] || translations['en'];
+      document.getElementById('title').innerText = t.title;
+      document.getElementById('htmlInput').placeholder = t.placeholder;
+    }
+
+    function renderHTML() {
+      const code = document.getElementById('htmlInput').value;
+      const iframeDoc = document.getElementById('preview').contentWindow.document;
+      iframeDoc.open();
+      iframeDoc.write(code);
+      iframeDoc.close();
+    }
+
+    function copyToClipboard() {
+      const code = document.getElementById('htmlInput').value;
+      navigator.clipboard.writeText(code).then(() => {
+        alert("کد کپی شد!");
+      });
+    }
+
+    function downloadFile(type) {
+      const code = document.getElementById('htmlInput').value;
+      let blob = new Blob([code], { type: type === 'html' ? 'text/html' : 'text/plain' });
+      let a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = type === 'html' ? 'code.html' : 'code.txt';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000
