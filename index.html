@@ -15,17 +15,12 @@
   --button-bg: #ffffff;
   --shadow-color: rgba(37, 99, 235, 0.35);
   --accent: var(--primary-color);
+  --highlight-color: var(--secondary-color);
 }
 body.dark {
-  --primary-color: #00ff7f;
-  --secondary-color: #32cd32;
   --bg-color: #2d2d30;
   --text-color: #ffffff;
-  --icon-color: var(--primary-color);
-  --glow-color: var(--secondary-color);
   --button-bg: #404040;
-  --shadow-color: rgba(0, 255, 127, 0.4);
-  --accent: var(--primary-color);
 }
 
 /* نوار رنگی بالا */
@@ -66,7 +61,7 @@ body.dark {
   width: 40px;
   height: 30px;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
@@ -75,7 +70,7 @@ body.dark {
   padding: 6px 12px;
   background: rgba(255,255,255,0.9);
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   font-size: 12px;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
@@ -87,7 +82,7 @@ body {
   font-family: 'Segoe UI', Tahoma, sans-serif;
   margin: 0;
   padding: 24px;
-  padding-top: 30px; /* فضا برای نوار رنگی */
+  padding-top: 30px;
   transition: background 0.25s ease, color 0.25s ease;
 }
 h1 {
@@ -107,27 +102,27 @@ h1 {
 }
 .group { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
 
-/* گروه دکمه‌های جدید */
+/* گروه دکمه‌های دیباگ و فرمت */
 .action-group {
   display: flex;
   background: var(--button-bg);
-  border-radius: 12px;
+  border-radius: 10px;
   box-shadow: 0 0 12px var(--shadow-color);
   overflow: hidden;
   border: 1px solid var(--accent);
 }
 
 .action-group button {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border: none;
   background: transparent;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
-  transition: background 0.25s ease, transform 0.25s ease;
+  transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
   border-right: 1px solid rgba(0,0,0,0.1);
 }
 
@@ -143,6 +138,7 @@ h1 {
 .action-group button:hover {
   background: var(--accent);
   transform: scale(1.05);
+  box-shadow: 0 0 18px var(--glow-color);
 }
 
 .action-group button:hover i {
@@ -171,14 +167,14 @@ h1 {
 .dropdown { position: relative; }
 .dropdown-content {
   position: absolute; top: calc(100% + 8px); right: 0;
-  background: var(--button-bg); border-radius: 8px; box-shadow: 0 0 12px var(--shadow-color);
+  background: var(--button-bg); border-radius: 10px; box-shadow: 0 0 12px var(--shadow-color);
   padding: 8px; z-index: 10; display: none; min-width: 160px;
 }
 .dropdown.open .dropdown-content { display: block; }
 .dropdown-content button {
   width: 100%; margin: 4px 0; padding: 8px 10px; font-size: 14px;
   border: none; background: var(--button-bg); color: var(--text-color);
-  cursor: pointer; border-radius: 6px;
+  cursor: pointer; border-radius: 10px;
 }
 .dropdown-content button:hover { background: var(--accent); color: #fff; }
 select, input[type="number"] {
@@ -186,6 +182,33 @@ select, input[type="number"] {
   background: var(--button-bg); color: var(--text-color); font-size: 14px;
   box-shadow: 0 0 8px var(--shadow-color);
 }
+
+/* استایل برای پنل ارتفاع */
+.height-panel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: var(--button-bg);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 8px var(--shadow-color);
+  font-size: 14px;
+}
+
+.height-panel input {
+  width: 70px;
+  border: none;
+  background: transparent;
+  color: var(--text-color);
+  font-size: 14px;
+  text-align: center;
+}
+
+.height-panel input:focus {
+  outline: none;
+}
+
 /* سیستم تب */
 .tabs-container {
   margin-top: 16px;
@@ -244,43 +267,44 @@ select, input[type="number"] {
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
-  cursor: text;
   padding: 2px 4px;
   border-radius: 4px;
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   color: inherit;
   outline: none;
+  cursor: pointer;
+  width: 100%;
+  min-width: 60px;
 }
 
-.tab-name:focus {
-  background: rgba(255,255,255,0.2);
+.tab-name.editing {
+  background: rgba(255,255,255,0.3);
+  border: 1px solid var(--accent);
+  cursor: text;
 }
 
 .tab-close {
   margin-right: 6px;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: rgba(255,0,0,0.7);
   color: white;
   border: none;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 11px;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0.7;
   transition: opacity 0.3s ease;
+  flex-shrink: 0;
 }
 
 .tab-close:hover {
   opacity: 1;
   background: #ff0000;
-}
-
-.tab:first-child .tab-close {
-  display: none; /* تب اول قابل حذف نیست */
 }
 
 .add-tab {
@@ -295,6 +319,7 @@ select, input[type="number"] {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .add-tab:hover {
@@ -323,7 +348,7 @@ select, input[type="number"] {
   font-size: 13px;
 }
 .chip {
-  padding: 4px 8px; border-radius: 999px;
+  padding: 4px 8px; border-radius: 10px;
   background: rgba(0,0,0,0.06);
   border: 1px solid var(--accent);
   font-size: 12px;
@@ -335,7 +360,22 @@ iframe {
   background: #fff;
   border: none;
 }
-footer { text-align: center; margin-top: 18px; font-size: 13px; opacity: 0.7; }
+
+/* فوتر */
+footer { 
+  text-align: center; 
+  margin-top: 18px; 
+  font-size: 13px; 
+  opacity: 0.85;
+  line-height: 1.8;
+}
+
+footer .separator {
+  color: var(--accent);
+  text-shadow: 0 0 8px var(--shadow-color);
+  font-weight: bold;
+  margin: 0 2px;
+}
 
 .notification {
   position: fixed;
@@ -344,7 +384,7 @@ footer { text-align: center; margin-top: 18px; font-size: 13px; opacity: 0.7; }
   background: var(--accent);
   color: white;
   padding: 12px 20px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 14px;
   z-index: 1000;
   opacity: 0;
@@ -389,6 +429,10 @@ footer { text-align: center; margin-top: 18px; font-size: 13px; opacity: 0.7; }
   border-bottom: 1px solid var(--accent);
 }
 
+.debug-header h3 {
+  margin: 0;
+}
+
 .debug-close {
   background: none;
   border: none;
@@ -402,6 +446,7 @@ footer { text-align: center; margin-top: 18px; font-size: 13px; opacity: 0.7; }
   font-size: 12px;
   line-height: 1.5;
   color: var(--text-color);
+  white-space: pre-wrap;
 }
 
 @media (max-width: 768px) {
@@ -442,13 +487,13 @@ footer { text-align: center; margin-top: 18px; font-size: 13px; opacity: 0.7; }
     <button class="device-button active" data-device="laptop" title="لپ‌تاپ"><i class="fas fa-laptop"></i></button>
     <button class="device-button" data-device="tablet" title="تبلت"><i class="fas fa-tablet-alt"></i></button>
     <button class="device-button" data-device="mobile" title="موبایل"><i class="fas fa-mobile-alt"></i></button>
-    <label class="chip">
-      ارتفاع:
-      <input id="heightInput" type="number" min="200" max="1200" step="20" value="220" style="width:80px; margin-inline-start:6px;">
-      px
-    </label>
+    <div class="height-panel">
+      <span id="heightLabel">ارتفاع:</span>
+      <input id="heightInput" type="number" min="200" max="1200" step="20" value="220">
+      <span>px</span>
+    </div>
+    <button class="action-btn" id="autoHeightBtn" title="تنظیم خودکار ارتفاع"><i class="fas fa-arrows-alt-v"></i></button>
     <div class="action-group">
-      <button id="autoHeightBtn" title="تنظیم خودکار ارتفاع"><i class="fas fa-arrows-alt-v"></i></button>
       <button id="debugBtn" title="دیباگ کد"><i class="fas fa-bug"></i></button>
       <button id="formatBtn" title="مرتب‌سازی کد"><i class="fas fa-align-left"></i></button>
     </div>
@@ -480,10 +525,10 @@ footer { text-align: center; margin-top: 18px; font-size: 13px; opacity: 0.7; }
 <div class="tabs-container">
   <div class="tabs-header" id="tabsHeader">
     <div class="tab active" data-tab="0">
-      <input class="tab-name" value="فایل جدید" readonly>
+      <span class="tab-name">فایل جدید</span>
       <button class="tab-close">&times;</button>
     </div>
-    <button class="add-tab" id="addTab">
+    <button class="add-tab" id="addTabBtn">
       <i class="fas fa-plus"></i>
     </button>
   </div>
@@ -492,14 +537,18 @@ footer { text-align: center; margin-top: 18px; font-size: 13px; opacity: 0.7; }
 <div class="preview-wrap">
   <div class="preview-header">
     <div class="left">
-      <span class="chip">پیش‌نمایش</span>
+      <span id="previewLabel" class="chip">پیش‌نمایش</span>
       <span id="deviceLabel" class="chip">عرض: 100%</span>
     </div>
-    <span id="heightLabel" class="chip">ارتفاع: 220px</span>
+    <span id="heightDisplay" class="chip">ارتفاع: 220px</span>
   </div>
   <iframe id="preview"></iframe>
 </div>
-<footer>© <span id="year"></span> ساخته شده توسط <strong>Nima.Sh</strong> 🚀</footer>
+<footer>
+  <strong>SMART HTML Viewer</strong> by <strong>Nima.Sh</strong>
+  <br>
+  HTML <span class="separator">|•|</span> CSS <span class="separator">|•|</span> JavaScript
+</footer>
 
 <div id="notification" class="notification"></div>
 
@@ -507,7 +556,7 @@ footer { text-align: center; margin-top: 18px; font-size: 13px; opacity: 0.7; }
 <div id="debugModal" class="debug-modal">
   <div class="debug-content">
     <div class="debug-header">
-      <h3>اطلاعات دیباگ کد</h3>
+      <h3 id="debugTitle">اطلاعات دیباگ کد</h3>
       <button class="debug-close" id="debugClose">&times;</button>
     </div>
     <div id="debugInfo" class="debug-info"></div>
@@ -521,15 +570,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const iframeEl = document.getElementById('preview');
   const heightInput = document.getElementById('heightInput');
   const heightLabel = document.getElementById('heightLabel');
+  const heightDisplay = document.getElementById('heightDisplay');
   const deviceLabel = document.getElementById('deviceLabel');
+  const previewLabel = document.getElementById('previewLabel');
   const langSelect = document.getElementById('languageSelect');
   const themeToggle = document.getElementById('themeToggle');
   const runBtn = document.getElementById('runBtn');
   const copyBtn = document.getElementById('copyBtn');
   const dropdown = document.getElementById('downloadDropdown');
-  const yearEl = document.getElementById('year');
   const notification = document.getElementById('notification');
   const infoBtn = document.getElementById('infoBtn');
+  const debugTitle = document.getElementById('debugTitle');
   
   // عناصر جدید
   const autoHeightBtn = document.getElementById('autoHeightBtn');
@@ -541,9 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const debugModal = document.getElementById('debugModal');
   const debugClose = document.getElementById('debugClose');
   const debugInfo = document.getElementById('debugInfo');
-
-  // تنظیم سال فعلی
-  yearEl.textContent = new Date().getFullYear();
+  const addTabBtn = document.getElementById('addTabBtn');
 
   // متن‌های چندزبانه
   const translations = {
@@ -552,6 +601,7 @@ document.addEventListener('DOMContentLoaded', () => {
       placeholder: 'کد HTML خود را اینجا بنویسید...',
       preview: 'پیش‌نمایش',
       height: 'ارتفاع',
+      heightLabel: 'ارتفاع:',
       width: 'عرض',
       copied: 'کد کپی شد!',
       downloadHtml: 'دانلود HTML',
@@ -560,13 +610,42 @@ document.addEventListener('DOMContentLoaded', () => {
       tablet: 'تبلت',
       mobile: 'موبایل',
       formatted: 'کد مرتب‌سازی شد!',
-      autoHeight: 'ارتفاع خودکار تنظیم شد!'
+      autoHeight: 'ارتفاع خودکار تنظیم شد!',
+      run: 'اجرای کد',
+      copy: 'کپی',
+      download: 'دانلود',
+      language: 'زبان',
+      info: 'اطلاعات',
+      theme: 'تغییر حالت',
+      debug: 'دیباگ کد',
+      format: 'مرتب‌سازی کد',
+      autoHeightTitle: 'تنظیم خودکار ارتفاع',
+      primaryColor: 'رنگ اصلی',
+      secondaryColor: 'رنگ فرعی',
+      resetColorsTitle: 'بازگشت به حالت پیشفرض',
+      newFile: 'فایل جدید',
+      debugInfo: 'اطلاعات دیباگ کد',
+      codeStats: 'آمار کد',
+      lines: 'تعداد خطوط',
+      characters: 'تعداد کاراکترها',
+      htmlTags: 'تگ‌های HTML',
+      cssStyles: 'استایل‌های CSS',
+      jsScripts: 'اسکریپت‌های JS',
+      tagCheck: 'بررسی تگ‌ها',
+      unclosedTags: 'تگ‌های بسته نشده',
+      allTagsClosed: 'همه تگ‌ها به درستی بسته شده‌اند',
+      suggestions: 'پیشنهادات',
+      addDoctype: 'DOCTYPE اضافه کنید',
+      addCharset: 'charset تعریف کنید',
+      addTitle: 'عنوان صفحه اضافه کنید',
+      useSeparateCss: 'از CSS جداگانه استفاده کنید'
     },
     en: {
       title: 'SMART HTML Viewer',
       placeholder: 'Write your HTML code here...',
       preview: 'Preview',
       height: 'Height',
+      heightLabel: 'Height:',
       width: 'Width',
       copied: 'Code copied!',
       downloadHtml: 'Download HTML',
@@ -575,13 +654,42 @@ document.addEventListener('DOMContentLoaded', () => {
       tablet: 'Tablet',
       mobile: 'Mobile',
       formatted: 'Code formatted!',
-      autoHeight: 'Auto height applied!'
+      autoHeight: 'Auto height applied!',
+      run: 'Run code',
+      copy: 'Copy',
+      download: 'Download',
+      language: 'Language',
+      info: 'Info',
+      theme: 'Toggle theme',
+      debug: 'Debug code',
+      format: 'Format code',
+      autoHeightTitle: 'Auto adjust height',
+      primaryColor: 'Primary color',
+      secondaryColor: 'Secondary color',
+      resetColorsTitle: 'Reset to default',
+      newFile: 'New File',
+      debugInfo: 'Debug Information',
+      codeStats: 'Code Stats',
+      lines: 'Lines',
+      characters: 'Characters',
+      htmlTags: 'HTML Tags',
+      cssStyles: 'CSS Styles',
+      jsScripts: 'JS Scripts',
+      tagCheck: 'Tag Check',
+      unclosedTags: 'Unclosed tags',
+      allTagsClosed: 'All tags are properly closed',
+      suggestions: 'Suggestions',
+      addDoctype: 'Add DOCTYPE',
+      addCharset: 'Define charset',
+      addTitle: 'Add page title',
+      useSeparateCss: 'Use separate CSS'
     },
     ar: {
       title: 'عارض HTML الذكي',
       placeholder: 'اكتب كود HTML هنا...',
       preview: 'معاينة',
       height: 'الارتفاع',
+      heightLabel: 'الارتفاع:',
       width: 'العرض',
       copied: 'تم نسخ الكود!',
       downloadHtml: 'تحميل HTML',
@@ -590,13 +698,42 @@ document.addEventListener('DOMContentLoaded', () => {
       tablet: 'جهاز لوحي',
       mobile: 'هاتف',
       formatted: 'تم تنسيق الكود!',
-      autoHeight: 'تم تطبيق الارتفاع التلقائي!'
+      autoHeight: 'تم تطبيق الارتفاع التلقائي!',
+      run: 'تشغيل الكود',
+      copy: 'نسخ',
+      download: 'تحميل',
+      language: 'اللغة',
+      info: 'معلومات',
+      theme: 'تبديل السمة',
+      debug: 'تصحيح الكود',
+      format: 'تنسيق الكود',
+      autoHeightTitle: 'ضبط الارتفاع تلقائياً',
+      primaryColor: 'اللون الأساسي',
+      secondaryColor: 'اللون الثانوي',
+      resetColorsTitle: 'إعادة التعيين',
+      newFile: 'ملف جديد',
+      debugInfo: 'معلومات التصحيح',
+      codeStats: 'إحصائيات الكود',
+      lines: 'الأسطر',
+      characters: 'الأحرف',
+      htmlTags: 'علامات HTML',
+      cssStyles: 'أنماط CSS',
+      jsScripts: 'سكربتات JS',
+      tagCheck: 'فحص العلامات',
+      unclosedTags: 'علامات غير مغلقة',
+      allTagsClosed: 'جميع العلامات مغلقة بشكل صحيح',
+      suggestions: 'اقتراحات',
+      addDoctype: 'أضف DOCTYPE',
+      addCharset: 'حدد charset',
+      addTitle: 'أضف عنوان الصفحة',
+      useSeparateCss: 'استخدم CSS منفصل'
     },
     fr: {
       title: 'Visionneuse HTML SMART',
       placeholder: 'Écrivez votre code HTML ici...',
       preview: 'Aperçu',
       height: 'Hauteur',
+      heightLabel: 'Hauteur:',
       width: 'Largeur',
       copied: 'Code copié!',
       downloadHtml: 'Télécharger HTML',
@@ -605,13 +742,42 @@ document.addEventListener('DOMContentLoaded', () => {
       tablet: 'Tablette',
       mobile: 'Mobile',
       formatted: 'Code formaté!',
-      autoHeight: 'Hauteur automatique appliquée!'
+      autoHeight: 'Hauteur automatique appliquée!',
+      run: 'Exécuter le code',
+      copy: 'Copier',
+      download: 'Télécharger',
+      language: 'Langue',
+      info: 'Info',
+      theme: 'Changer le thème',
+      debug: 'Déboguer le code',
+      format: 'Formater le code',
+      autoHeightTitle: 'Ajuster la hauteur automatiquement',
+      primaryColor: 'Couleur principale',
+      secondaryColor: 'Couleur secondaire',
+      resetColorsTitle: 'Réinitialiser',
+      newFile: 'Nouveau fichier',
+      debugInfo: 'Informations de débogage',
+      codeStats: 'Statistiques du code',
+      lines: 'Lignes',
+      characters: 'Caractères',
+      htmlTags: 'Balises HTML',
+      cssStyles: 'Styles CSS',
+      jsScripts: 'Scripts JS',
+      tagCheck: 'Vérification des balises',
+      unclosedTags: 'Balises non fermées',
+      allTagsClosed: 'Toutes les balises sont correctement fermées',
+      suggestions: 'Suggestions',
+      addDoctype: 'Ajouter DOCTYPE',
+      addCharset: 'Définir charset',
+      addTitle: 'Ajouter un titre de page',
+      useSeparateCss: 'Utiliser un CSS séparé'
     },
     es: {
       title: 'Visor HTML INTELIGENTE',
       placeholder: 'Escribe tu código HTML aquí...',
       preview: 'Vista previa',
       height: 'Altura',
+      heightLabel: 'Altura:',
       width: 'Ancho',
       copied: '¡Código copiado!',
       downloadHtml: 'Descargar HTML',
@@ -620,13 +786,42 @@ document.addEventListener('DOMContentLoaded', () => {
       tablet: 'Tableta',
       mobile: 'Móvil',
       formatted: '¡Código formateado!',
-      autoHeight: '¡Altura automática aplicada!'
+      autoHeight: '¡Altura automática aplicada!',
+      run: 'Ejecutar código',
+      copy: 'Copiar',
+      download: 'Descargar',
+      language: 'Idioma',
+      info: 'Info',
+      theme: 'Cambiar tema',
+      debug: 'Depurar código',
+      format: 'Formatear código',
+      autoHeightTitle: 'Ajustar altura automáticamente',
+      primaryColor: 'Color principal',
+      secondaryColor: 'Color secundario',
+      resetColorsTitle: 'Restablecer',
+      newFile: 'Nuevo archivo',
+      debugInfo: 'Información de depuración',
+      codeStats: 'Estadísticas del código',
+      lines: 'Líneas',
+      characters: 'Caracteres',
+      htmlTags: 'Etiquetas HTML',
+      cssStyles: 'Estilos CSS',
+      jsScripts: 'Scripts JS',
+      tagCheck: 'Verificación de etiquetas',
+      unclosedTags: 'Etiquetas sin cerrar',
+      allTagsClosed: 'Todas las etiquetas están correctamente cerradas',
+      suggestions: 'Sugerencias',
+      addDoctype: 'Agregar DOCTYPE',
+      addCharset: 'Definir charset',
+      addTitle: 'Agregar título de página',
+      useSeparateCss: 'Usar CSS separado'
     },
     zh: {
       title: '智能 HTML 查看器',
       placeholder: '在此处编写您的 HTML 代码...',
       preview: '预览',
       height: '高度',
+      heightLabel: '高度:',
       width: '宽度',
       copied: '代码已复制！',
       downloadHtml: '下载 HTML',
@@ -635,13 +830,42 @@ document.addEventListener('DOMContentLoaded', () => {
       tablet: '平板电脑',
       mobile: '手机',
       formatted: '代码已格式化！',
-      autoHeight: '自动高度已应用！'
+      autoHeight: '自动高度已应用！',
+      run: '运行代码',
+      copy: '复制',
+      download: '下载',
+      language: '语言',
+      info: '信息',
+      theme: '切换主题',
+      debug: '调试代码',
+      format: '格式化代码',
+      autoHeightTitle: '自动调整高度',
+      primaryColor: '主色',
+      secondaryColor: '次要颜色',
+      resetColorsTitle: '重置',
+      newFile: '新文件',
+      debugInfo: '调试信息',
+      codeStats: '代码统计',
+      lines: '行数',
+      characters: '字符数',
+      htmlTags: 'HTML标签',
+      cssStyles: 'CSS样式',
+      jsScripts: 'JS脚本',
+      tagCheck: '标签检查',
+      unclosedTags: '未闭合标签',
+      allTagsClosed: '所有标签已正确闭合',
+      suggestions: '建议',
+      addDoctype: '添加 DOCTYPE',
+      addCharset: '定义 charset',
+      addTitle: '添加页面标题',
+      useSeparateCss: '使用单独的 CSS'
     },
     de: {
       title: 'SMART HTML Viewer',
       placeholder: 'Schreiben Sie Ihren HTML-Code hier...',
       preview: 'Vorschau',
       height: 'Höhe',
+      heightLabel: 'Höhe:',
       width: 'Breite',
       copied: 'Code kopiert!',
       downloadHtml: 'HTML herunterladen',
@@ -650,7 +874,35 @@ document.addEventListener('DOMContentLoaded', () => {
       tablet: 'Tablet',
       mobile: 'Handy',
       formatted: 'Code formatiert!',
-      autoHeight: 'Automatische Höhe angewendet!'
+      autoHeight: 'Automatische Höhe angewendet!',
+      run: 'Code ausführen',
+      copy: 'Kopieren',
+      download: 'Herunterladen',
+      language: 'Sprache',
+      info: 'Info',
+      theme: 'Thema wechseln',
+      debug: 'Code debuggen',
+      format: 'Code formatieren',
+      autoHeightTitle: 'Höhe automatisch anpassen',
+      primaryColor: 'Hauptfarbe',
+      secondaryColor: 'Sekundärfarbe',
+      resetColorsTitle: 'Zurücksetzen',
+      newFile: 'Neue Datei',
+      debugInfo: 'Debug-Informationen',
+      codeStats: 'Code-Statistiken',
+      lines: 'Zeilen',
+      characters: 'Zeichen',
+      htmlTags: 'HTML-Tags',
+      cssStyles: 'CSS-Stile',
+      jsScripts: 'JS-Skripte',
+      tagCheck: 'Tag-Prüfung',
+      unclosedTags: 'Nicht geschlossene Tags',
+      allTagsClosed: 'Alle Tags sind korrekt geschlossen',
+      suggestions: 'Vorschläge',
+      addDoctype: 'DOCTYPE hinzufügen',
+      addCharset: 'Charset definieren',
+      addTitle: 'Seitentitel hinzufügen',
+      useSeparateCss: 'Separates CSS verwenden'
     }
   };
 
@@ -663,37 +915,35 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
   let tabCounter = 1;
 
+  // ذخیره رنگ‌های فعلی
+  let currentPrimaryColor = '#2563eb';
+  let currentSecondaryColor = '#00aaff';
+
   // تنظیم حالت پیش‌فرض روشن
   document.body.classList.remove('dark');
   themeToggle.querySelector('i').className = 'fas fa-moon';
 
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
-    if (event.matches) {
-      document.body.classList.add('dark');
-      themeToggle.querySelector('i').className = 'fas fa-sun';
-    } else {
-      document.body.classList.remove('dark');
-      themeToggle.querySelector('i').className = 'fas fa-moon';
-    }
-  });
-
-  // تغییر رنگ تم
+  // تغییر رنگ تم - اصلاح شده
   function updateThemeColors(primary, secondary) {
-    const root = document.documentElement;
-    const isDark = document.body.classList.contains('dark');
+    currentPrimaryColor = primary;
+    currentSecondaryColor = secondary;
     
-    if (isDark) {
-      root.style.setProperty('--primary-color', primary);
-      root.style.setProperty('--secondary-color', secondary);
-    } else {
-      root.style.setProperty('--primary-color', primary);
-      root.style.setProperty('--secondary-color', secondary);
-    }
+    const root = document.documentElement;
+    
+    // تنظیم رنگ‌ها روی root
+    root.style.setProperty('--primary-color', primary);
+    root.style.setProperty('--secondary-color', secondary);
+    root.style.setProperty('--icon-color', primary);
+    root.style.setProperty('--glow-color', secondary);
+    root.style.setProperty('--accent', primary);
+    root.style.setProperty('--highlight-color', secondary);
     
     // به‌روزرسانی سایه‌ها
     const primaryRgb = hexToRgb(primary);
-    const shadowColor = `rgba(${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}, 0.35)`;
-    root.style.setProperty('--shadow-color', shadowColor);
+    if (primaryRgb) {
+      const shadowColor = `rgba(${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}, 0.35)`;
+      root.style.setProperty('--shadow-color', shadowColor);
+    }
   }
 
   function hexToRgb(hex) {
@@ -714,26 +964,61 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 3000);
   }
 
-  // به‌روزرسانی زبان
+  // به‌روزرسانی زبان - اصلاح شده
   function updateLanguage(lang) {
     currentLang = lang;
     const t = translations[lang];
     
     titleEl.textContent = t.title;
     inputEl.placeholder = t.placeholder;
-    document.querySelector('.preview-header .chip').textContent = t.preview;
+    previewLabel.textContent = t.preview;
+    heightLabel.textContent = t.heightLabel;
     
     dropdown.querySelector('[data-type="html"]').textContent = t.downloadHtml;
     dropdown.querySelector('[data-type="txt"]').textContent = t.downloadTxt;
     
+    // به‌روزرسانی عناوین دکمه‌ها
+    document.querySelector('[data-device="laptop"]').title = t.laptop;
+    document.querySelector('[data-device="tablet"]').title = t.tablet;
+    document.querySelector('[data-device="mobile"]').title = t.mobile;
+    runBtn.title = t.run;
+    copyBtn.title = t.copy;
+    dropdown.querySelector('.action-btn').title = t.download;
+    langSelect.title = t.language;
+    infoBtn.title = t.info;
+    themeToggle.title = t.theme;
+    debugBtn.title = t.debug;
+    formatBtn.title = t.format;
+    autoHeightBtn.title = t.autoHeightTitle;
+    primaryColorPicker.title = t.primaryColor;
+    secondaryColorPicker.title = t.secondaryColor;
+    resetColors.title = t.resetColorsTitle;
+    debugTitle.textContent = t.debugInfo;
+    
     if (lang === 'ar' || lang === 'fa') {
       document.documentElement.dir = 'rtl';
+      document.documentElement.lang = lang;
     } else {
       document.documentElement.dir = 'ltr';
+      document.documentElement.lang = lang;
     }
     
+    // به‌روزرسانی نام تب‌ها اگر پیش‌فرض هستند
+    tabs.forEach((tab, index) => {
+      if (tab.name === 'فایل جدید' || tab.name === 'New File' || 
+          tab.name === 'ملف جديد' || tab.name === 'Nouveau fichier' ||
+          tab.name === 'Nuevo archivo' || tab.name === '新文件' || 
+          tab.name === 'Neue Datei' || tab.name.startsWith('فایل ') ||
+          tab.name.startsWith('File ')) {
+        if (index === 0 && tabs.length === 1) {
+          tab.name = t.newFile;
+        }
+      }
+    });
+    renderTabs();
+    
     updateDeviceLabel();
-    updateHeightLabel();
+    updateHeightDisplay();
   }
 
   function updateDeviceLabel() {
@@ -752,9 +1037,9 @@ document.addEventListener('DOMContentLoaded', () => {
     deviceLabel.textContent = `${t.width}: ${width}`;
   }
 
-  function updateHeightLabel() {
+  function updateHeightDisplay() {
     const t = translations[currentLang];
-    heightLabel.textContent = `${t.height}: ${heightInput.value}px`;
+    heightDisplay.textContent = `${t.height}: ${heightInput.value}px`;
   }
 
   function changeDevice(device) {
@@ -825,7 +1110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const newHeight = Math.max(220, Math.min(800, lines * 20 + 40));
     heightInput.value = newHeight;
     iframeEl.style.height = newHeight + 'px';
-    updateHeightLabel();
+    updateHeightDisplay();
     showNotification(translations[currentLang].autoHeight);
   }
 
@@ -848,63 +1133,97 @@ document.addEventListener('DOMContentLoaded', () => {
     const formattedLines = [];
     
     lines.forEach(line => {
-      if (line.includes('</') && !line.includes('</'+ line.split('</')[1].split('>')[0] + '>')) {
+      if (line.match(/^<\//) && !line.match(/<[^\/][^>]*>[^<]*<\/[^>]+>/)) {
         indentLevel = Math.max(0, indentLevel - 1);
       }
       
       formattedLines.push('  '.repeat(indentLevel) + line);
       
-      if (line.includes('<') && !line.includes('</') && !line.endsWith('/>') && !line.includes('<!')) {
+      if (line.match(/<[^\/!][^>]*[^\/]>/) && !line.match(/<\//) && !line.match(/\/>/)) {
         indentLevel++;
       }
     });
     
     inputEl.value = formattedLines.join('\n');
+    saveCurrentTab();
     runCode();
     showNotification(translations[currentLang].formatted);
   }
 
   // دیباگ کد
   function debugCode() {
+    const t = translations[currentLang];
     const code = inputEl.value;
     const lines = code.split('\n');
     
-    let debugOutput = `📊 آمار کد:\n`;
+    let debugOutput = `📊 ${t.codeStats}:\n`;
     debugOutput += `━━━━━━━━━━━━━━\n`;
-    debugOutput += `📝 تعداد خطوط: ${lines.length}\n`;
-    debugOutput += `🔤 تعداد کاراکترها: ${code.length}\n`;
-    debugOutput += `🏷️  تگ‌های HTML: ${(code.match(/<[^>]+>/g) || []).length}\n`;
-    debugOutput += `🎨 استایل‌های CSS: ${(code.match(/[^{}]+{[^}]*}/g) || []).length}\n`;
-    debugOutput += `⚙️  اسکریپت‌های JS: ${(code.match(/<script[\s\S]*?<\/script>/gi) || []).length}\n\n`;
+    debugOutput += `📝 ${t.lines}: ${lines.length}\n`;
+    debugOutput += `🔤 ${t.characters}: ${code.length}\n`;
+    debugOutput += `🏷️  ${t.htmlTags}: ${(code.match(/<[^>]+>/g) || []).length}\n`;
+    debugOutput += `🎨 ${t.cssStyles}: ${(code.match(/[^{}]+{[^}]*}/g) || []).length}\n`;
+    debugOutput += `⚙️  ${t.jsScripts}: ${(code.match(/<script[\s\S]*?<\/script>/gi) || []).length}\n\n`;
     
-    debugOutput += `🔍 بررسی تگ‌ها:\n`;
+    debugOutput += `🔍 ${t.tagCheck}:\n`;
     debugOutput += `━━━━━━━━━━━━━━\n`;
     
-    const openTags = (code.match(/<[^\/][^>]*[^\/]>/g) || []).map(tag => tag.match(/<(\w+)/)[1]);
-    const closeTags = (code.match(/<\/\w+>/g) || []).map(tag => tag.match(/<\/(\w+)>/)[1]);
+    const openTags = (code.match(/<([a-zA-Z][a-zA-Z0-9]*)[^>]*(?<!\/)\s*>/g) || [])
+      .map(tag => {
+        const match = tag.match(/<([a-zA-Z][a-zA-Z0-9]*)/);
+        return match ? match[1].toLowerCase() : null;
+      })
+      .filter(Boolean);
     
-    const unclosedTags = openTags.filter(tag => !closeTags.includes(tag) && !['img', 'br', 'hr', 'input', 'meta', 'link'].includes(tag));
+    const closeTags = (code.match(/<\/([a-zA-Z][a-zA-Z0-9]*)>/g) || [])
+      .map(tag => {
+        const match = tag.match(/<\/([a-zA-Z][a-zA-Z0-9]*)>/);
+        return match ? match[1].toLowerCase() : null;
+      })
+      .filter(Boolean);
+    
+    const selfClosingTags = ['img', 'br', 'hr', 'input', 'meta', 'link', 'area', 'base', 'col', 'embed', 'param', 'source', 'track', 'wbr'];
+    
+    const openCount = {};
+    const closeCount = {};
+    
+    openTags.forEach(tag => {
+      if (!selfClosingTags.includes(tag)) {
+        openCount[tag] = (openCount[tag] || 0) + 1;
+      }
+    });
+    
+    closeTags.forEach(tag => {
+      closeCount[tag] = (closeCount[tag] || 0) + 1;
+    });
+    
+    const unclosedTags = [];
+    for (const tag in openCount) {
+      const diff = openCount[tag] - (closeCount[tag] || 0);
+      if (diff > 0) {
+        unclosedTags.push(`${tag} (${diff})`);
+      }
+    }
     
     if (unclosedTags.length > 0) {
-      debugOutput += `⚠️  تگ‌های بسته نشده: ${unclosedTags.join(', ')}\n`;
+      debugOutput += `⚠️  ${t.unclosedTags}: ${unclosedTags.join(', ')}\n`;
     } else {
-      debugOutput += `✅ همه تگ‌ها به درستی بسته شده‌اند\n`;
+      debugOutput += `✅ ${t.allTagsClosed}\n`;
     }
     
-    debugOutput += `\n🎯 پیشنهادات:\n`;
+    debugOutput += `\n🎯 ${t.suggestions}:\n`;
     debugOutput += `━━━━━━━━━━━━━━\n`;
     
-    if (!code.includes('<!DOCTYPE html>')) {
-      debugOutput += `💡 DOCTYPE اضافه کنید\n`;
+    if (!code.includes('<!DOCTYPE html>') && !code.includes('<!doctype html>')) {
+      debugOutput += `💡 ${t.addDoctype}\n`;
     }
     if (!code.includes('<meta charset=')) {
-      debugOutput += `💡 charset تعریف کنید\n`;
+      debugOutput += `💡 ${t.addCharset}\n`;
     }
     if (!code.includes('<title>')) {
-      debugOutput += `💡 عنوان صفحه اضافه کنید\n`;
+      debugOutput += `💡 ${t.addTitle}\n`;
     }
     if (code.includes('style=')) {
-      debugOutput += `💡 از CSS جداگانه استفاده کنید\n`;
+      debugOutput += `💡 ${t.useSeparateCss}\n`;
     }
     
     debugInfo.textContent = debugOutput;
@@ -913,48 +1232,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Event Listeners
   
-  // دکمه‌های دستگاه
+  // دکمه‌های دستگاه - اصلاح شده (بدون باز کردن پنجره جدید)
   document.querySelectorAll('.device-button').forEach(btn => {
     btn.addEventListener('click', () => {
       const device = btn.dataset.device;
       changeDevice(device);
-      
-      let windowSpecs = '';
-      switch (device) {
-        case 'laptop':
-          windowSpecs = 'width=1366,height=768,scrollbars=yes,resizable=yes';
-          break;
-        case 'tablet':
-          windowSpecs = 'width=768,height=1024,scrollbars=yes,resizable=yes';
-          break;
-        case 'mobile':
-          windowSpecs = 'width=375,height=667,scrollbars=yes,resizable=yes';
-          break;
-        default:
-          windowSpecs = 'width=800,height=600,scrollbars=yes,resizable=yes';
-      }
-      
-      const htmlCode = inputEl.value;
-      const newWindow = window.open('', '_blank', windowSpecs);
-      
-      if (newWindow) {
-        newWindow.document.write(htmlCode);
-        newWindow.document.close();
-        
-        const deviceNames = {
-          laptop: 'لپ‌تاپ - 1366x768',
-          tablet: 'تبلت - 768x1024', 
-          mobile: 'موبایل - 375x667'
-        };
-        newWindow.document.title = `${deviceNames[device]} | SMART HTML Viewer`;
-      }
     });
   });
 
   heightInput.addEventListener('input', () => {
     const height = heightInput.value;
     iframeEl.style.height = height + 'px';
-    updateHeightLabel();
+    updateHeightDisplay();
   });
 
   // دکمه‌های جدید
@@ -974,11 +1263,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // انتخابگر رنگ
-  primaryColorPicker.addEventListener('change', (e) => {
+  primaryColorPicker.addEventListener('input', (e) => {
     updateThemeColors(e.target.value, secondaryColorPicker.value);
   });
 
-  secondaryColorPicker.addEventListener('change', (e) => {
+  secondaryColorPicker.addEventListener('input', (e) => {
     updateThemeColors(primaryColorPicker.value, e.target.value);
   });
 
@@ -1000,7 +1289,7 @@ document.addEventListener('DOMContentLoaded', () => {
   copyBtn.addEventListener('click', copyCode);
 
   dropdown.addEventListener('click', (e) => {
-    if (e.target.classList.contains('action-btn') || e.target.classList.contains('fa-download')) {
+    if (e.target.classList.contains('action-btn') || e.target.closest('.action-btn')) {
       dropdown.classList.toggle('open');
     }
   });
@@ -1027,13 +1316,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const isDark = document.body.classList.contains('dark');
     themeToggle.querySelector('i').className = isDark ? 'fas fa-sun' : 'fas fa-moon';
     
-    // تغییر رنگ‌های انتخابگر بر اساس تم
+    // تغییر رنگ‌های انتخابگر بر اساس تم و اعمال فوری
     if (isDark) {
       primaryColorPicker.value = '#00ff7f';
       secondaryColorPicker.value = '#32cd32';
+      updateThemeColors('#00ff7f', '#32cd32');
     } else {
       primaryColorPicker.value = '#2563eb';
       secondaryColorPicker.value = '#00aaff';
+      updateThemeColors('#2563eb', '#00aaff');
     }
   });
 
@@ -1070,51 +1361,52 @@ document.addEventListener('DOMContentLoaded', () => {
   // رندر کردن تب‌ها
   function renderTabs() {
     const tabsHeader = document.getElementById('tabsHeader');
-    const addTabBtn = document.getElementById('addTab');
     
-    // پاک کردن تب‌های موجود
-    tabsHeader.innerHTML = '';
+    // پاک کردن تب‌های موجود (به جز دکمه اضافه کردن)
+    const existingTabs = tabsHeader.querySelectorAll('.tab');
+    existingTabs.forEach(tab => tab.remove());
     
-    // اضافه کردن تب‌ها
-    tabs.forEach(tab => {
+    // اضافه کردن تب‌ها قبل از دکمه add
+    tabs.forEach((tab, index) => {
       const tabEl = document.createElement('div');
       tabEl.className = `tab ${tab.active ? 'active' : ''}`;
       tabEl.dataset.tab = tab.id;
       
-      tabEl.innerHTML = `
-        <input class="tab-name" value="${tab.name}" readonly>
-        <button class="tab-close">&times;</button>
-      `;
+      const tabName = document.createElement('span');
+      tabName.className = 'tab-name';
+      tabName.textContent = tab.name;
+      
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'tab-close';
+      closeBtn.innerHTML = '&times;';
+      
+      tabEl.appendChild(tabName);
+      tabEl.appendChild(closeBtn);
       
       // کلیک روی تب
       tabEl.addEventListener('click', (e) => {
-        if (!e.target.classList.contains('tab-close') && !e.target.classList.contains('tab-name')) {
+        if (!e.target.classList.contains('tab-close') && 
+            !e.target.classList.contains('tab-name') &&
+            !e.target.classList.contains('editing')) {
           switchTab(tab.id);
         }
       });
       
-      // تغییر نام تب
-      const tabName = tabEl.querySelector('.tab-name');
-      tabName.addEventListener('dblclick', () => {
-        tabName.readOnly = false;
-        tabName.focus();
-        tabName.select();
+      // دابل کلیک برای ویرایش نام
+      tabName.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        startEditingTabName(tabName, tab);
       });
       
-      tabName.addEventListener('blur', () => {
-        tabName.readOnly = true;
-        tab.name = tabName.value || 'بدون نام';
-        tabName.value = tab.name;
-      });
-      
-      tabName.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          tabName.blur();
+      // کلیک روی نام تب برای انتخاب (نه ویرایش)
+      tabName.addEventListener('click', (e) => {
+        if (!tabName.classList.contains('editing')) {
+          e.stopPropagation();
+          switchTab(tab.id);
         }
       });
       
       // بستن تب
-      const closeBtn = tabEl.querySelector('.tab-close');
       if (tabs.length > 1) {
         closeBtn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -1124,11 +1416,42 @@ document.addEventListener('DOMContentLoaded', () => {
         closeBtn.style.display = 'none';
       }
       
-      tabsHeader.appendChild(tabEl);
+      tabsHeader.insertBefore(tabEl, addTabBtn);
     });
+  }
+  
+  // شروع ویرایش نام تب
+  function startEditingTabName(tabNameEl, tab) {
+    tabNameEl.classList.add('editing');
+    tabNameEl.contentEditable = true;
+    tabNameEl.focus();
     
-    // اضافه کردن دکمه تب جدید
-    tabsHeader.appendChild(addTabBtn);
+    // انتخاب تمام متن
+    const range = document.createRange();
+    range.selectNodeContents(tabNameEl);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    
+    const finishEditing = () => {
+      tabNameEl.classList.remove('editing');
+      tabNameEl.contentEditable = false;
+      const newName = tabNameEl.textContent.trim();
+      tab.name = newName || translations[currentLang].newFile;
+      tabNameEl.textContent = tab.name;
+    };
+    
+    tabNameEl.addEventListener('blur', finishEditing, { once: true });
+    
+    tabNameEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        tabNameEl.blur();
+      } else if (e.key === 'Escape') {
+        tabNameEl.textContent = tab.name;
+        tabNameEl.blur();
+      }
+    });
   }
 
   // اضافه کردن تب جدید
@@ -1138,10 +1461,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // غیرفعال کردن همه تب‌ها
     tabs.forEach(tab => tab.active = false);
     
+    const t = translations[currentLang];
+    
     // ایجاد تب جدید
     const newTab = {
       id: tabCounter++,
-      name: `فایل ${tabCounter}`,
+      name: `${t.newFile} ${tabCounter}`,
       content: '',
       active: true
     };
@@ -1154,7 +1479,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // بستن تب
   function closeTab(tabId) {
-    if (tabs.length <= 1) return; // حداقل یک تب باید باقی بماند
+    if (tabs.length <= 1) return;
     
     const tabIndex = tabs.findIndex(tab => tab.id === tabId);
     const wasActive = tabs[tabIndex].active;
@@ -1162,7 +1487,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tabs.splice(tabIndex, 1);
     
     // اگر تب فعال حذف شد، تب بعدی یا قبلی را فعال کن
-    if (wasActive) {
+    if (wasActive && tabs.length > 0) {
       const nextIndex = Math.min(tabIndex, tabs.length - 1);
       tabs[nextIndex].active = true;
       inputEl.value = tabs[nextIndex].content;
@@ -1172,8 +1497,8 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTabs();
   }
 
-  // Event Listeners برای تب‌ها
-  document.getElementById('addTab').addEventListener('click', addNewTab);
+  // Event Listener برای دکمه اضافه کردن تب
+  addTabBtn.addEventListener('click', addNewTab);
 
   // ذخیره تغییرات هنگام تایپ
   let timeout;
@@ -1188,100 +1513,6 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // محتوای پیشفرض تب اول
   tabs[0].content = `<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMART HTML Viewer - نمایشگر هوشمند HTML</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #fff;
-            text-align: center;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        }
-        .logo {
-            font-size: 3rem;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.8;
-            margin-bottom: 30px;
-        }
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-        .feature-card {
-            background: rgba(255,255,255,0.15);
-            padding: 20px;
-            border-radius: 15px;
-            transition: transform 0.3s ease;
-        }
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-        .feature-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-        .feature-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .cta-button {
-            background: linear-gradient(45deg, #ff6b6b, #feca57);
-            color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            margin: 20px 10px;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .cta-button:hover {
-            transform: scale(1.05);
-        }
-        .credits {
-            margin-top: 40px;
-            opacity: 0.7;
-            font-size: 0.9rem;
-        }
-        @media (max-width: 600px) {
-            .logo { font-size: 2rem; }
-            .container { padding: 20px; }
-            .feature-grid { grid-template-columns: 1fr; }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-     <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
