@@ -1,1 +1,1978 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>SMART HTML Viewer</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --primary-color: #2563eb;
+  --secondary-color: #00aaff;
+  --bg-color: #f5f5f5;
+  --text-color: #0f172a;
+  --icon-color: var(--primary-color);
+  --glow-color: var(--secondary-color);
+  --button-bg: #ffffff;
+  --shadow-color: rgba(37, 99, 235, 0.35);
+  --accent: var(--primary-color);
+  --highlight-color: var(--secondary-color);
+}
+body.dark {
+  --bg-color: #2d2d30;
+  --text-color: #ffffff;
+  --button-bg: #404040;
+}
 
+/* نوار رنگی بالا */
+.color-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, 
+    var(--primary-color) 0%, 
+    var(--secondary-color) 50%, 
+    var(--primary-color) 100%);
+  z-index: 1000;
+  cursor: pointer;
+  transition: height 0.3s ease;
+}
+.color-bar:hover {
+  height: 12px;
+}
+
+.color-controls {
+  position: fixed;
+  top: 15px;
+  left: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1001;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.color-bar:hover + .color-controls,
+.color-controls:hover {
+  opacity: 1;
+}
+
+.color-picker {
+  width: 40px;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.reset-colors {
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: 10px;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  margin: 0;
+  padding: 24px;
+  padding-top: 30px;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+h1 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 18px;
+  color: var(--accent);
+  font-weight: bold;
+  text-shadow: 0 2px 4px var(--shadow-color);
+}
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.group { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+
+/* گروه دکمه‌های دیباگ و فرمت */
+.action-group {
+  display: flex;
+  background: var(--button-bg);
+  border-radius: 10px;
+  box-shadow: 0 0 12px var(--shadow-color);
+  overflow: hidden;
+  border: 1px solid var(--accent);
+}
+
+.action-group button {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  border-right: 1px solid rgba(0,0,0,0.1);
+}
+
+.action-group button:last-child {
+  border-right: none;
+}
+
+.action-group button i {
+  color: var(--icon-color);
+  transition: color 0.25s ease;
+}
+
+.action-group button:hover {
+  background: var(--accent);
+  transform: scale(1.05);
+  box-shadow: 0 0 18px var(--glow-color);
+}
+
+.action-group button:hover i {
+  color: white;
+}
+
+.device-button, .action-btn {
+  width: 44px; height: 44px; border-radius: 10px; border: none;
+  background: var(--button-bg);
+  display: inline-flex; justify-content: center; align-items: center;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 0 12px var(--shadow-color);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.device-button i, .action-btn i { color: var(--icon-color); }
+.device-button:hover, .action-btn:hover {
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 0 18px var(--glow-color);
+}
+.device-button.active {
+  background: var(--accent);
+}
+.device-button.active i {
+  color: white;
+}
+
+/* دکمه پاپ‌آپ */
+.popup-button {
+  width: 44px; height: 44px; border-radius: 10px; border: none;
+  background: var(--button-bg);
+  display: inline-flex; justify-content: center; align-items: center;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 0 12px var(--shadow-color);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+}
+.popup-button i { color: var(--icon-color); }
+.popup-button:hover {
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 0 18px var(--glow-color);
+}
+
+/* منوی پاپ‌آپ */
+.popup-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--button-bg);
+  border-radius: 10px;
+  box-shadow: 0 0 12px var(--shadow-color);
+  padding: 8px;
+  z-index: 100;
+  display: none;
+  min-width: 180px;
+  border: 1px solid var(--accent);
+}
+.popup-menu.open {
+  display: block;
+}
+.popup-menu button {
+  width: 100%;
+  margin: 4px 0;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: none;
+  background: var(--button-bg);
+  color: var(--text-color);
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.25s ease;
+}
+.popup-menu button i {
+  color: var(--icon-color);
+  width: 20px;
+  text-align: center;
+}
+.popup-menu button:hover {
+  background: var(--accent);
+  color: #fff;
+}
+.popup-menu button:hover i {
+  color: #fff;
+}
+.popup-menu .size-info {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-right: auto;
+}
+
+.dropdown { position: relative; }
+.dropdown-content {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  background: var(--button-bg); border-radius: 10px; box-shadow: 0 0 12px var(--shadow-color);
+  padding: 8px; z-index: 10; display: none; min-width: 160px;
+}
+.dropdown.open .dropdown-content { display: block; }
+.dropdown-content button {
+  width: 100%; margin: 4px 0; padding: 8px 10px; font-size: 14px;
+  border: none; background: var(--button-bg); color: var(--text-color);
+  cursor: pointer; border-radius: 10px;
+}
+.dropdown-content button:hover { background: var(--accent); color: #fff; }
+select, input[type="number"] {
+  padding: 8px 10px; border-radius: 10px; border: 1px solid var(--accent);
+  background: var(--button-bg); color: var(--text-color); font-size: 14px;
+  box-shadow: 0 0 8px var(--shadow-color);
+}
+
+/* استایل برای پنل ارتفاع */
+.height-panel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: var(--button-bg);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 8px var(--shadow-color);
+  font-size: 14px;
+}
+
+.height-panel input {
+  width: 70px;
+  border: none;
+  background: transparent;
+  color: var(--text-color);
+  font-size: 14px;
+  text-align: center;
+}
+
+.height-panel input:focus {
+  outline: none;
+}
+
+/* سیستم تب */
+.tabs-container {
+  margin-top: 16px;
+  background: var(--button-bg);
+  border: 1px solid var(--accent);
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 0 12px var(--shadow-color);
+  overflow: hidden;
+}
+
+.tabs-header {
+  display: flex;
+  background: var(--bg-color);
+  border-bottom: 1px solid var(--accent);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tabs-header::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(0,0,0,0.05);
+  border-right: 1px solid var(--accent);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  max-width: 200px;
+  position: relative;
+  white-space: nowrap;
+}
+
+.tab.active {
+  background: var(--button-bg);
+  border-bottom: 2px solid var(--accent);
+}
+
+.tab:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.tab.active:hover {
+  background: var(--button-bg);
+  color: var(--text-color);
+}
+
+.tab-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: inherit;
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+  min-width: 60px;
+}
+
+.tab-name.editing {
+  background: rgba(255,255,255,0.3);
+  border: 1px solid var(--accent);
+  cursor: text;
+}
+
+.tab-close {
+  margin-right: 6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255,0,0,0.7);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+  flex-shrink: 0;
+}
+
+.tab-close:hover {
+  opacity: 1;
+  background: #ff0000;
+}
+
+.add-tab {
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 16px;
+  transition: all 0.3s ease;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.add-tab:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.editor {
+  width: 100%; min-height: 220px;
+  padding: 12px; border-radius: 0 0 10px 10px; border: none;
+  background: var(--button-bg); color: var(--text-color);
+  font-family: monospace; font-size: 14px; resize: vertical;
+  border-top: 1px solid var(--accent);
+}
+.preview-wrap {
+  margin-top: 16px;
+  background: var(--button-bg);
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  box-shadow: 0 0 12px var(--shadow-color);
+  overflow: hidden;
+}
+.preview-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 12px; border-bottom: 1px solid var(--accent);
+  font-size: 13px;
+}
+.chip {
+  padding: 4px 8px; border-radius: 10px;
+  background: rgba(0,0,0,0.06);
+  border: 1px solid var(--accent);
+  font-size: 12px;
+}
+iframe {
+  display: block;
+  width: 100%;
+  height: 220px;
+  background: #fff;
+  border: none;
+}
+
+/* فوتر */
+footer { 
+  text-align: center; 
+  margin-top: 18px; 
+  font-size: 13px; 
+  opacity: 0.85;
+  line-height: 1.8;
+}
+
+footer .separator {
+  color: var(--accent);
+  text-shadow: 0 0 8px var(--shadow-color);
+  font-weight: bold;
+  margin: 0 2px;
+}
+
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--accent);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.3s ease;
+}
+.notification.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* مودال دیباگ */
+.debug-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.debug-content {
+  background: var(--button-bg);
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+  box-shadow: 0 0 20px var(--shadow-color);
+}
+
+.debug-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--accent);
+}
+
+.debug-header h3 {
+  margin: 0;
+}
+
+.debug-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+.debug-info {
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-color);
+  white-space: pre-wrap;
+}
+
+@media (max-width: 768px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .group {
+    justify-content: center;
+  }
+  .color-controls {
+    position: relative;
+    top: auto;
+    left: auto;
+    opacity: 1;
+    margin-bottom: 10px;
+  }
+  body {
+    padding-top: 50px;
+  }
+}
+</style>
+</head>
+<body>
+<!-- نوار رنگی -->
+<div class="color-bar" id="colorBar"></div>
+<div class="color-controls">
+  <input type="color" id="primaryColorPicker" class="color-picker" value="#2563eb" title="رنگ اصلی">
+  <input type="color" id="secondaryColorPicker" class="color-picker" value="#00aaff" title="رنگ فرعی">
+  <button class="reset-colors" id="resetColors" title="بازگشت به حالت پیشفرض">
+    <i class="fas fa-undo"></i>
+  </button>
+</div>
+
+<h1 id="title">SMART HTML Viewer</h1>
+<div class="toolbar">
+  <div class="group">
+    <button class="device-button active" data-device="laptop" title="لپ‌تاپ"><i class="fas fa-laptop"></i></button>
+    <button class="device-button" data-device="tablet" title="تبلت"><i class="fas fa-tablet-alt"></i></button>
+    <button class="device-button" data-device="mobile" title="موبایل"><i class="fas fa-mobile-alt"></i></button>
+    
+    <!-- دکمه پاپ‌آپ پیش‌نمایش -->
+    <div class="dropdown" id="popupDropdown">
+      <button class="popup-button" title="باز کردن در پنجره جدید"><i class="fas fa-external-link-alt"></i></button>
+      <div class="popup-menu" id="popupMenu">
+        <button data-popup="laptop">
+          <i class="fas fa-laptop"></i>
+          <span>لپ‌تاپ</span>
+          <span class="size-info">1366×768</span>
+        </button>
+        <button data-popup="tablet">
+          <i class="fas fa-tablet-alt"></i>
+          <span>تبلت</span>
+          <span class="size-info">768×1024</span>
+        </button>
+        <button data-popup="mobile">
+          <i class="fas fa-mobile-alt"></i>
+          <span>موبایل</span>
+          <span class="size-info">375×667</span>
+        </button>
+      </div>
+    </div>
+    
+    <div class="height-panel">
+      <span id="heightLabel">ارتفاع:</span>
+      <input id="heightInput" type="number" min="200" max="1200" step="20" value="220">
+      <span>px</span>
+    </div>
+    <button class="action-btn" id="autoHeightBtn" title="تنظیم خودکار ارتفاع"><i class="fas fa-arrows-alt-v"></i></button>
+    <div class="action-group">
+      <button id="debugBtn" title="دیباگ کد"><i class="fas fa-bug"></i></button>
+      <button id="formatBtn" title="مرتب‌سازی کد"><i class="fas fa-align-left"></i></button>
+    </div>
+  </div>
+  <div class="group">
+    <button class="action-btn" id="runBtn" title="اجرای کد"><i class="fas fa-play"></i></button>
+    <button class="action-btn" id="copyBtn" title="کپی"><i class="fas fa-copy"></i></button>
+    <div class="dropdown" id="downloadDropdown">
+      <button class="action-btn" title="دانلود"><i class="fas fa-download"></i></button>
+      <div class="dropdown-content">
+        <button data-type="html">دانلود HTML</button>
+        <button data-type="txt">دانلود TXT</button>
+      </div>
+    </div>
+    <select id="languageSelect" title="زبان">
+      <option value="fa">فارسی</option>
+      <option value="en">English</option>
+      <option value="ar">العربية</option>
+      <option value="fr">Français</option>
+      <option value="es">Español</option>
+      <option value="zh">中文</option>
+      <option value="de">Deutsch</option>
+    </select>
+    <button class="action-btn" id="infoBtn" title="اطلاعات"><i class="fas fa-info-circle"></i></button>
+    <button class="action-btn" id="themeToggle" title="تغییر حالت"><i class="fas fa-moon"></i></button>
+  </div>
+</div>
+<!-- سیستم تب -->
+<div class="tabs-container">
+  <div class="tabs-header" id="tabsHeader">
+    <div class="tab active" data-tab="0">
+      <span class="tab-name">فایل جدید</span>
+      <button class="tab-close">&times;</button>
+    </div>
+    <button class="add-tab" id="addTabBtn">
+      <i class="fas fa-plus"></i>
+    </button>
+  </div>
+  <textarea id="htmlInput" class="editor" placeholder="کد HTML خود را اینجا بنویسید..."></textarea>
+</div>
+<div class="preview-wrap">
+  <div class="preview-header">
+    <div class="left">
+      <span id="previewLabel" class="chip">پیش‌نمایش</span>
+      <span id="deviceLabel" class="chip">عرض: 100%</span>
+    </div>
+    <span id="heightDisplay" class="chip">ارتفاع: 220px</span>
+  </div>
+  <iframe id="preview"></iframe>
+</div>
+<footer>
+  <strong>SMART HTML Viewer</strong> by <strong>Nima.Sh</strong>
+  <br>
+  HTML <span class="separator">|•|</span> CSS <span class="separator">|•|</span> JavaScript
+</footer>
+
+<div id="notification" class="notification"></div>
+
+<!-- مودال دیباگ -->
+<div id="debugModal" class="debug-modal">
+  <div class="debug-content">
+    <div class="debug-header">
+      <h3 id="debugTitle">اطلاعات دیباگ کد</h3>
+      <button class="debug-close" id="debugClose">&times;</button>
+    </div>
+    <div id="debugInfo" class="debug-info"></div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const titleEl = document.getElementById('title');
+  const inputEl = document.getElementById('htmlInput');
+  const iframeEl = document.getElementById('preview');
+  const heightInput = document.getElementById('heightInput');
+  const heightLabel = document.getElementById('heightLabel');
+  const heightDisplay = document.getElementById('heightDisplay');
+  const deviceLabel = document.getElementById('deviceLabel');
+  const previewLabel = document.getElementById('previewLabel');
+  const langSelect = document.getElementById('languageSelect');
+  const themeToggle = document.getElementById('themeToggle');
+  const runBtn = document.getElementById('runBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const dropdown = document.getElementById('downloadDropdown');
+  const notification = document.getElementById('notification');
+  const infoBtn = document.getElementById('infoBtn');
+  const debugTitle = document.getElementById('debugTitle');
+  
+  // عناصر جدید
+  const autoHeightBtn = document.getElementById('autoHeightBtn');
+  const debugBtn = document.getElementById('debugBtn');
+  const formatBtn = document.getElementById('formatBtn');
+  const primaryColorPicker = document.getElementById('primaryColorPicker');
+  const secondaryColorPicker = document.getElementById('secondaryColorPicker');
+  const resetColors = document.getElementById('resetColors');
+  const debugModal = document.getElementById('debugModal');
+  const debugClose = document.getElementById('debugClose');
+  const debugInfo = document.getElementById('debugInfo');
+  const addTabBtn = document.getElementById('addTabBtn');
+  
+  // عناصر پاپ‌آپ
+  const popupDropdown = document.getElementById('popupDropdown');
+  const popupMenu = document.getElementById('popupMenu');
+
+  // تنظیمات ابعاد پنجره برای هر دستگاه
+  const deviceDimensions = {
+    laptop: { width: 1366, height: 768, name: 'لپ‌تاپ', nameEn: 'Laptop' },
+    tablet: { width: 768, height: 1024, name: 'تبلت', nameEn: 'Tablet' },
+    mobile: { width: 375, height: 667, name: 'موبایل', nameEn: 'Mobile' }
+  };
+
+  // متن‌های چندزبانه
+  const translations = {
+    fa: {
+      title: 'SMART HTML Viewer',
+      placeholder: 'کد HTML خود را اینجا بنویسید...',
+      preview: 'پیش‌نمایش',
+      height: 'ارتفاع',
+      heightLabel: 'ارتفاع:',
+      width: 'عرض',
+      copied: 'کد کپی شد!',
+      downloadHtml: 'دانلود HTML',
+      downloadTxt: 'دانلود TXT',
+      laptop: 'لپ‌تاپ',
+      tablet: 'تبلت',
+      mobile: 'موبایل',
+      formatted: 'کد مرتب‌سازی شد!',
+      autoHeight: 'ارتفاع خودکار تنظیم شد!',
+      run: 'اجرای کد',
+      copy: 'کپی',
+      download: 'دانلود',
+      language: 'زبان',
+      info: 'اطلاعات',
+      theme: 'تغییر حالت',
+      debug: 'دیباگ کد',
+      format: 'مرتب‌سازی کد',
+      autoHeightTitle: 'تنظیم خودکار ارتفاع',
+      primaryColor: 'رنگ اصلی',
+      secondaryColor: 'رنگ فرعی',
+      resetColorsTitle: 'بازگشت به حالت پیشفرض',
+      newFile: 'فایل جدید',
+      debugInfo: 'اطلاعات دیباگ کد',
+      codeStats: 'آمار کد',
+      lines: 'تعداد خطوط',
+      characters: 'تعداد کاراکترها',
+      htmlTags: 'تگ‌های HTML',
+      cssStyles: 'استایل‌های CSS',
+      jsScripts: 'اسکریپت‌های JS',
+      tagCheck: 'بررسی تگ‌ها',
+      unclosedTags: 'تگ‌های بسته نشده',
+      allTagsClosed: 'همه تگ‌ها به درستی بسته شده‌اند',
+      suggestions: 'پیشنهادات',
+      addDoctype: 'DOCTYPE اضافه کنید',
+      addCharset: 'charset تعریف کنید',
+      addTitle: 'عنوان صفحه اضافه کنید',
+      useSeparateCss: 'از CSS جداگانه استفاده کنید',
+      openInNewWindow: 'باز کردن در پنجره جدید',
+      popupOpened: 'پنجره پیش‌نمایش باز شد!'
+    },
+    en: {
+      title: 'SMART HTML Viewer',
+      placeholder: 'Write your HTML code here...',
+      preview: 'Preview',
+      height: 'Height',
+      heightLabel: 'Height:',
+      width: 'Width',
+      copied: 'Code copied!',
+      downloadHtml: 'Download HTML',
+      downloadTxt: 'Download TXT',
+      laptop: 'Laptop',
+      tablet: 'Tablet',
+      mobile: 'Mobile',
+      formatted: 'Code formatted!',
+      autoHeight: 'Auto height applied!',
+      run: 'Run code',
+      copy: 'Copy',
+      download: 'Download',
+      language: 'Language',
+      info: 'Info',
+      theme: 'Toggle theme',
+      debug: 'Debug code',
+      format: 'Format code',
+      autoHeightTitle: 'Auto adjust height',
+      primaryColor: 'Primary color',
+      secondaryColor: 'Secondary color',
+      resetColorsTitle: 'Reset to default',
+      newFile: 'New File',
+      debugInfo: 'Debug Information',
+      codeStats: 'Code Stats',
+      lines: 'Lines',
+      characters: 'Characters',
+      htmlTags: 'HTML Tags',
+      cssStyles: 'CSS Styles',
+      jsScripts: 'JS Scripts',
+      tagCheck: 'Tag Check',
+      unclosedTags: 'Unclosed tags',
+      allTagsClosed: 'All tags are properly closed',
+      suggestions: 'Suggestions',
+      addDoctype: 'Add DOCTYPE',
+      addCharset: 'Define charset',
+      addTitle: 'Add page title',
+      useSeparateCss: 'Use separate CSS',
+      openInNewWindow: 'Open in new window',
+      popupOpened: 'Preview window opened!'
+    },
+    ar: {
+      title: 'عارض HTML الذكي',
+      placeholder: 'اكتب كود HTML هنا...',
+      preview: 'معاينة',
+      height: 'الارتفاع',
+      heightLabel: 'الارتفاع:',
+      width: 'العرض',
+      copied: 'تم نسخ الكود!',
+      downloadHtml: 'تحميل HTML',
+      downloadTxt: 'تحميل TXT',
+      laptop: 'حاسوب محمول',
+      tablet: 'جهاز لوحي',
+      mobile: 'هاتف',
+      formatted: 'تم تنسيق الكود!',
+      autoHeight: 'تم تطبيق الارتفاع التلقائي!',
+      run: 'تشغيل الكود',
+      copy: 'نسخ',
+      download: 'تحميل',
+      language: 'اللغة',
+      info: 'معلومات',
+      theme: 'تبديل السمة',
+      debug: 'تصحيح الكود',
+      format: 'تنسيق الكود',
+      autoHeightTitle: 'ضبط الارتفاع تلقائياً',
+      primaryColor: 'اللون الأساسي',
+      secondaryColor: 'اللون الثانوي',
+      resetColorsTitle: 'إعادة التعيين',
+      newFile: 'ملف جديد',
+      debugInfo: 'معلومات التصحيح',
+      codeStats: 'إحصائيات الكود',
+      lines: 'الأسطر',
+      characters: 'الأحرف',
+      htmlTags: 'علامات HTML',
+      cssStyles: 'أنماط CSS',
+      jsScripts: 'سكربتات JS',
+      tagCheck: 'فحص العلامات',
+      unclosedTags: 'علامات غير مغلقة',
+      allTagsClosed: 'جميع العلامات مغلقة بشكل صحيح',
+      suggestions: 'اقتراحات',
+      addDoctype: 'أضف DOCTYPE',
+      addCharset: 'حدد charset',
+      addTitle: 'أضف عنوان الصفحة',
+      useSeparateCss: 'استخدم CSS منفصل',
+      openInNewWindow: 'فتح في نافذة جديدة',
+      popupOpened: 'تم فتح نافذة المعاينة!'
+    },
+    fr: {
+      title: 'Visionneuse HTML SMART',
+      placeholder: 'Écrivez votre code HTML ici...',
+      preview: 'Aperçu',
+      height: 'Hauteur',
+      heightLabel: 'Hauteur:',
+      width: 'Largeur',
+      copied: 'Code copié!',
+      downloadHtml: 'Télécharger HTML',
+      downloadTxt: 'Télécharger TXT',
+      laptop: 'Ordinateur portable',
+      tablet: 'Tablette',
+      mobile: 'Mobile',
+      formatted: 'Code formaté!',
+      autoHeight: 'Hauteur automatique appliquée!',
+      run: 'Exécuter le code',
+      copy: 'Copier',
+      download: 'Télécharger',
+      language: 'Langue',
+      info: 'Info',
+      theme: 'Changer le thème',
+      debug: 'Déboguer le code',
+      format: 'Formater le code',
+      autoHeightTitle: 'Ajuster la hauteur automatiquement',
+      primaryColor: 'Couleur principale',
+      secondaryColor: 'Couleur secondaire',
+      resetColorsTitle: 'Réinitialiser',
+      newFile: 'Nouveau fichier',
+      debugInfo: 'Informations de débogage',
+      codeStats: 'Statistiques du code',
+      lines: 'Lignes',
+      characters: 'Caractères',
+      htmlTags: 'Balises HTML',
+      cssStyles: 'Styles CSS',
+      jsScripts: 'Scripts JS',
+      tagCheck: 'Vérification des balises',
+      unclosedTags: 'Balises non fermées',
+      allTagsClosed: 'Toutes les balises sont correctement fermées',
+      suggestions: 'Suggestions',
+      addDoctype: 'Ajouter DOCTYPE',
+      addCharset: 'Définir charset',
+      addTitle: 'Ajouter un titre de page',
+      useSeparateCss: 'Utiliser un CSS séparé',
+      openInNewWindow: 'Ouvrir dans une nouvelle fenêtre',
+      popupOpened: 'Fenêtre d\'aperçu ouverte!'
+    },
+    es: {
+      title: 'Visor HTML INTELIGENTE',
+      placeholder: 'Escribe tu código HTML aquí...',
+      preview: 'Vista previa',
+      height: 'Altura',
+      heightLabel: 'Altura:',
+      width: 'Ancho',
+      copied: '¡Código copiado!',
+      downloadHtml: 'Descargar HTML',
+      downloadTxt: 'Descargar TXT',
+      laptop: 'Portátil',
+      tablet: 'Tableta',
+      mobile: 'Móvil',
+      formatted: '¡Código formateado!',
+      autoHeight: '¡Altura automática aplicada!',
+      run: 'Ejecutar código',
+      copy: 'Copiar',
+      download: 'Descargar',
+      language: 'Idioma',
+      info: 'Info',
+      theme: 'Cambiar tema',
+      debug: 'Depurar código',
+      format: 'Formatear código',
+      autoHeightTitle: 'Ajustar altura automáticamente',
+      primaryColor: 'Color principal',
+      secondaryColor: 'Color secundario',
+      resetColorsTitle: 'Restablecer',
+      newFile: 'Nuevo archivo',
+      debugInfo: 'Información de depuración',
+      codeStats: 'Estadísticas del código',
+      lines: 'Líneas',
+      characters: 'Caracteres',
+      htmlTags: 'Etiquetas HTML',
+      cssStyles: 'Estilos CSS',
+      jsScripts: 'Scripts JS',
+      tagCheck: 'Verificación de etiquetas',
+      unclosedTags: 'Etiquetas sin cerrar',
+      allTagsClosed: 'Todas las etiquetas están correctamente cerradas',
+      suggestions: 'Sugerencias',
+      addDoctype: 'Agregar DOCTYPE',
+      addCharset: 'Definir charset',
+      addTitle: 'Agregar título de página',
+      useSeparateCss: 'Usar CSS separado',
+      openInNewWindow: 'Abrir en nueva ventana',
+      popupOpened: '¡Ventana de vista previa abierta!'
+    },
+    zh: {
+      title: '智能 HTML 查看器',
+      placeholder: '在此处编写您的 HTML 代码...',
+      preview: '预览',
+      height: '高度',
+      heightLabel: '高度:',
+      width: '宽度',
+      copied: '代码已复制！',
+      downloadHtml: '下载 HTML',
+      downloadTxt: '下载 TXT',
+      laptop: '笔记本电脑',
+      tablet: '平板电脑',
+      mobile: '手机',
+      formatted: '代码已格式化！',
+      autoHeight: '自动高度已应用！',
+      run: '运行代码',
+      copy: '复制',
+      download: '下载',
+      language: '语言',
+      info: '信息',
+      theme: '切换主题',
+      debug: '调试代码',
+      format: '格式化代码',
+      autoHeightTitle: '自动调整高度',
+      primaryColor: '主色',
+      secondaryColor: '次要颜色',
+      resetColorsTitle: '重置',
+      newFile: '新文件',
+      debugInfo: '调试信息',
+      codeStats: '代码统计',
+      lines: '行数',
+      characters: '字符数',
+      htmlTags: 'HTML标签',
+      cssStyles: 'CSS样式',
+      jsScripts: 'JS脚本',
+      tagCheck: '标签检查',
+      unclosedTags: '未闭合标签',
+      allTagsClosed: '所有标签已正确闭合',
+      suggestions: '建议',
+      addDoctype: '添加 DOCTYPE',
+      addCharset: '定义 charset',
+      addTitle: '添加页面标题',
+      useSeparateCss: '使用单独的 CSS',
+      openInNewWindow: '在新窗口中打开',
+      popupOpened: '预览窗口已打开！'
+    },
+    de: {
+      title: 'SMART HTML Viewer',
+      placeholder: 'Schreiben Sie Ihren HTML-Code hier...',
+      preview: 'Vorschau',
+      height: 'Höhe',
+      heightLabel: 'Höhe:',
+      width: 'Breite',
+      copied: 'Code kopiert!',
+      downloadHtml: 'HTML herunterladen',
+      downloadTxt: 'TXT herunterladen',
+      laptop: 'Laptop',
+      tablet: 'Tablet',
+      mobile: 'Handy',
+      formatted: 'Code formatiert!',
+      autoHeight: 'Automatische Höhe angewendet!',
+      run: 'Code ausführen',
+      copy: 'Kopieren',
+      download: 'Herunterladen',
+      language: 'Sprache',
+      info: 'Info',
+      theme: 'Thema wechseln',
+      debug: 'Code debuggen',
+      format: 'Code formatieren',
+      autoHeightTitle: 'Höhe automatisch anpassen',
+      primaryColor: 'Hauptfarbe',
+      secondaryColor: 'Sekundärfarbe',
+      resetColorsTitle: 'Zurücksetzen',
+      newFile: 'Neue Datei',
+      debugInfo: 'Debug-Informationen',
+      codeStats: 'Code-Statistiken',
+      lines: 'Zeilen',
+      characters: 'Zeichen',
+      htmlTags: 'HTML-Tags',
+      cssStyles: 'CSS-Stile',
+      jsScripts: 'JS-Skripte',
+      tagCheck: 'Tag-Prüfung',
+      unclosedTags: 'Nicht geschlossene Tags',
+      allTagsClosed: 'Alle Tags sind korrekt geschlossen',
+      suggestions: 'Vorschläge',
+      addDoctype: 'DOCTYPE hinzufügen',
+      addCharset: 'Charset definieren',
+      addTitle: 'Seitentitel hinzufügen',
+      useSeparateCss: 'Separates CSS verwenden',
+      openInNewWindow: 'In neuem Fenster öffnen',
+      popupOpened: 'Vorschaufenster geöffnet!'
+    }
+  };
+
+  let currentLang = 'fa';
+  let currentDevice = 'laptop';
+  
+  // سیستم تب
+  let tabs = [
+    { id: 0, name: 'فایل جدید', content: '', active: true }
+  ];
+  let tabCounter = 1;
+
+  // ذخیره رنگ‌های فعلی
+  let currentPrimaryColor = '#2563eb';
+  let currentSecondaryColor = '#00aaff';
+
+  // تنظیم حالت پیش‌فرض روشن
+  document.body.classList.remove('dark');
+  themeToggle.querySelector('i').className = 'fas fa-moon';
+
+  // تغییر رنگ تم - اصلاح شده
+  function updateThemeColors(primary, secondary) {
+    currentPrimaryColor = primary;
+    currentSecondaryColor = secondary;
+    
+    const root = document.documentElement;
+    
+    // تنظیم رنگ‌ها روی root
+    root.style.setProperty('--primary-color', primary);
+    root.style.setProperty('--secondary-color', secondary);
+    root.style.setProperty('--icon-color', primary);
+    root.style.setProperty('--glow-color', secondary);
+    root.style.setProperty('--accent', primary);
+    root.style.setProperty('--highlight-color', secondary);
+    
+    // به‌روزرسانی سایه‌ها
+    const primaryRgb = hexToRgb(primary);
+    if (primaryRgb) {
+      const shadowColor = `rgba(${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}, 0.35)`;
+      root.style.setProperty('--shadow-color', shadowColor);
+    }
+  }
+
+  function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  }
+
+  // نمایش اعلان
+  function showNotification(message) {
+    notification.textContent = message;
+    notification.classList.add('show');
+    setTimeout(() => {
+      notification.classList.remove('show');
+    }, 3000);
+  }
+
+  // به‌روزرسانی زبان - اصلاح شده
+  function updateLanguage(lang) {
+    currentLang = lang;
+    const t = translations[lang];
+    
+    titleEl.textContent = t.title;
+    inputEl.placeholder = t.placeholder;
+    previewLabel.textContent = t.preview;
+    heightLabel.textContent = t.heightLabel;
+    
+    dropdown.querySelector('[data-type="html"]').textContent = t.downloadHtml;
+    dropdown.querySelector('[data-type="txt"]').textContent = t.downloadTxt;
+    
+    // به‌روزرسانی عناوین دکمه‌ها
+    document.querySelector('[data-device="laptop"]').title = t.laptop;
+    document.querySelector('[data-device="tablet"]').title = t.tablet;
+    document.querySelector('[data-device="mobile"]').title = t.mobile;
+    runBtn.title = t.run;
+    copyBtn.title = t.copy;
+    dropdown.querySelector('.action-btn').title = t.download;
+    langSelect.title = t.language;
+    infoBtn.title = t.info;
+    themeToggle.title = t.theme;
+    debugBtn.title = t.debug;
+    formatBtn.title = t.format;
+    autoHeightBtn.title = t.autoHeightTitle;
+    primaryColorPicker.title = t.primaryColor;
+    secondaryColorPicker.title = t.secondaryColor;
+    resetColors.title = t.resetColorsTitle;
+    debugTitle.textContent = t.debugInfo;
+    
+    // به‌روزرسانی دکمه پاپ‌آپ
+    popupDropdown.querySelector('.popup-button').title = t.openInNewWindow;
+    
+    // به‌روزرسانی متن‌های منوی پاپ‌آپ
+    popupMenu.querySelector('[data-popup="laptop"] span:first-of-type').textContent = t.laptop;
+    popupMenu.querySelector('[data-popup="tablet"] span:first-of-type').textContent = t.tablet;
+    popupMenu.querySelector('[data-popup="mobile"] span:first-of-type').textContent = t.mobile;
+    
+    if (lang === 'ar' || lang === 'fa') {
+      document.documentElement.dir = 'rtl';
+      document.documentElement.lang = lang;
+    } else {
+      document.documentElement.dir = 'ltr';
+      document.documentElement.lang = lang;
+    }
+    
+    // به‌روزرسانی نام تب‌ها اگر پیش‌فرض هستند
+    tabs.forEach((tab, index) => {
+      if (tab.name === 'فایل جدید' || tab.name === 'New File' || 
+          tab.name === 'ملف جديد' || tab.name === 'Nouveau fichier' ||
+          tab.name === 'Nuevo archivo' || tab.name === '新文件' || 
+          tab.name === 'Neue Datei' || tab.name.startsWith('فایل ') ||
+          tab.name.startsWith('File ')) {
+        if (index === 0 && tabs.length === 1) {
+          tab.name = t.newFile;
+        }
+      }
+    });
+    renderTabs();
+    
+    updateDeviceLabel();
+    updateHeightDisplay();
+  }
+
+  function updateDeviceLabel() {
+    const t = translations[currentLang];
+    let width = '100%';
+    
+    switch (currentDevice) {
+      case 'tablet':
+        width = '768px';
+        break;
+      case 'mobile':
+        width = '375px';
+        break;
+    }
+    
+    deviceLabel.textContent = `${t.width}: ${width}`;
+  }
+
+  function updateHeightDisplay() {
+    const t = translations[currentLang];
+    heightDisplay.textContent = `${t.height}: ${heightInput.value}px`;
+  }
+
+  function changeDevice(device) {
+    currentDevice = device;
+    
+    document.querySelectorAll('.device-button').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    
+    document.querySelector(`[data-device="${device}"]`).classList.add('active');
+    
+    switch (device) {
+      case 'laptop':
+        iframeEl.style.width = '100%';
+        iframeEl.style.maxWidth = 'none';
+        break;
+      case 'tablet':
+        iframeEl.style.width = '768px';
+        iframeEl.style.maxWidth = '100%';
+        break;
+      case 'mobile':
+        iframeEl.style.width = '375px';
+        iframeEl.style.maxWidth = '100%';
+        break;
+    }
+    
+    updateDeviceLabel();
+  }
+
+  function runCode() {
+    const htmlCode = inputEl.value;
+    const iframe = iframeEl;
+    
+    iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(htmlCode);
+  }
+
+  // تابع باز کردن پنجره پاپ‌آپ
+  function openPreviewPopup(device) {
+    const dimensions = deviceDimensions[device];
+    const t = translations[currentLang];
+    const deviceName = currentLang === 'fa' || currentLang === 'ar' ? dimensions.name : dimensions.nameEn;
+    const windowTitle = `${deviceName} - SMART HTML Viewer`;
+    
+    // تنظیمات پنجره
+    const windowFeatures = [
+      `width=${dimensions.width}`,
+      `height=${dimensions.height}`,
+      'resizable=yes',
+      'scrollbars=yes',
+      'menubar=no',
+      'toolbar=no',
+      'location=no',
+      'status=yes'
+    ].join(',');
+    
+    // باز کردن پنجره جدید
+    const popupWindow = window.open('', windowTitle, windowFeatures);
+    
+    if (popupWindow) {
+      // محتوای HTML فعلی
+      const htmlContent = inputEl.value;
+      
+      // نوشتن محتوا در پنجره جدید
+      popupWindow.document.open();
+      popupWindow.document.write(htmlContent);
+      popupWindow.document.close();
+      
+      // تنظیم عنوان پنجره
+      popupWindow.document.title = windowTitle;
+      
+      // نمایش اعلان
+      showNotification(t.popupOpened);
+      
+      // بستن منوی پاپ‌آپ
+      popupMenu.classList.remove('open');
+    } else {
+      // اگر پاپ‌آپ بلاک شده بود
+      alert('لطفاً اجازه باز شدن پنجره‌های پاپ‌آپ را بدهید.');
+    }
+  }
+
+  async function copyCode() {
+    try {
+      await navigator.clipboard.writeText(inputEl.value);
+      showNotification(translations[currentLang].copied);
+    } catch (err) {
+      inputEl.select();
+      document.execCommand('copy');
+      showNotification(translations[currentLang].copied);
+    }
+  }
+
+  function downloadFile(type) {
+    const content = inputEl.value;
+    const filename = type === 'html' ? 'code.html' : 'code.txt';
+    const mimeType = type === 'html' ? 'text/html' : 'text/plain';
+    
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // تنظیم خودکار ارتفاع
+  function autoAdjustHeight() {
+    const lines = inputEl.value.split('\n').length;
+    const newHeight = Math.max(220, Math.min(800, lines * 20 + 40));
+    heightInput.value = newHeight;
+    iframeEl.style.height = newHeight + 'px';
+    updateHeightDisplay();
+    showNotification(translations[currentLang].autoHeight);
+  }
+
+  // مرتب‌سازی کد
+  function formatCode() {
+    let code = inputEl.value;
+    
+    // مرتب‌سازی ساده HTML
+    code = code
+      .replace(/>\s*</g, '>\n<')
+      .replace(/^\s+|\s+$/gm, '')
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line.length > 0)
+      .join('\n');
+    
+    // اضافه کردن ایندنت
+    const lines = code.split('\n');
+    let indentLevel = 0;
+    const formattedLines = [];
+    
+    lines.forEach(line => {
+      if (line.match(/^<\//) && !line.match(/<[^\/][^>]*>[^<]*<\/[^>]+>/)) {
+        indentLevel = Math.max(0, indentLevel - 1);
+      }
+      
+      formattedLines.push('  '.repeat(indentLevel) + line);
+      
+      if (line.match(/<[^\/!][^>]*[^\/]>/) && !line.match(/<\//) && !line.match(/\/>/)) {
+        indentLevel++;
+      }
+    });
+    
+    inputEl.value = formattedLines.join('\n');
+    saveCurrentTab();
+    runCode();
+    showNotification(translations[currentLang].formatted);
+  }
+
+  // دیباگ کد
+  function debugCode() {
+    const t = translations[currentLang];
+    const code = inputEl.value;
+    const lines = code.split('\n');
+    
+    let debugOutput = `📊 ${t.codeStats}:\n`;
+    debugOutput += `━━━━━━━━━━━━━━\n`;
+    debugOutput += `📝 ${t.lines}: ${lines.length}\n`;
+    debugOutput += `🔤 ${t.characters}: ${code.length}\n`;
+    debugOutput += `🏷️  ${t.htmlTags}: ${(code.match(/<[^>]+>/g) || []).length}\n`;
+    debugOutput += `🎨 ${t.cssStyles}: ${(code.match(/[^{}]+{[^}]*}/g) || []).length}\n`;
+    debugOutput += `⚙️  ${t.jsScripts}: ${(code.match(/<script[\s\S]*?<\/script>/gi) || []).length}\n\n`;
+    
+    debugOutput += `🔍 ${t.tagCheck}:\n`;
+    debugOutput += `━━━━━━━━━━━━━━\n`;
+    
+    const openTags = (code.match(/<([a-zA-Z][a-zA-Z0-9]*)[^>]*(?<!\/)\s*>/g) || [])
+      .map(tag => {
+        const match = tag.match(/<([a-zA-Z][a-zA-Z0-9]*)/);
+        return match ? match[1].toLowerCase() : null;
+      })
+      .filter(Boolean);
+    
+    const closeTags = (code.match(/<\/([a-zA-Z][a-zA-Z0-9]*)>/g) || [])
+      .map(tag => {
+        const match = tag.match(/<\/([a-zA-Z][a-zA-Z0-9]*)>/);
+        return match ? match[1].toLowerCase() : null;
+      })
+      .filter(Boolean);
+    
+    const selfClosingTags = ['img', 'br', 'hr', 'input', 'meta', 'link', 'area', 'base', 'col', 'embed', 'param', 'source', 'track', 'wbr'];
+    
+    const openCount = {};
+    const closeCount = {};
+    
+    openTags.forEach(tag => {
+      if (!selfClosingTags.includes(tag)) {
+        openCount[tag] = (openCount[tag] || 0) + 1;
+      }
+    });
+    
+    closeTags.forEach(tag => {
+      closeCount[tag] = (closeCount[tag] || 0) + 1;
+    });
+    
+    const unclosedTags = [];
+    for (const tag in openCount) {
+      const diff = openCount[tag] - (closeCount[tag] || 0);
+      if (diff > 0) {
+        unclosedTags.push(`${tag} (${diff})`);
+      }
+    }
+    
+    if (unclosedTags.length > 0) {
+      debugOutput += `⚠️  ${t.unclosedTags}: ${unclosedTags.join(', ')}\n`;
+    } else {
+      debugOutput += `✅ ${t.allTagsClosed}\n`;
+    }
+    
+    debugOutput += `\n🎯 ${t.suggestions}:\n`;
+    debugOutput += `━━━━━━━━━━━━━━\n`;
+    
+    if (!code.includes('<!DOCTYPE html>') && !code.includes('<!doctype html>')) {
+      debugOutput += `💡 ${t.addDoctype}\n`;
+    }
+    if (!code.includes('<meta charset=')) {
+      debugOutput += `💡 ${t.addCharset}\n`;
+    }
+    if (!code.includes('<title>')) {
+      debugOutput += `💡 ${t.addTitle}\n`;
+    }
+    if (code.includes('style=')) {
+      debugOutput += `💡 ${t.useSeparateCss}\n`;
+    }
+    
+    debugInfo.textContent = debugOutput;
+    debugModal.style.display = 'flex';
+  }
+
+  // Event Listeners
+  
+  // دکمه‌های دستگاه
+  document.querySelectorAll('.device-button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const device = btn.dataset.device;
+      changeDevice(device);
+    });
+  });
+
+  // منوی پاپ‌آپ
+  popupDropdown.querySelector('.popup-button').addEventListener('click', (e) => {
+    e.stopPropagation();
+    popupMenu.classList.toggle('open');
+  });
+  
+  // دکمه‌های پاپ‌آپ
+  popupMenu.querySelectorAll('[data-popup]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const device = btn.dataset.popup;
+      openPreviewPopup(device);
+    });
+  });
+
+  heightInput.addEventListener('input', () => {
+    const height = heightInput.value;
+    iframeEl.style.height = height + 'px';
+    updateHeightDisplay();
+  });
+
+  // دکمه‌های جدید
+  autoHeightBtn.addEventListener('click', autoAdjustHeight);
+  debugBtn.addEventListener('click', debugCode);
+  formatBtn.addEventListener('click', formatCode);
+
+  // مودال دیباگ
+  debugClose.addEventListener('click', () => {
+    debugModal.style.display = 'none';
+  });
+  
+  debugModal.addEventListener('click', (e) => {
+    if (e.target === debugModal) {
+      debugModal.style.display = 'none';
+    }
+  });
+
+  // انتخابگر رنگ
+  primaryColorPicker.addEventListener('input', (e) => {
+    updateThemeColors(e.target.value, secondaryColorPicker.value);
+  });
+
+  secondaryColorPicker.addEventListener('input', (e) => {
+    updateThemeColors(primaryColorPicker.value, e.target.value);
+  });
+
+  // بازگشت به رنگ‌های پیشفرض
+  resetColors.addEventListener('click', () => {
+    const isDark = document.body.classList.contains('dark');
+    if (isDark) {
+      primaryColorPicker.value = '#00ff7f';
+      secondaryColorPicker.value = '#32cd32';
+      updateThemeColors('#00ff7f', '#32cd32');
+    } else {
+      primaryColorPicker.value = '#2563eb';
+      secondaryColorPicker.value = '#00aaff';
+      updateThemeColors('#2563eb', '#00aaff');
+    }
+  });
+
+  runBtn.addEventListener('click', runCode);
+  copyBtn.addEventListener('click', copyCode);
+
+  dropdown.addEventListener('click', (e) => {
+    if (e.target.classList.contains('action-btn') || e.target.closest('.action-btn')) {
+      dropdown.classList.toggle('open');
+    }
+  });
+
+  dropdown.querySelectorAll('[data-type]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      downloadFile(btn.dataset.type);
+      dropdown.classList.remove('open');
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!dropdown.contains(e.target)) {
+      dropdown.classList.remove('open');
+    }
+    if (!popupDropdown.contains(e.target)) {
+      popupMenu.classList.remove('open');
+    }
+  });
+
+  langSelect.addEventListener('change', () => {
+    updateLanguage(langSelect.value);
+  });
+
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    const isDark = document.body.classList.contains('dark');
+    themeToggle.querySelector('i').className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+    
+    // تغییر رنگ‌های انتخابگر بر اساس تم و اعمال فوری
+    if (isDark) {
+      primaryColorPicker.value = '#00ff7f';
+      secondaryColorPicker.value = '#32cd32';
+      updateThemeColors('#00ff7f', '#32cd32');
+    } else {
+      primaryColorPicker.value = '#2563eb';
+      secondaryColorPicker.value = '#00aaff';
+      updateThemeColors('#2563eb', '#00aaff');
+    }
+  });
+
+  infoBtn.addEventListener('click', () => {
+    window.open('https://nima-shaheswarzadeh.github.io', '_blank');
+  });
+
+  // سیستم تب - توابع
+  
+  // ذخیره محتوای تب فعلی
+  function saveCurrentTab() {
+    const activeTab = tabs.find(tab => tab.active);
+    if (activeTab) {
+      activeTab.content = inputEl.value;
+    }
+  }
+
+  // تغییر تب فعال
+  function switchTab(tabId) {
+    saveCurrentTab();
+    
+    // تغییر وضعیت تب‌ها
+    tabs.forEach(tab => tab.active = false);
+    const targetTab = tabs.find(tab => tab.id === tabId);
+    if (targetTab) {
+      targetTab.active = true;
+      inputEl.value = targetTab.content;
+      runCode();
+    }
+    
+    renderTabs();
+  }
+
+  // رندر کردن تب‌ها
+  function renderTabs() {
+    const tabsHeader = document.getElementById('tabsHeader');
+    
+    // پاک کردن تب‌های موجود (به جز دکمه اضافه کردن)
+    const existingTabs = tabsHeader.querySelectorAll('.tab');
+    existingTabs.forEach(tab => tab.remove());
+    
+    // اضافه کردن تب‌ها قبل از دکمه add
+    tabs.forEach((tab, index) => {
+      const tabEl = document.createElement('div');
+      tabEl.className = `tab ${tab.active ? 'active' : ''}`;
+      tabEl.dataset.tab = tab.id;
+      
+      const tabName = document.createElement('span');
+      tabName.className = 'tab-name';
+      tabName.textContent = tab.name;
+      
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'tab-close';
+      closeBtn.innerHTML = '&times;';
+      
+      tabEl.appendChild(tabName);
+      tabEl.appendChild(closeBtn);
+      
+      // کلیک روی تب
+      tabEl.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('tab-close') && 
+            !e.target.classList.contains('tab-name') &&
+            !e.target.classList.contains('editing')) {
+          switchTab(tab.id);
+        }
+      });
+      
+      // دابل کلیک برای ویرایش نام
+      tabName.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        startEditingTabName(tabName, tab);
+      });
+      
+      // کلیک روی نام تب برای انتخاب (نه ویرایش)
+      tabName.addEventListener('click', (e) => {
+        if (!tabName.classList.contains('editing')) {
+          e.stopPropagation();
+          switchTab(tab.id);
+        }
+      });
+      
+      // بستن تب
+      if (tabs.length > 1) {
+        closeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          closeTab(tab.id);
+        });
+      } else {
+        closeBtn.style.display = 'none';
+      }
+      
+      tabsHeader.insertBefore(tabEl, addTabBtn);
+    });
+  }
+  
+  // شروع ویرایش نام تب
+  function startEditingTabName(tabNameEl, tab) {
+    tabNameEl.classList.add('editing');
+    tabNameEl.contentEditable = true;
+    tabNameEl.focus();
+    
+    // انتخاب تمام متن
+    const range = document.createRange();
+    range.selectNodeContents(tabNameEl);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    
+    const finishEditing = () => {
+      tabNameEl.classList.remove('editing');
+      tabNameEl.contentEditable = false;
+      const newName = tabNameEl.textContent.trim();
+      tab.name = newName || translations[currentLang].newFile;
+      tabNameEl.textContent = tab.name;
+    };
+    
+    tabNameEl.addEventListener('blur', finishEditing, { once: true });
+    
+    tabNameEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        tabNameEl.blur();
+      } else if (e.key === 'Escape') {
+        tabNameEl.textContent = tab.name;
+        tabNameEl.blur();
+      }
+    });
+  }
+
+  // اضافه کردن تب جدید
+  function addNewTab() {
+    saveCurrentTab();
+    
+    // غیرفعال کردن همه تب‌ها
+    tabs.forEach(tab => tab.active = false);
+    
+    const t = translations[currentLang];
+    
+    // ایجاد تب جدید
+    const newTab = {
+      id: tabCounter++,
+      name: `${t.newFile} ${tabCounter}`,
+      content: '',
+      active: true
+    };
+    
+    tabs.push(newTab);
+    inputEl.value = '';
+    runCode();
+    renderTabs();
+  }
+
+  // بستن تب
+  function closeTab(tabId) {
+    if (tabs.length <= 1) return;
+    
+    const tabIndex = tabs.findIndex(tab => tab.id === tabId);
+    const wasActive = tabs[tabIndex].active;
+    
+    tabs.splice(tabIndex, 1);
+    
+    // اگر تب فعال حذف شد، تب بعدی یا قبلی را فعال کن
+    if (wasActive && tabs.length > 0) {
+      const nextIndex = Math.min(tabIndex, tabs.length - 1);
+      tabs[nextIndex].active = true;
+      inputEl.value = tabs[nextIndex].content;
+      runCode();
+    }
+    
+    renderTabs();
+  }
+
+  // Event Listener برای دکمه اضافه کردن تب
+  addTabBtn.addEventListener('click', addNewTab);
+
+  // ذخیره تغییرات هنگام تایپ
+  let timeout;
+  inputEl.addEventListener('input', () => {
+    saveCurrentTab();
+    clearTimeout(timeout);
+    timeout = setTimeout(runCode, 500);
+  });
+
+  updateLanguage('fa');
+  changeDevice('laptop');
+  
+  // محتوای پیشفرض تب اول
+  tabs[0].content = `<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMART HTML Viewer - نمایشگر هوشمند HTML</title>
+  <!-- لود فونت -->
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ================== تنظیمات پایه ================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      overflow-x: hidden;
+      background: radial-gradient(circle at 20% 30%, #1e1f27, #0a0a0d 80%);
+      min-height: 100vh;
+    }
+
+    /* ================== پس‌زمینه متحرک نئونی ================== */
+    .tech-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(0,0,255,0.15);
+      animation: move 20s infinite ease-in-out alternate;
+      filter: blur(60px);
+    }
+    @keyframes move {
+      0% { transform: translate(0,0) scale(1); }
+      25% { transform: translate(70px,-50px) scale(1.2); }
+      50% { transform: translate(-50px,90px) scale(1.3); }
+      75% { transform: translate(80px,-40px) scale(1.1); }
+      100% { transform: translate(0,0) scale(1); }
+    }
+
+    /* ================== کارت اصلی ================== */
+    .container {
+      max-width: 900px;
+      margin: 60px auto;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 25px;
+      padding: 50px;
+      box-shadow: 0 10px 40px rgba(0,0,255,0.3),0 10px 60px rgba(128,0,255,0.3);
+      position: relative;
+      animation: fadeIn 1.5s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity:0; transform:translateY(30px); }
+      to { opacity:1; transform:translateY(0); }
+    }
+
+    /* ================== لوگو ================== */
+    .logo {
+      font-family: 'Vazirmatn', sans-serif;
+      font-size: 3rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #00f5d4;
+      text-shadow: 0 0 10px #00f5d4, 0 0 20px #00f5d4, 0 0 30px #00f5d4;
+      display: inline-block;
+      animation: logoMove 4s infinite ease-in-out;
+    }
+    @keyframes logoMove {
+      0% { 
+        transform: scale(1) rotate(0deg); 
+        text-shadow: 0 0 10px #00f5d4, 0 0 20px #00f5d4, 0 0 30px #00f5d4; 
+      }
+      25% { 
+        transform: scale(1.05) rotate(2deg); 
+        text-shadow: 0 0 15px #00f5d4, 0 0 30px #00f5d4, 0 0 45px #00f5d4; 
+      }
+      50% { 
+        transform: scale(1.1) rotate(-2deg); 
+        text-shadow: 0 0 20px #00f5d4, 0 0 40px #00f5d4, 0 0 60px #00f5d4; 
+      }
+      75% { 
+        transform: scale(1.05) rotate(1deg); 
+        text-shadow: 0 0 15px #00f5d4, 0 0 30px #00f5d4, 0 0 45px #00f5d4; 
+      }
+      100% { 
+        transform: scale(1) rotate(0deg); 
+        text-shadow: 0 0 10px #00f5d4, 0 0 20px #00f5d4, 0 0 30px #00f5d4; 
+      }
+    }
+
+    /* ================== زیرعنوان ================== */
+    .subtitle {
+      font-size:1.2rem;
+      opacity:0.85;
+      margin-bottom:40px;
+      color:#dcdcdc;
+      text-shadow: 0 0 5px #1E3A8A, 0 0 10px #7C3AED;
+    }
+
+    /* ================== گرید ویژگی‌ها ================== */
+    .feature-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:25px;
+      margin:40px 0;
+    }
+
+    /* ================== کارت‌های ویژگی ================== */
+    .feature-card {
+      background: rgba(0,0,0,0.2);
+      padding:25px;
+      border-radius:25px;
+      transition: transform 0.5s ease, box-shadow 0.5s ease, background 0.5s ease;
+      border:1px solid rgba(0,0,255,0.2);
+      box-shadow:0 4px 15px rgba(0,0,255,0.3),0 4px 20px rgba(128,0,255,0.2);
+    }
+    .feature-card:hover {
+      transform:translateY(-10px) scale(1.05);
+      box-shadow:0 10px 35px rgba(0,0,255,0.5),0 10px 50px rgba(128,0,255,0.4);
+      background: rgba(0,0,255,0.1);
+    }
+    .feature-icon {
+      font-size:2.4rem;
+      margin-bottom:10px;
+      animation: float 3s infinite ease-in-out;
+    }
+    @keyframes float { 
+      0%,100%{transform:translateY(0);} 
+      50%{transform:translateY(-10px);} 
+    }
+    .feature-title {
+      font-weight:bold;
+      font-size:1.2rem;
+      margin-bottom:5px;
+      color:#00f5d4;
+      text-shadow:0 0 5px #1E3A8A,0 0 10px #7C3AED;
+    }
+    .feature-desc {
+      color: #b0b0b0;
+      font-size: 0.95rem;
+    }
+
+    /* ================== دکمه‌ها ================== */
+    @keyframes btnGradient {
+      0%{background-position:0% 50%;}
+      50%{background-position:100% 50%;}
+      100%{background-position:0% 50%;}
+    }
+    .cta-button {
+      background: linear-gradient(45deg,#1E3A8A,#7C3AED,#1E3A8A);
+      background-size:200% 200%;
+      color:#fff;
+      padding:15px 40px;
+      border:none;
+      border-radius:25px;
+      font-size:1.2rem;
+      font-weight:bold;
+      cursor:pointer;
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+      margin:20px 10px;
+      text-decoration:none;
+      display:inline-block;
+      animation: btnGradient 6s ease infinite;
+      box-shadow:0 0 25px rgba(30,58,138,0.5),0 0 35px rgba(124,58,237,0.4);
+      font-family: 'Vazirmatn', sans-serif;
+    }
+    .cta-button:hover {
+      transform:scale(1.08);
+      box-shadow:0 0 50px rgba(30,58,138,0.8),0 0 60px rgba(124,58,237,0.7);
+    }
+
+    /* ================== متن پایینی ================== */
+    .credits {
+      margin-top:50px;
+      opacity:0.9;
+      font-size:0.95rem;
+      color:#b0b0b0;
+      text-shadow:0 0 5px #1E3A8A,0 0 10px #7C3AED;
+      line-height: 1.8;
+    }
+
+    /* ================== واکنش‌گرایی ================== */
+    @media(max-width:600px){
+      .logo{font-size:2rem;}
+      .container{padding:25px; margin: 30px auto;}
+      .feature-grid{grid-template-columns:1fr;}
+      .cta-button{
+        display: block;
+        margin: 15px auto;
+        width: 80%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- پس‌زمینه متحرک -->
+  <div class="tech-bg">
+    <div class="circle" style="width:250px;height:250px;top:20%;left:10%;animation-delay:0s;"></div>
+    <div class="circle" style="width:400px;height:400px;top:50%;left:70%;animation-delay:2s;"></div>
+    <div class="circle" style="width:300px;height:300px;top:80%;left:20%;animation-delay:4s;"></div>
+    <div class="circle" style="width:350px;height:350px;top:30%;left:80%;animation-delay:6s;"></div>
+    <div class="circle" style="width:200px;height:200px;top:70%;left:50%;animation-delay:8s;"></div>
+  </div>
+
+  <!-- کارت اصلی -->
+  <div class="container">
+    <div class="logo">SMART HTML Viewer</div>
+    <div class="subtitle">نمایشگر هوشمند و پیشرفته کدهای HTML با طراحی مدرن و انیمیشن‌های نئونی ✨</div>
+
+    <!-- ویژگی‌ها -->
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔥</div>
+        <div class="feature-title">اجرای زنده</div>
+        <div class="feature-desc">پیش‌نمایش فوری کدهای HTML</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <div class="feature-title">واکنش‌گرا</div>
+        <div class="feature-desc">نمایش در سایزهای مختلف دستگاه</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <div class="feature-title">شخصی‌سازی</div>
+        <div class="feature-desc">تم‌ها و رنگ‌های قابل تنظیم</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌍</div>
+        <div class="feature-title">چندزبانه</div>
+        <div class="feature-desc">پشتیبانی از 7 زبان مختلف</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <div class="feature-title">سیستم تب</div>
+        <div class="feature-desc">کار همزمان روی چندین پروژه</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔧</div>
+        <div class="feature-title">ابزارهای پیشرفته</div>
+        <div class="feature-desc">دیباگ، فرمت و تنظیمات خودکار</div>
+      </div>
+    </div>
+
+    <!-- دکمه‌ها -->
+    <a href="https://nima-shaheswarzadeh.github.io/SMART-HTML-Viewer/" class="cta-button" target="_blank">🚀 شروع کنید</a>
+    <a href="https://github.com/Nima-Shaheswarzadeh/SMART-HTML-Viewer" class="cta-button" target="_blank">📂 مشاهده کد منبع</a>
+
+    <!-- متن پایانی -->
+    <div class="credits">
+      SMART HTML Viewer by Nima.Sh <br>
+      HTML |•| CSS |•| JavaScript
+    </div>
+  </div>
+
+</body>
+</html>
+</body>
+</html>`;
+  
+  inputEl.value = tabs[0].content;
+  renderTabs();
+  runCode();
+});
+</script>
+</body>
+</html>
