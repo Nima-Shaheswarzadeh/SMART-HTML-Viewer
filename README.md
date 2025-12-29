@@ -50,5 +50,4 @@
 
 ---
 
-![SMART HTML Viewer](https://raw.githubusercontent.com/Nima-Shaheswarzadeh/SMART-HTML-Viewer/Welcome-Page/Welcome-Page.jpeg)
-
+![SMART HTML Viewer](https://raw.githubusercontent.com/Nima-Shaheswarzadeh/SMART-HTML-Viewer/main/Welcome-Page/Welcome-Page.jpeg)
