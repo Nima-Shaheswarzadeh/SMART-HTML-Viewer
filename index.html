@@ -1704,6 +1704,8 @@ document.addEventListener('DOMContentLoaded', () => {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SMART HTML Viewer - نمایشگر هوشمند HTML</title>
+  <!-- لود فونت -->
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
   <style>
     /* ================== تنظیمات پایه ================== */
     * {
@@ -1712,12 +1714,13 @@ document.addEventListener('DOMContentLoaded', () => {
       box-sizing: border-box;
     }
     body {
-      font-family: 'Segoe UI', Tahoma, sans-serif;
+      font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
       color: #fff;
       text-align: center;
       padding: 20px;
       overflow-x: hidden;
       background: radial-gradient(circle at 20% 30%, #1e1f27, #0a0a0d 80%);
+      min-height: 100vh;
     }
 
     /* ================== پس‌زمینه متحرک نئونی ================== */
@@ -1750,7 +1753,8 @@ document.addEventListener('DOMContentLoaded', () => {
       margin: 60px auto;
       background: rgba(255,255,255,0.05);
       backdrop-filter: blur(20px);
-      border-radius: 25px; /* گرد کردن کارت اصلی */
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 25px;
       padding: 50px;
       box-shadow: 0 10px 40px rgba(0,0,255,0.3),0 10px 60px rgba(128,0,255,0.3);
       position: relative;
@@ -1763,21 +1767,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /* ================== لوگو ================== */
     .logo {
-      font-family: 'Asym', sans-serif;
+      font-family: 'Vazirmatn', sans-serif;
       font-size: 3rem;
       font-weight: bold;
       margin-bottom: 10px;
-      background: linear-gradient(90deg, #00f5a0, #7b2ff7); /* ترکیب آبی و بنفش */
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #00f5d4;
+      text-shadow: 0 0 10px #00f5d4, 0 0 20px #00f5d4, 0 0 30px #00f5d4;
+      display: inline-block;
       animation: logoMove 4s infinite ease-in-out;
     }
     @keyframes logoMove {
-      0% { transform: scale(1) rotate(0deg); text-shadow: 0 0 15px #00f5a0, 0 0 25px #7b2ff7; }
-      25% { transform: scale(1.05) rotate(2deg); text-shadow: 0 0 20px #00f5a0, 0 0 30px #7b2ff7; }
-      50% { transform: scale(1.1) rotate(-2deg); text-shadow: 0 0 25px #00f5a0, 0 0 35px #7b2ff7; }
-      75% { transform: scale(1.05) rotate(1deg); text-shadow: 0 0 20px #00f5a0, 0 0 30px #7b2ff7; }
-      100% { transform: scale(1) rotate(0deg); text-shadow: 0 0 15px #00f5a0, 0 0 25px #7b2ff7; }
+      0% { 
+        transform: scale(1) rotate(0deg); 
+        text-shadow: 0 0 10px #00f5d4, 0 0 20px #00f5d4, 0 0 30px #00f5d4; 
+      }
+      25% { 
+        transform: scale(1.05) rotate(2deg); 
+        text-shadow: 0 0 15px #00f5d4, 0 0 30px #00f5d4, 0 0 45px #00f5d4; 
+      }
+      50% { 
+        transform: scale(1.1) rotate(-2deg); 
+        text-shadow: 0 0 20px #00f5d4, 0 0 40px #00f5d4, 0 0 60px #00f5d4; 
+      }
+      75% { 
+        transform: scale(1.05) rotate(1deg); 
+        text-shadow: 0 0 15px #00f5d4, 0 0 30px #00f5d4, 0 0 45px #00f5d4; 
+      }
+      100% { 
+        transform: scale(1) rotate(0deg); 
+        text-shadow: 0 0 10px #00f5d4, 0 0 20px #00f5d4, 0 0 30px #00f5d4; 
+      }
     }
 
     /* ================== زیرعنوان ================== */
@@ -1801,8 +1820,8 @@ document.addEventListener('DOMContentLoaded', () => {
     .feature-card {
       background: rgba(0,0,0,0.2);
       padding:25px;
-      border-radius:25px; /* گرد کردن کارت‌ها */
-      transition:0.5s ease;
+      border-radius:25px;
+      transition: transform 0.5s ease, box-shadow 0.5s ease, background 0.5s ease;
       border:1px solid rgba(0,0,255,0.2);
       box-shadow:0 4px 15px rgba(0,0,255,0.3),0 4px 20px rgba(128,0,255,0.2);
     }
@@ -1816,13 +1835,20 @@ document.addEventListener('DOMContentLoaded', () => {
       margin-bottom:10px;
       animation: float 3s infinite ease-in-out;
     }
-    @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+    @keyframes float { 
+      0%,100%{transform:translateY(0);} 
+      50%{transform:translateY(-10px);} 
+    }
     .feature-title {
       font-weight:bold;
       font-size:1.2rem;
       margin-bottom:5px;
       color:#00f5d4;
       text-shadow:0 0 5px #1E3A8A,0 0 10px #7C3AED;
+    }
+    .feature-desc {
+      color: #b0b0b0;
+      font-size: 0.95rem;
     }
 
     /* ================== دکمه‌ها ================== */
@@ -1832,21 +1858,22 @@ document.addEventListener('DOMContentLoaded', () => {
       100%{background-position:0% 50%;}
     }
     .cta-button {
-      background: linear-gradient(45deg,#1E3A8A,#7C3AED);
+      background: linear-gradient(45deg,#1E3A8A,#7C3AED,#1E3A8A);
       background-size:200% 200%;
       color:#fff;
       padding:15px 40px;
       border:none;
-      border-radius:25px; /* گرد کردن دکمه‌ها */
+      border-radius:25px;
       font-size:1.2rem;
       font-weight:bold;
       cursor:pointer;
-      transition:all 0.5s ease;
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
       margin:20px 10px;
       text-decoration:none;
       display:inline-block;
       animation: btnGradient 6s ease infinite;
       box-shadow:0 0 25px rgba(30,58,138,0.5),0 0 35px rgba(124,58,237,0.4);
+      font-family: 'Vazirmatn', sans-serif;
     }
     .cta-button:hover {
       transform:scale(1.08);
@@ -1860,13 +1887,19 @@ document.addEventListener('DOMContentLoaded', () => {
       font-size:0.95rem;
       color:#b0b0b0;
       text-shadow:0 0 5px #1E3A8A,0 0 10px #7C3AED;
+      line-height: 1.8;
     }
 
     /* ================== واکنش‌گرایی ================== */
     @media(max-width:600px){
-      .logo{font-size:2.5rem;}
-      .container{padding:25px;}
+      .logo{font-size:2rem;}
+      .container{padding:25px; margin: 30px auto;}
       .feature-grid{grid-template-columns:1fr;}
+      .cta-button{
+        display: block;
+        margin: 15px auto;
+        width: 80%;
+      }
     }
   </style>
 </head>
@@ -1891,32 +1924,32 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="feature-card">
         <div class="feature-icon">🔥</div>
         <div class="feature-title">اجرای زنده</div>
-        <div>پیش‌نمایش فوری کدهای HTML</div>
+        <div class="feature-desc">پیش‌نمایش فوری کدهای HTML</div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">📱</div>
         <div class="feature-title">واکنش‌گرا</div>
-        <div>نمایش در سایزهای مختلف دستگاه</div>
+        <div class="feature-desc">نمایش در سایزهای مختلف دستگاه</div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🎨</div>
         <div class="feature-title">شخصی‌سازی</div>
-        <div>تم‌ها و رنگ‌های قابل تنظیم</div>
+        <div class="feature-desc">تم‌ها و رنگ‌های قابل تنظیم</div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🌍</div>
         <div class="feature-title">چندزبانه</div>
-        <div>پشتیبانی از 7 زبان مختلف</div>
+        <div class="feature-desc">پشتیبانی از 7 زبان مختلف</div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">📝</div>
         <div class="feature-title">سیستم تب</div>
-        <div>کار همزمان روی چندین پروژه</div>
+        <div class="feature-desc">کار همزمان روی چندین پروژه</div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🔧</div>
         <div class="feature-title">ابزارهای پیشرفته</div>
-        <div>دیباگ، فرمت و تنظیمات خودکار</div>
+        <div class="feature-desc">دیباگ، فرمت و تنظیمات خودکار</div>
       </div>
     </div>
 
@@ -1930,6 +1963,9 @@ document.addEventListener('DOMContentLoaded', () => {
       HTML |•| CSS |•| JavaScript
     </div>
   </div>
+
+</body>
+</html>
 </body>
 </html>`;
   
