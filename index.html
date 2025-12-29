@@ -164,6 +164,73 @@ h1 {
 .device-button.active i {
   color: white;
 }
+
+/* دکمه پاپ‌آپ */
+.popup-button {
+  width: 44px; height: 44px; border-radius: 10px; border: none;
+  background: var(--button-bg);
+  display: inline-flex; justify-content: center; align-items: center;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 0 12px var(--shadow-color);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+}
+.popup-button i { color: var(--icon-color); }
+.popup-button:hover {
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 0 18px var(--glow-color);
+}
+
+/* منوی پاپ‌آپ */
+.popup-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--button-bg);
+  border-radius: 10px;
+  box-shadow: 0 0 12px var(--shadow-color);
+  padding: 8px;
+  z-index: 100;
+  display: none;
+  min-width: 180px;
+  border: 1px solid var(--accent);
+}
+.popup-menu.open {
+  display: block;
+}
+.popup-menu button {
+  width: 100%;
+  margin: 4px 0;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: none;
+  background: var(--button-bg);
+  color: var(--text-color);
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.25s ease;
+}
+.popup-menu button i {
+  color: var(--icon-color);
+  width: 20px;
+  text-align: center;
+}
+.popup-menu button:hover {
+  background: var(--accent);
+  color: #fff;
+}
+.popup-menu button:hover i {
+  color: #fff;
+}
+.popup-menu .size-info {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-right: auto;
+}
+
 .dropdown { position: relative; }
 .dropdown-content {
   position: absolute; top: calc(100% + 8px); right: 0;
@@ -487,6 +554,29 @@ footer .separator {
     <button class="device-button active" data-device="laptop" title="لپ‌تاپ"><i class="fas fa-laptop"></i></button>
     <button class="device-button" data-device="tablet" title="تبلت"><i class="fas fa-tablet-alt"></i></button>
     <button class="device-button" data-device="mobile" title="موبایل"><i class="fas fa-mobile-alt"></i></button>
+    
+    <!-- دکمه پاپ‌آپ پیش‌نمایش -->
+    <div class="dropdown" id="popupDropdown">
+      <button class="popup-button" title="باز کردن در پنجره جدید"><i class="fas fa-external-link-alt"></i></button>
+      <div class="popup-menu" id="popupMenu">
+        <button data-popup="laptop">
+          <i class="fas fa-laptop"></i>
+          <span>لپ‌تاپ</span>
+          <span class="size-info">1366×768</span>
+        </button>
+        <button data-popup="tablet">
+          <i class="fas fa-tablet-alt"></i>
+          <span>تبلت</span>
+          <span class="size-info">768×1024</span>
+        </button>
+        <button data-popup="mobile">
+          <i class="fas fa-mobile-alt"></i>
+          <span>موبایل</span>
+          <span class="size-info">375×667</span>
+        </button>
+      </div>
+    </div>
+    
     <div class="height-panel">
       <span id="heightLabel">ارتفاع:</span>
       <input id="heightInput" type="number" min="200" max="1200" step="20" value="220">
@@ -593,6 +683,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const debugClose = document.getElementById('debugClose');
   const debugInfo = document.getElementById('debugInfo');
   const addTabBtn = document.getElementById('addTabBtn');
+  
+  // عناصر پاپ‌آپ
+  const popupDropdown = document.getElementById('popupDropdown');
+  const popupMenu = document.getElementById('popupMenu');
+
+  // تنظیمات ابعاد پنجره برای هر دستگاه
+  const deviceDimensions = {
+    laptop: { width: 1366, height: 768, name: 'لپ‌تاپ', nameEn: 'Laptop' },
+    tablet: { width: 768, height: 1024, name: 'تبلت', nameEn: 'Tablet' },
+    mobile: { width: 375, height: 667, name: 'موبایل', nameEn: 'Mobile' }
+  };
 
   // متن‌های چندزبانه
   const translations = {
@@ -638,7 +739,9 @@ document.addEventListener('DOMContentLoaded', () => {
       addDoctype: 'DOCTYPE اضافه کنید',
       addCharset: 'charset تعریف کنید',
       addTitle: 'عنوان صفحه اضافه کنید',
-      useSeparateCss: 'از CSS جداگانه استفاده کنید'
+      useSeparateCss: 'از CSS جداگانه استفاده کنید',
+      openInNewWindow: 'باز کردن در پنجره جدید',
+      popupOpened: 'پنجره پیش‌نمایش باز شد!'
     },
     en: {
       title: 'SMART HTML Viewer',
@@ -682,7 +785,9 @@ document.addEventListener('DOMContentLoaded', () => {
       addDoctype: 'Add DOCTYPE',
       addCharset: 'Define charset',
       addTitle: 'Add page title',
-      useSeparateCss: 'Use separate CSS'
+      useSeparateCss: 'Use separate CSS',
+      openInNewWindow: 'Open in new window',
+      popupOpened: 'Preview window opened!'
     },
     ar: {
       title: 'عارض HTML الذكي',
@@ -726,7 +831,9 @@ document.addEventListener('DOMContentLoaded', () => {
       addDoctype: 'أضف DOCTYPE',
       addCharset: 'حدد charset',
       addTitle: 'أضف عنوان الصفحة',
-      useSeparateCss: 'استخدم CSS منفصل'
+      useSeparateCss: 'استخدم CSS منفصل',
+      openInNewWindow: 'فتح في نافذة جديدة',
+      popupOpened: 'تم فتح نافذة المعاينة!'
     },
     fr: {
       title: 'Visionneuse HTML SMART',
@@ -770,7 +877,9 @@ document.addEventListener('DOMContentLoaded', () => {
       addDoctype: 'Ajouter DOCTYPE',
       addCharset: 'Définir charset',
       addTitle: 'Ajouter un titre de page',
-      useSeparateCss: 'Utiliser un CSS séparé'
+      useSeparateCss: 'Utiliser un CSS séparé',
+      openInNewWindow: 'Ouvrir dans une nouvelle fenêtre',
+      popupOpened: 'Fenêtre d\'aperçu ouverte!'
     },
     es: {
       title: 'Visor HTML INTELIGENTE',
@@ -814,7 +923,9 @@ document.addEventListener('DOMContentLoaded', () => {
       addDoctype: 'Agregar DOCTYPE',
       addCharset: 'Definir charset',
       addTitle: 'Agregar título de página',
-      useSeparateCss: 'Usar CSS separado'
+      useSeparateCss: 'Usar CSS separado',
+      openInNewWindow: 'Abrir en nueva ventana',
+      popupOpened: '¡Ventana de vista previa abierta!'
     },
     zh: {
       title: '智能 HTML 查看器',
@@ -858,7 +969,9 @@ document.addEventListener('DOMContentLoaded', () => {
       addDoctype: '添加 DOCTYPE',
       addCharset: '定义 charset',
       addTitle: '添加页面标题',
-      useSeparateCss: '使用单独的 CSS'
+      useSeparateCss: '使用单独的 CSS',
+      openInNewWindow: '在新窗口中打开',
+      popupOpened: '预览窗口已打开！'
     },
     de: {
       title: 'SMART HTML Viewer',
@@ -902,7 +1015,9 @@ document.addEventListener('DOMContentLoaded', () => {
       addDoctype: 'DOCTYPE hinzufügen',
       addCharset: 'Charset definieren',
       addTitle: 'Seitentitel hinzufügen',
-      useSeparateCss: 'Separates CSS verwenden'
+      useSeparateCss: 'Separates CSS verwenden',
+      openInNewWindow: 'In neuem Fenster öffnen',
+      popupOpened: 'Vorschaufenster geöffnet!'
     }
   };
 
@@ -995,6 +1110,14 @@ document.addEventListener('DOMContentLoaded', () => {
     resetColors.title = t.resetColorsTitle;
     debugTitle.textContent = t.debugInfo;
     
+    // به‌روزرسانی دکمه پاپ‌آپ
+    popupDropdown.querySelector('.popup-button').title = t.openInNewWindow;
+    
+    // به‌روزرسانی متن‌های منوی پاپ‌آپ
+    popupMenu.querySelector('[data-popup="laptop"] span:first-of-type').textContent = t.laptop;
+    popupMenu.querySelector('[data-popup="tablet"] span:first-of-type').textContent = t.tablet;
+    popupMenu.querySelector('[data-popup="mobile"] span:first-of-type').textContent = t.mobile;
+    
     if (lang === 'ar' || lang === 'fa') {
       document.documentElement.dir = 'rtl';
       document.documentElement.lang = lang;
@@ -1074,6 +1197,51 @@ document.addEventListener('DOMContentLoaded', () => {
     const iframe = iframeEl;
     
     iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(htmlCode);
+  }
+
+  // تابع باز کردن پنجره پاپ‌آپ
+  function openPreviewPopup(device) {
+    const dimensions = deviceDimensions[device];
+    const t = translations[currentLang];
+    const deviceName = currentLang === 'fa' || currentLang === 'ar' ? dimensions.name : dimensions.nameEn;
+    const windowTitle = `${deviceName} - SMART HTML Viewer`;
+    
+    // تنظیمات پنجره
+    const windowFeatures = [
+      `width=${dimensions.width}`,
+      `height=${dimensions.height}`,
+      'resizable=yes',
+      'scrollbars=yes',
+      'menubar=no',
+      'toolbar=no',
+      'location=no',
+      'status=yes'
+    ].join(',');
+    
+    // باز کردن پنجره جدید
+    const popupWindow = window.open('', windowTitle, windowFeatures);
+    
+    if (popupWindow) {
+      // محتوای HTML فعلی
+      const htmlContent = inputEl.value;
+      
+      // نوشتن محتوا در پنجره جدید
+      popupWindow.document.open();
+      popupWindow.document.write(htmlContent);
+      popupWindow.document.close();
+      
+      // تنظیم عنوان پنجره
+      popupWindow.document.title = windowTitle;
+      
+      // نمایش اعلان
+      showNotification(t.popupOpened);
+      
+      // بستن منوی پاپ‌آپ
+      popupMenu.classList.remove('open');
+    } else {
+      // اگر پاپ‌آپ بلاک شده بود
+      alert('لطفاً اجازه باز شدن پنجره‌های پاپ‌آپ را بدهید.');
+    }
   }
 
   async function copyCode() {
@@ -1232,11 +1400,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Event Listeners
   
-  // دکمه‌های دستگاه - اصلاح شده (بدون باز کردن پنجره جدید)
+  // دکمه‌های دستگاه
   document.querySelectorAll('.device-button').forEach(btn => {
     btn.addEventListener('click', () => {
       const device = btn.dataset.device;
       changeDevice(device);
+    });
+  });
+
+  // منوی پاپ‌آپ
+  popupDropdown.querySelector('.popup-button').addEventListener('click', (e) => {
+    e.stopPropagation();
+    popupMenu.classList.toggle('open');
+  });
+  
+  // دکمه‌های پاپ‌آپ
+  popupMenu.querySelectorAll('[data-popup]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const device = btn.dataset.popup;
+      openPreviewPopup(device);
     });
   });
 
@@ -1304,6 +1487,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', (e) => {
     if (!dropdown.contains(e.target)) {
       dropdown.classList.remove('open');
+    }
+    if (!popupDropdown.contains(e.target)) {
+      popupMenu.classList.remove('open');
     }
   });
 
