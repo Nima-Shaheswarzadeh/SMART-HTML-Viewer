@@ -654,6 +654,177 @@ footer .separator {
 </div>
 
 <script>
+// ==================== سیستم صدا ====================
+const SoundManager = {
+  audioContext: null,
+  enabled: true,
+  
+  init() {
+    try {
+      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) {
+      console.log('Web Audio API not supported');
+      this.enabled = false;
+    }
+  },
+  
+  // صدای کلیک ساده
+  click() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(800, 0.05, 'sine', 0.3);
+  },
+  
+  // صدای هاور
+  hover() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(600, 0.03, 'sine', 0.1);
+  },
+  
+  // صدای موفقیت
+  success() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(523, 0.1, 'sine', 0.3);
+    setTimeout(() => this.playTone(659, 0.1, 'sine', 0.3), 100);
+    setTimeout(() => this.playTone(784, 0.15, 'sine', 0.3), 200);
+  },
+  
+  // صدای تغییر تب
+  tabSwitch() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(440, 0.08, 'triangle', 0.25);
+  },
+  
+  // صدای اضافه کردن تب
+  tabAdd() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(880, 0.1, 'sine', 0.3);
+  },
+  
+  // صدای حذف تب
+  tabClose() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(300, 0.15, 'sine', 0.25);
+  },
+  
+  // صدای تغییر تم
+  themeToggle() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(400, 0.1, 'square', 0.15);
+    setTimeout(() => this.playTone(600, 0.1, 'square', 0.15), 100);
+  },
+  
+  // صدای تغییر دستگاه
+  deviceChange() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(500, 0.08, 'triangle', 0.2);
+    setTimeout(() => this.playTone(700, 0.08, 'triangle', 0.2), 80);
+  },
+  
+  // صدای کپی
+  copy() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(1000, 0.05, 'sine', 0.25);
+    setTimeout(() => this.playTone(1200, 0.05, 'sine', 0.25), 50);
+  },
+  
+  // صدای دانلود
+  download() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(600, 0.1, 'sine', 0.3);
+    setTimeout(() => this.playTone(400, 0.15, 'sine', 0.3), 100);
+  },
+  
+  // صدای اجرای کد
+  run() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(392, 0.08, 'sine', 0.25);
+    setTimeout(() => this.playTone(523, 0.08, 'sine', 0.25), 80);
+    setTimeout(() => this.playTone(659, 0.1, 'sine', 0.25), 160);
+  },
+  
+  // صدای باز شدن منو
+  menuOpen() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(350, 0.06, 'sine', 0.2);
+  },
+  
+  // صدای بستن منو/مودال
+  menuClose() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(250, 0.06, 'sine', 0.2);
+  },
+  
+  // صدای دیباگ
+  debug() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(220, 0.1, 'sawtooth', 0.15);
+    setTimeout(() => this.playTone(330, 0.1, 'sawtooth', 0.15), 100);
+  },
+  
+  // صدای فرمت کد
+  format() {
+    if (!this.enabled || !this.audioContext) return;
+    for (let i = 0; i < 4; i++) {
+      setTimeout(() => this.playTone(400 + i * 100, 0.05, 'sine', 0.2), i * 50);
+    }
+  },
+  
+  // صدای تغییر رنگ
+  colorChange() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(550, 0.05, 'sine', 0.15);
+  },
+  
+  // صدای ریست
+  reset() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(800, 0.08, 'sine', 0.25);
+    setTimeout(() => this.playTone(600, 0.08, 'sine', 0.25), 80);
+    setTimeout(() => this.playTone(400, 0.1, 'sine', 0.25), 160);
+  },
+  
+  // صدای پاپ‌آپ
+  popup() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(700, 0.1, 'sine', 0.3);
+    setTimeout(() => this.playTone(900, 0.1, 'sine', 0.3), 100);
+  },
+  
+  // صدای تایپ
+  typing() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(600 + Math.random() * 200, 0.02, 'sine', 0.1);
+  },
+  
+  // پخش تن
+  playTone(frequency, duration, type = 'sine', volume = 0.3) {
+    if (!this.audioContext) return;
+    
+    // Resume audio context if suspended
+    if (this.audioContext.state === 'suspended') {
+      this.audioContext.resume();
+    }
+    
+    const oscillator = this.audioContext.createOscillator();
+    const gainNode = this.audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(this.audioContext.destination);
+    
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(frequency, this.audioContext.currentTime);
+    
+    gainNode.gain.setValueAtTime(volume, this.audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
+    
+    oscillator.start(this.audioContext.currentTime);
+    oscillator.stop(this.audioContext.currentTime + duration);
+  }
+};
+
+// راه‌اندازی سیستم صدا
+SoundManager.init();
+
 document.addEventListener('DOMContentLoaded', () => {
   const titleEl = document.getElementById('title');
   const inputEl = document.getElementById('htmlInput');
@@ -1403,6 +1574,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // دکمه‌های دستگاه
   document.querySelectorAll('.device-button').forEach(btn => {
     btn.addEventListener('click', () => {
+      SoundManager.deviceChange();
       const device = btn.dataset.device;
       changeDevice(device);
     });
@@ -1411,6 +1583,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // منوی پاپ‌آپ
   popupDropdown.querySelector('.popup-button').addEventListener('click', (e) => {
     e.stopPropagation();
+    const isOpen = popupMenu.classList.contains('open');
+    if (isOpen) {
+      SoundManager.menuClose();
+    } else {
+      SoundManager.menuOpen();
+    }
     popupMenu.classList.toggle('open');
   });
   
@@ -1418,44 +1596,62 @@ document.addEventListener('DOMContentLoaded', () => {
   popupMenu.querySelectorAll('[data-popup]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
+      SoundManager.popup();
       const device = btn.dataset.popup;
       openPreviewPopup(device);
     });
   });
 
   heightInput.addEventListener('input', () => {
+    SoundManager.click();
     const height = heightInput.value;
     iframeEl.style.height = height + 'px';
     updateHeightDisplay();
   });
 
   // دکمه‌های جدید
-  autoHeightBtn.addEventListener('click', autoAdjustHeight);
-  debugBtn.addEventListener('click', debugCode);
-  formatBtn.addEventListener('click', formatCode);
+  autoHeightBtn.addEventListener('click', () => {
+    SoundManager.success();
+    autoAdjustHeight();
+  });
+  
+  debugBtn.addEventListener('click', () => {
+    SoundManager.debug();
+    debugCode();
+  });
+  
+  formatBtn.addEventListener('click', () => {
+    SoundManager.format();
+    formatCode();
+  });
 
   // مودال دیباگ
   debugClose.addEventListener('click', () => {
+    SoundManager.menuClose();
     debugModal.style.display = 'none';
   });
   
   debugModal.addEventListener('click', (e) => {
     if (e.target === debugModal) {
+      SoundManager.menuClose();
       debugModal.style.display = 'none';
     }
   });
 
   // انتخابگر رنگ
   primaryColorPicker.addEventListener('input', (e) => {
+    SoundManager.colorChange();
     updateThemeColors(e.target.value, secondaryColorPicker.value);
   });
 
   secondaryColorPicker.addEventListener('input', (e) => {
+    SoundManager.colorChange();
     updateThemeColors(primaryColorPicker.value, e.target.value);
   });
 
   // بازگشت به رنگ‌های پیشفرض
   resetColors.addEventListener('click', () => {
+    SoundManager.reset();
     const isDark = document.body.classList.contains('dark');
     if (isDark) {
       primaryColorPicker.value = '#00ff7f';
@@ -1468,17 +1664,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  runBtn.addEventListener('click', runCode);
-  copyBtn.addEventListener('click', copyCode);
+  runBtn.addEventListener('click', () => {
+    SoundManager.run();
+    runCode();
+  });
+  
+  copyBtn.addEventListener('click', () => {
+    SoundManager.copy();
+    copyCode();
+  });
 
   dropdown.addEventListener('click', (e) => {
     if (e.target.classList.contains('action-btn') || e.target.closest('.action-btn')) {
+      const isOpen = dropdown.classList.contains('open');
+      if (isOpen) {
+        SoundManager.menuClose();
+      } else {
+        SoundManager.menuOpen();
+      }
       dropdown.classList.toggle('open');
     }
   });
 
   dropdown.querySelectorAll('[data-type]').forEach(btn => {
     btn.addEventListener('click', () => {
+      SoundManager.download();
       downloadFile(btn.dataset.type);
       dropdown.classList.remove('open');
     });
@@ -1494,10 +1704,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   langSelect.addEventListener('change', () => {
+    SoundManager.click();
     updateLanguage(langSelect.value);
   });
 
   themeToggle.addEventListener('click', () => {
+    SoundManager.themeToggle();
     document.body.classList.toggle('dark');
     const isDark = document.body.classList.contains('dark');
     themeToggle.querySelector('i').className = isDark ? 'fas fa-sun' : 'fas fa-moon';
@@ -1515,6 +1727,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   infoBtn.addEventListener('click', () => {
+    SoundManager.click();
     window.open('https://nima-shaheswarzadeh.github.io', '_blank');
   });
 
@@ -1574,6 +1787,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!e.target.classList.contains('tab-close') && 
             !e.target.classList.contains('tab-name') &&
             !e.target.classList.contains('editing')) {
+          SoundManager.tabSwitch();
           switchTab(tab.id);
         }
       });
@@ -1581,6 +1795,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // دابل کلیک برای ویرایش نام
       tabName.addEventListener('dblclick', (e) => {
         e.stopPropagation();
+        SoundManager.click();
         startEditingTabName(tabName, tab);
       });
       
@@ -1588,6 +1803,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tabName.addEventListener('click', (e) => {
         if (!tabName.classList.contains('editing')) {
           e.stopPropagation();
+          SoundManager.tabSwitch();
           switchTab(tab.id);
         }
       });
@@ -1596,6 +1812,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (tabs.length > 1) {
         closeBtn.addEventListener('click', (e) => {
           e.stopPropagation();
+          SoundManager.tabClose();
           closeTab(tab.id);
         });
       } else {
@@ -1625,6 +1842,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const newName = tabNameEl.textContent.trim();
       tab.name = newName || translations[currentLang].newFile;
       tabNameEl.textContent = tab.name;
+      SoundManager.success();
     };
     
     tabNameEl.addEventListener('blur', finishEditing, { once: true });
@@ -1684,7 +1902,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Event Listener برای دکمه اضافه کردن تب
-  addTabBtn.addEventListener('click', addNewTab);
+  addTabBtn.addEventListener('click', () => {
+    SoundManager.tabAdd();
+    addNewTab();
+  });
 
   // ذخیره تغییرات هنگام تایپ
   let timeout;
@@ -1692,6 +1913,17 @@ document.addEventListener('DOMContentLoaded', () => {
     saveCurrentTab();
     clearTimeout(timeout);
     timeout = setTimeout(runCode, 500);
+  });
+  
+  // صدای تایپ برای ویرایشگر (اختیاری - هر 5 کاراکتر)
+  let charCount = 0;
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.key.length === 1) {
+      charCount++;
+      if (charCount % 5 === 0) {
+        SoundManager.typing();
+      }
+    }
   });
 
   updateLanguage('fa');
@@ -1964,8 +2196,6 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
   </div>
 
-</body>
-</html>
 </body>
 </html>`;
   
