@@ -1933,49 +1933,49 @@ document.addEventListener('DOMContentLoaded', () => {
   tabs[0].content = `<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
+  <!-- ================== تنظیمات پایه ================== -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SMART HTML Viewer - نمایشگر هوشمند HTML</title>
-  <!-- لود فونت -->
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+
   <style>
-    /* ================== تنظیمات پایه ================== */
+    /* ================== Reset ================== */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
-      font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
       color: #fff;
       text-align: center;
       padding: 20px;
       overflow-x: hidden;
       background: radial-gradient(circle at 20% 30%, #1e1f27, #0a0a0d 80%);
-      min-height: 100vh;
     }
 
     /* ================== پس‌زمینه متحرک نئونی ================== */
     .tech-bg {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       z-index: -1;
       overflow: hidden;
     }
+
     .circle {
       position: absolute;
       border-radius: 50%;
       background: rgba(0,0,255,0.15);
-      animation: move 20s infinite ease-in-out alternate;
       filter: blur(60px);
+      animation: move 20s infinite ease-in-out alternate;
     }
+
     @keyframes move {
-      0% { transform: translate(0,0) scale(1); }
-      25% { transform: translate(70px,-50px) scale(1.2); }
-      50% { transform: translate(-50px,90px) scale(1.3); }
-      75% { transform: translate(80px,-40px) scale(1.1); }
+      0%   { transform: translate(0,0) scale(1); }
+      25%  { transform: translate(70px,-50px) scale(1.2); }
+      50%  { transform: translate(-50px,90px) scale(1.3); }
+      75%  { transform: translate(80px,-40px) scale(1.1); }
       100% { transform: translate(0,0) scale(1); }
     }
 
@@ -1983,221 +1983,196 @@ document.addEventListener('DOMContentLoaded', () => {
     .container {
       max-width: 900px;
       margin: 60px auto;
+      padding: 50px;
+      border-radius: 25px;
       background: rgba(255,255,255,0.05);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 25px;
-      padding: 50px;
-      box-shadow: 0 10px 40px rgba(0,0,255,0.3),0 10px 60px rgba(128,0,255,0.3);
-      position: relative;
+      box-shadow: 
+        0 10px 40px rgba(0,0,255,0.3),
+        0 10px 60px rgba(128,0,255,0.3);
       animation: fadeIn 1.5s ease-out;
     }
+
     @keyframes fadeIn {
       from { opacity:0; transform:translateY(30px); }
-      to { opacity:1; transform:translateY(0); }
+      to   { opacity:1; transform:translateY(0); }
     }
 
-    /* ================== لوگو ================== */
+    /* ================== لوگو (افکت اصلی نئونی) ================== */
     .logo {
-      font-family: 'Vazirmatn', sans-serif;
+      font-family: 'Asym', sans-serif;
       font-size: 3rem;
       font-weight: bold;
       margin-bottom: 10px;
-      color: #00f5d4;
-      text-shadow: 0 0 10px #00f5d4, 0 0 20px #00f5d4, 0 0 30px #00f5d4;
-      display: inline-block;
+      background: linear-gradient(90deg, #00f5a0, #7b2ff7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       animation: logoMove 4s infinite ease-in-out;
     }
+
     @keyframes logoMove {
-      0% { 
-        transform: scale(1) rotate(0deg); 
-        text-shadow: 0 0 10px #00f5d4, 0 0 20px #00f5d4, 0 0 30px #00f5d4; 
+      0% {
+        transform: scale(1) rotate(0deg);
+        text-shadow: 0 0 15px #00f5a0, 0 0 25px #7b2ff7;
       }
-      25% { 
-        transform: scale(1.05) rotate(2deg); 
-        text-shadow: 0 0 15px #00f5d4, 0 0 30px #00f5d4, 0 0 45px #00f5d4; 
+      25% {
+        transform: scale(1.05) rotate(2deg);
+        text-shadow: 0 0 20px #00f5a0, 0 0 30px #7b2ff7;
       }
-      50% { 
-        transform: scale(1.1) rotate(-2deg); 
-        text-shadow: 0 0 20px #00f5d4, 0 0 40px #00f5d4, 0 0 60px #00f5d4; 
+      50% {
+        transform: scale(1.1) rotate(-2deg);
+        text-shadow: 0 0 25px #00f5a0, 0 0 35px #7b2ff7;
       }
-      75% { 
-        transform: scale(1.05) rotate(1deg); 
-        text-shadow: 0 0 15px #00f5d4, 0 0 30px #00f5d4, 0 0 45px #00f5d4; 
+      75% {
+        transform: scale(1.05) rotate(1deg);
+        text-shadow: 0 0 20px #00f5a0, 0 0 30px #7b2ff7;
       }
-      100% { 
-        transform: scale(1) rotate(0deg); 
-        text-shadow: 0 0 10px #00f5d4, 0 0 20px #00f5d4, 0 0 30px #00f5d4; 
+      100% {
+        transform: scale(1) rotate(0deg);
+        text-shadow: 0 0 15px #00f5a0, 0 0 25px #7b2ff7;
       }
     }
 
     /* ================== زیرعنوان ================== */
     .subtitle {
-      font-size:1.2rem;
-      opacity:0.85;
-      margin-bottom:40px;
-      color:#dcdcdc;
+      font-size: 1.15rem;
+      opacity: 0.9;
+      margin-bottom: 40px;
+      color: #dcdcdc;
       text-shadow: 0 0 5px #1E3A8A, 0 0 10px #7C3AED;
     }
 
     /* ================== گرید ویژگی‌ها ================== */
     .feature-grid {
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-      gap:25px;
-      margin:40px 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 25px;
+      margin: 40px 0;
     }
 
-    /* ================== کارت‌های ویژگی ================== */
+    /* ================== کارت ویژگی ================== */
     .feature-card {
-      background: rgba(0,0,0,0.2);
-      padding:25px;
-      border-radius:25px;
-      transition: transform 0.5s ease, box-shadow 0.5s ease, background 0.5s ease;
-      border:1px solid rgba(0,0,255,0.2);
-      box-shadow:0 4px 15px rgba(0,0,255,0.3),0 4px 20px rgba(128,0,255,0.2);
+      background: rgba(0,0,0,0.25);
+      padding: 25px;
+      border-radius: 25px;
+      border: 1px solid rgba(0,0,255,0.2);
+      transition: 0.5s ease;
+      box-shadow: 0 4px 15px rgba(0,0,255,0.3);
     }
+
     .feature-card:hover {
-      transform:translateY(-10px) scale(1.05);
-      box-shadow:0 10px 35px rgba(0,0,255,0.5),0 10px 50px rgba(128,0,255,0.4);
-      background: rgba(0,0,255,0.1);
+      transform: translateY(-10px) scale(1.05);
+      background: rgba(0,0,255,0.15);
+      box-shadow: 0 10px 35px rgba(0,0,255,0.5);
     }
+
     .feature-icon {
-      font-size:2.4rem;
-      margin-bottom:10px;
+      font-size: 2.4rem;
+      margin-bottom: 10px;
       animation: float 3s infinite ease-in-out;
     }
-    @keyframes float { 
-      0%,100%{transform:translateY(0);} 
-      50%{transform:translateY(-10px);} 
+
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
+
     .feature-title {
-      font-weight:bold;
-      font-size:1.2rem;
-      margin-bottom:5px;
-      color:#00f5d4;
-      text-shadow:0 0 5px #1E3A8A,0 0 10px #7C3AED;
-    }
-    .feature-desc {
-      color: #b0b0b0;
-      font-size: 0.95rem;
+      font-size: 1.15rem;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #00f5d4;
+      text-shadow: 0 0 5px #1E3A8A, 0 0 10px #7C3AED;
     }
 
     /* ================== دکمه‌ها ================== */
-    @keyframes btnGradient {
-      0%{background-position:0% 50%;}
-      50%{background-position:100% 50%;}
-      100%{background-position:0% 50%;}
-    }
     .cta-button {
-      background: linear-gradient(45deg,#1E3A8A,#7C3AED,#1E3A8A);
-      background-size:200% 200%;
-      color:#fff;
-      padding:15px 40px;
-      border:none;
-      border-radius:25px;
-      font-size:1.2rem;
-      font-weight:bold;
-      cursor:pointer;
-      transition: transform 0.5s ease, box-shadow 0.5s ease;
-      margin:20px 10px;
-      text-decoration:none;
-      display:inline-block;
-      animation: btnGradient 6s ease infinite;
-      box-shadow:0 0 25px rgba(30,58,138,0.5),0 0 35px rgba(124,58,237,0.4);
-      font-family: 'Vazirmatn', sans-serif;
-    }
-    .cta-button:hover {
-      transform:scale(1.08);
-      box-shadow:0 0 50px rgba(30,58,138,0.8),0 0 60px rgba(124,58,237,0.7);
+      display: inline-block;
+      margin: 20px 10px;
+      padding: 15px 40px;
+      border-radius: 25px;
+      background: linear-gradient(45deg,#1E3A8A,#7C3AED);
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-decoration: none;
+      transition: 0.5s ease;
+      box-shadow: 0 0 25px rgba(30,58,138,0.5);
     }
 
-    /* ================== متن پایینی ================== */
+    .cta-button:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 50px rgba(30,58,138,0.8);
+    }
+
+    /* ================== متن پایانی ================== */
     .credits {
-      margin-top:50px;
-      opacity:0.9;
-      font-size:0.95rem;
-      color:#b0b0b0;
-      text-shadow:0 0 5px #1E3A8A,0 0 10px #7C3AED;
-      line-height: 1.8;
+      margin-top: 50px;
+      opacity: 0.9;
+      font-size: 0.95rem;
+      color: #b0b0b0;
+      text-shadow: 0 0 5px #1E3A8A, 0 0 10px #7C3AED;
     }
 
     /* ================== واکنش‌گرایی ================== */
-    @media(max-width:600px){
-      .logo{font-size:2rem;}
-      .container{padding:25px; margin: 30px auto;}
-      .feature-grid{grid-template-columns:1fr;}
-      .cta-button{
-        display: block;
-        margin: 15px auto;
-        width: 80%;
-      }
+    @media (max-width: 600px) {
+      .logo { font-size: 2.4rem; }
+      .container { padding: 25px; }
+      .feature-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
+
 <body>
 
-  <!-- پس‌زمینه متحرک -->
+  <!-- ================== پس‌زمینه ================== -->
   <div class="tech-bg">
-    <div class="circle" style="width:250px;height:250px;top:20%;left:10%;animation-delay:0s;"></div>
-    <div class="circle" style="width:400px;height:400px;top:50%;left:70%;animation-delay:2s;"></div>
-    <div class="circle" style="width:300px;height:300px;top:80%;left:20%;animation-delay:4s;"></div>
-    <div class="circle" style="width:350px;height:350px;top:30%;left:80%;animation-delay:6s;"></div>
-    <div class="circle" style="width:200px;height:200px;top:70%;left:50%;animation-delay:8s;"></div>
+    <div class="circle" style="width:250px;height:250px;top:20%;left:10%;"></div>
+    <div class="circle" style="width:400px;height:400px;top:50%;left:70%;"></div>
+    <div class="circle" style="width:300px;height:300px;top:80%;left:20%;"></div>
+    <div class="circle" style="width:350px;height:350px;top:30%;left:80%;"></div>
+    <div class="circle" style="width:200px;height:200px;top:70%;left:50%;"></div>
   </div>
 
-  <!-- کارت اصلی -->
+  <!-- ================== محتوای اصلی ================== -->
   <div class="container">
-    <div class="logo">SMART HTML Viewer</div>
-    <div class="subtitle">نمایشگر هوشمند و پیشرفته کدهای HTML با طراحی مدرن و انیمیشن‌های نئونی ✨</div>
 
-    <!-- ویژگی‌ها -->
-    <div class="feature-grid">
-      <div class="feature-card">
-        <div class="feature-icon">🔥</div>
-        <div class="feature-title">اجرای زنده</div>
-        <div class="feature-desc">پیش‌نمایش فوری کدهای HTML</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📱</div>
-        <div class="feature-title">واکنش‌گرا</div>
-        <div class="feature-desc">نمایش در سایزهای مختلف دستگاه</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🎨</div>
-        <div class="feature-title">شخصی‌سازی</div>
-        <div class="feature-desc">تم‌ها و رنگ‌های قابل تنظیم</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🌍</div>
-        <div class="feature-title">چندزبانه</div>
-        <div class="feature-desc">پشتیبانی از 7 زبان مختلف</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📝</div>
-        <div class="feature-title">سیستم تب</div>
-        <div class="feature-desc">کار همزمان روی چندین پروژه</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔧</div>
-        <div class="feature-title">ابزارهای پیشرفته</div>
-        <div class="feature-desc">دیباگ، فرمت و تنظیمات خودکار</div>
-      </div>
+    <div class="logo">SMART HTML Viewer</div>
+
+    <div class="subtitle">
+      ابزار سبک، واکنش‌گرا و چندزبانه برای تست، پیش‌نمایش و دیباگ کدهای HTML ✨
     </div>
 
-    <!-- دکمه‌ها -->
-    <a href="https://nima-shaheswarzadeh.github.io/SMART-HTML-Viewer/" class="cta-button" target="_blank">🚀 شروع کنید</a>
-    <a href="https://github.com/Nima-Shaheswarzadeh/SMART-HTML-Viewer" class="cta-button" target="_blank">📂 مشاهده کد منبع</a>
+    <!-- ===== ۹ ویژگی ===== -->
+    <div class="feature-grid">
 
-    <!-- متن پایانی -->
+      <div class="feature-card"><div class="feature-icon">🔥</div><div class="feature-title">اجرای زنده</div><div>نمایش تغییرات کد در لحظه</div></div>
+      <div class="feature-card"><div class="feature-icon">🔊</div><div class="feature-title">Sound FX</div><div>افکت صوتی با Web Audio API</div></div>
+      <div class="feature-card"><div class="feature-icon">🐛</div><div class="feature-title">دیباگر</div><div>تشخیص خطا و پیشنهاد اصلاح</div></div>
+      <div class="feature-card"><div class="feature-icon">📑</div><div class="feature-title">مدیریت تب</div><div>چند فایل همزمان</div></div>
+      <div class="feature-card"><div class="feature-icon">🧹</div><div class="feature-title">فرمت کد</div><div>مرتب‌سازی خودکار</div></div>
+      <div class="feature-card"><div class="feature-icon">📱</div><div class="feature-title">Responsive</div><div>تست موبایل و تبلت</div></div>
+      <div class="feature-card"><div class="feature-icon">🪟</div><div class="feature-title">Popup</div><div>پیش‌نمایش جداگانه</div></div>
+      <div class="feature-card"><div class="feature-icon">💾</div><div class="feature-title">خروجی</div><div>دانلود و کپی سریع</div></div>
+      <div class="feature-card"><div class="feature-icon">🌍</div><div class="feature-title">چندزبانه</div><div>پشتیبانی از 7 زبان</div></div>
+
+    </div>
+
+    <!-- ===== دکمه‌ها ===== -->
+    <a href="https://nima-shaheswarzadeh.github.io/SMART-HTML-Viewer/" target="_blank" class="cta-button">🚀 شروع کنید</a>
+    <a href="https://github.com/Nima-Shaheswarzadeh/SMART-HTML-Viewer" target="_blank" class="cta-button">📂 مشاهده کد منبع</a>
+
+    <!-- ===== Credits ===== -->
     <div class="credits">
       SMART HTML Viewer by Nima.Sh <br>
       HTML |•| CSS |•| JavaScript
     </div>
+
   </div>
 
 </body>
-</html>`;
+</html>
+`;
   
   inputEl.value = tabs[0].content;
   renderTabs();
