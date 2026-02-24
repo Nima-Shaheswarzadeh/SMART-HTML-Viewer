@@ -6,8 +6,7 @@
 
 ---
 
-😍 **برای تست و استفاده:**
-[![SMART HTML Viewer](https://img.shields.io/badge/SMART%20HTML%20Viewer-View-87CEEB?style=for-the-badge&logoColor=gray)](https://Nima-Shaheswarzadeh.github.io/SMART-HTML-Viewer)
+😍 **برای تست و استفاده:**  [![SMART HTML Viewer](https://img.shields.io/badge/SMART%20HTML%20Viewer-View-87CEEB?style=for-the-badge&logoColor=gray)](https://Nima-Shaheswarzadeh.github.io/SMART-HTML-Viewer)
 
 ---
 
