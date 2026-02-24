@@ -1,2171 +1,2183 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <meta name="description" content="نیما شهسوارزاده - توسعه‌دهنده و طراح وب، متخصص Unity و C#، گرافیست حرفه‌ای. آماده همکاری در پروژه‌های خلاقانه">
-    <meta name="keywords" content="نیما شهسوارزاده, توسعه دهنده, طراح وب, Unity, C#, گرافیست, برنامه نویس">
-    <meta name="author" content="Nima Shaheswarzadeh">
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#0a1628">
+<meta charset="UTF-8">
+<title>SMART HTML Viewer</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --primary-color: #2563eb;
+  --secondary-color: #00aaff;
+  --bg-color: #f5f5f5;
+  --text-color: #0f172a;
+  --icon-color: var(--primary-color);
+  --glow-color: var(--secondary-color);
+  --button-bg: #ffffff;
+  --shadow-color: rgba(37, 99, 235, 0.35);
+  --accent: var(--primary-color);
+  --highlight-color: var(--secondary-color);
+}
+body.dark {
+  --bg-color: #2d2d30;
+  --text-color: #ffffff;
+  --button-bg: #404040;
+}
 
-    <!-- Open Graph / Social Media -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="نیما شهسوارزاده | Nima Shaheswarzadeh">
-    <meta property="og:description" content="توسعه‌دهنده و طراح وب، متخصص Unity و C#، گرافیست حرفه‌ای">
-    <meta property="og:image" content="https://raw.githubusercontent.com/Nima-Shaheswarzadeh/Nima-Shaheswarzadeh.github.io/main/Picture/Nima%20Person%201.1.png">
+/* نوار رنگی بالا */
+.color-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, 
+    var(--primary-color) 0%, 
+    var(--secondary-color) 50%, 
+    var(--primary-color) 100%);
+  z-index: 1000;
+  cursor: pointer;
+  transition: height 0.3s ease;
+}
+.color-bar:hover {
+  height: 12px;
+}
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="نیما شهسوارزاده | Nima Shaheswarzadeh">
-    <meta name="twitter:description" content="توسعه‌دهنده و طراح وب، متخصص Unity و C#">
+.color-controls {
+  position: fixed;
+  top: 15px;
+  left: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1001;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.color-bar:hover + .color-controls,
+.color-controls:hover {
+  opacity: 1;
+}
 
-    <title>نیما شهسوارزاده |•| Nima Shaheswarzadeh</title>
-    <link rel="canonical" href="https://nima-shaheswarzadeh.github.io/">
+.color-picker {
+  width: 40px;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
 
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    <style>
-        /* ===== تنظیمات پایه - فونت فارسی Vazirmatn ===== */
-        * {
-            font-family: 'Vazirmatn', sans-serif;
-        }
-        
-        /* ===== اسکرول نرم و snap scroll ===== */
-        html {
-            scroll-behavior: smooth;
-            scroll-snap-type: y proximity;
-        }
-        
-        /* ===== پس زمینه پویا با بلور - تم Navy Blue & Turquoise با رنگ‌های خاکستری ملایم ===== */
-        body {
-            position: relative;
-            overflow-x: hidden;
-            background: #0a1628;
-        }
-        
-        /* ===== اسکرول بخش به بخش (Snap Scroll) ===== */
-        section, footer {
-            scroll-snap-align: start;
-            scroll-snap-stop: normal;
-        }
-        
-        #home {
-            scroll-snap-align: center;
-        }
-        
-        /* غیرفعال کردن snap در موبایل برای تجربه بهتر */
-        @media (max-width: 768px) {
-            html {
-                scroll-snap-type: none;
-            }
-        }
-        
-        /* ===== پس‌زمینه انیمیشن‌دار ===== */
-        #animated-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-            background: linear-gradient(135deg, #0a1628 0%, #1a2744 50%, #0d1f3c 100%);
-        }
-        
-        /* شبکه نئونی فیروزه‌ای در پس‌زمینه */
-        #animated-bg::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 255, 213, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 213, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: gridMove 20s linear infinite;
-        }
-        
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
-        }
-        
-        /* ===== بلوب‌های پس‌زمینه با حرکت ===== */
-        .bg-blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.4;
-            animation: floatBlob 20s ease-in-out infinite;
-        }
-        
-        .bg-blob-1 {
-            width: 600px;
-            height: 600px;
-            background: linear-gradient(135deg, #00ffd5, #00b8a9);
-            top: -200px;
-            right: -100px;
-            animation-delay: 0s;
-            box-shadow: 0 0 100px rgba(0, 255, 213, 0.3);
-        }
-        
-        .bg-blob-2 {
-            width: 500px;
-            height: 500px;
-            background: linear-gradient(135deg, #1e3a5f, #2d5a87);
-            bottom: -150px;
-            left: -100px;
-            animation-delay: -7s;
-        }
-        
-        .bg-blob-3 {
-            width: 400px;
-            height: 400px;
-            background: linear-gradient(135deg, #00e5cc, #00b8a9);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation-delay: -14s;
-            box-shadow: 0 0 80px rgba(0, 229, 204, 0.2);
-        }
-        
-        .bg-blob-4 {
-            width: 350px;
-            height: 350px;
-            background: linear-gradient(135deg, #3a6ea5, #1e3a5f);
-            top: 30%;
-            right: 20%;
-            animation-delay: -5s;
-        }
-        
-        .bg-blob-5 {
-            width: 450px;
-            height: 450px;
-            background: linear-gradient(135deg, #00ffd5, #0891b2);
-            bottom: 20%;
-            right: -100px;
-            animation-delay: -10s;
-            box-shadow: 0 0 120px rgba(0, 255, 213, 0.25);
-        }
-        
-        /* رنگ خاکستری ملایم برای تعادل */
-        .bg-blob-6 {
-            width: 380px;
-            height: 380px;
-            background: linear-gradient(135deg, #8a94a6, #6b7280);
-            top: 60%;
-            left: 10%;
-            animation-delay: -12s;
-            opacity: 0.25;
-        }
-        
-        @keyframes floatBlob {
-            0%, 100% { 
-                transform: translate(0, 0) scale(1) rotate(0deg); 
-            }
-            25% { 
-                transform: translate(100px, -80px) scale(1.1) rotate(90deg); 
-            }
-            50% { 
-                transform: translate(-50px, 100px) scale(0.9) rotate(180deg); 
-            }
-            75% { 
-                transform: translate(-100px, -50px) scale(1.05) rotate(270deg); 
-            }
-        }
-        
-        /* ===== کلاس‌های رنگی گرادیانت ===== */
-        .gradient-text {
-            background: linear-gradient(135deg, #00ffd5 0%, #3a6ea5 50%, #00e5cc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, #00ffd5 0%, #1e3a5f 50%, #00b8a9 100%);
-        }
-        
-        /* گرادیانت خاکستری ملایم */
-        .gradient-gray {
-            background: linear-gradient(135deg, #9ca3af 0%, #6b7280 50%, #8a94a6 100%);
-        }
-        
-        /* ===== افکت نور نئونی ===== */
-        .neon-glow {
-            box-shadow: 0 0 20px rgba(0, 255, 213, 0.4),
-                        0 0 40px rgba(0, 255, 213, 0.2),
-                        0 0 60px rgba(0, 255, 213, 0.1);
-        }
-        
-        .neon-text-glow {
-            text-shadow: 0 0 10px rgba(0, 255, 213, 0.8),
-                         0 0 20px rgba(0, 255, 213, 0.5),
-                         0 0 30px rgba(0, 255, 213, 0.3);
-        }
-        
-        /* ===== انیمیشن بوردر نئونی ===== */
-        .neon-border {
-            position: relative;
-        }
-        
-        .neon-border::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #00ffd5, #1e3a5f, #00e5cc, #3a6ea5);
-            background-size: 400% 400%;
-            border-radius: inherit;
-            z-index: -1;
-            animation: neonBorderAnim 8s ease infinite;
-            opacity: 0.7;
-        }
-        
-        @keyframes neonBorderAnim {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        /* ===== ذرات شناور نئونی ===== */
-        .neon-particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            overflow: hidden;
-        }
-        
-        .neon-particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #00ffd5;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #00ffd5, 0 0 20px #00ffd5;
-            animation: particleFloat 15s infinite linear;
-            opacity: 0.6;
-        }
-        
-        @keyframes particleFloat {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.6;
-            }
-            90% {
-                opacity: 0.6;
-            }
-            100% {
-                transform: translateY(-100vh) rotate(720deg);
-                opacity: 0;
-            }
-        }
-        
-        /* ===== افکت hover کارت‌ها ===== */
-        .card-hover {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .card-hover:hover {
-            transform: translateY(-15px) scale(1.02);
-            box-shadow: 0 30px 60px -15px rgba(0, 255, 213, 0.3);
-        }
-        
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.5;
-            animation: blob 7s infinite;
-        }
-        
-        @keyframes blob {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-        
-        /* ===== انیمیشن‌های پیشرفته برای اسکرول ===== */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .fade-in-left {
-            opacity: 0;
-            transform: translateX(-80px);
-            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .fade-in-left.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        
-        .fade-in-right {
-            opacity: 0;
-            transform: translateX(80px);
-            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .fade-in-right.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        
-        .scale-in {
-            opacity: 0;
-            transform: scale(0.8);
-            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .scale-in.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
-        
-        .rotate-in {
-            opacity: 0;
-            transform: rotate(-10deg) scale(0.9);
-            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .rotate-in.visible {
-            opacity: 1;
-            transform: rotate(0deg) scale(1);
-        }
-        
-        section {
-            position: relative;
-        }
-        
-        .section-animate {
-            opacity: 0;
-            transform: translateY(60px) scale(0.95);
-            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        
-        .section-animate.visible {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-        
-        .stagger-animate > * {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        
-        .stagger-animate.visible > *:nth-child(1) { transition-delay: 0.1s; }
-        .stagger-animate.visible > *:nth-child(2) { transition-delay: 0.2s; }
-        .stagger-animate.visible > *:nth-child(3) { transition-delay: 0.3s; }
-        .stagger-animate.visible > *:nth-child(4) { transition-delay: 0.4s; }
-        .stagger-animate.visible > *:nth-child(5) { transition-delay: 0.5s; }
-        .stagger-animate.visible > *:nth-child(6) { transition-delay: 0.6s; }
-        
-        .stagger-animate.visible > * {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .reveal-up {
-            opacity: 0;
-            transform: translateY(80px);
-            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        
-        .reveal-up.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* ===== افکت تایپینگ ===== */
-        .typing-effect {
-            border-left: 3px solid #00ffd5;
-            animation: blink 0.7s infinite;
-        }
-        
-        @keyframes blink {
-            0%, 100% { border-color: #00ffd5; }
-            50% { border-color: transparent; }
-        }
-        
-        /* ===== انیمیشن نوار مهارت ===== */
-        .skill-bar {
-            transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        /* ===== افکت overlay پروژه‌ها ===== */
-        .project-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(0, 255, 213, 0.9) 0%, rgba(30, 58, 95, 0.9) 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .project-card:hover::before {
-            opacity: 1;
-        }
-        
-        .project-card:hover .project-info {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* ===== خط زیر لینک‌های نویگیشن ===== */
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(135deg, #00ffd5 0%, #3a6ea5 100%);
-            transition: width 0.3s ease;
-        }
-        
-        .nav-link:hover::after {
-            width: 100%;
-        }
-        
-        /* ===== جلوه بلور اکریلیک - تم Navy ===== */
-        .acrylic-blur {
-            background: rgba(10, 22, 40, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 255, 213, 0.1);
-        }
-        
-        .acrylic-blur-light {
-            background: rgba(0, 255, 213, 0.2);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(0, 255, 213, 0.3);
-        }
-        
-        /* جلوه بلور خاکستری ملایم */
-        .acrylic-blur-gray {
-            background: rgba(107, 114, 128, 0.15);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(156, 163, 175, 0.2);
-        }
-        
-        /* ===== سیستم تب‌های پروژه ===== */
-        .project-tab {
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .project-tab.active {
-            background: linear-gradient(135deg, #00ffd5 0%, #1e3a5f 100%);
-        }
-        
-        .project-content {
-            display: none;
-            animation: fadeInUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .project-content.active {
-            display: block;
-        }
-        
-        @keyframes fadeInUp {
-            from { 
-                opacity: 0; 
-                transform: translateY(30px); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0); 
-            }
-        }
-        
-        /* ===== انیمیشن‌های خاص ===== */
-        .float-animation {
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        
-        .pulse-animation {
-            animation: pulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-        
-        .slow-spin {
-            animation: slowSpin 20s linear infinite;
-        }
-        
-        @keyframes slowSpin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        .smooth-scroll {
-            scroll-behavior: smooth;
-        }
-        
-        /* ===== خط زیر عنوان بخش‌ها ===== */
-        .section-title {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .section-title::before {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 3px;
-            background: linear-gradient(135deg, #00ffd5 0%, #3a6ea5 100%);
-            border-radius: 2px;
-            transition: width 0.6s ease;
-        }
-        
-        .section-title.visible::before {
-            width: 100%;
-        }
-        
-        /* ===== آیکون‌های شبکه‌های اجتماعی ===== */
-        .social-icon {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .social-icon:hover {
-            transform: translateY(-8px) scale(1.2);
-            text-shadow: 0 10px 30px rgba(0, 255, 213, 0.5);
-            color: #00ffd5 !important;
-        }
-        
-        /* ===== کارت‌های شیشه‌ای - تم Navy ===== */
-        .glass-card {
-            background: rgba(20, 35, 60, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 255, 213, 0.1);
-            transition: all 0.4s ease;
-        }
-        
-        .glass-card:hover {
-            background: rgba(30, 50, 80, 0.7);
-            border-color: rgba(0, 255, 213, 0.4);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
-                        0 0 30px rgba(0, 255, 213, 0.1);
-        }
-        
-        /* ===== پس‌زمینه متن برای خوانایی بهتر ===== */
-        .text-backdrop {
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-radius: 12px;
-            padding: 8px 16px;
-        }
-        
-        /* سایه متن برای خوانایی بهتر */
-        h1, h2, h3, p, span, a, div {
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-        }
-        
-        .gradient-text {
-            text-shadow: 0 4px 20px rgba(0, 255, 213, 0.3);
-        }
-        
-        section {
-            background: rgba(10, 22, 40, 0.3);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-        }
-        
-        #home {
-            background: transparent;
-            backdrop-filter: none;
-        }
-        
-        /* ===== افکت کلیک ===== */
-        .clickable {
-            cursor: pointer;
-        }
-        
-        .click-ripple {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .click-ripple::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(0, 255, 213, 0.3);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s, opacity 0.3s;
-            opacity: 0;
-        }
-        
-        .click-ripple:active::after {
-            width: 200px;
-            height: 200px;
-            opacity: 1;
-            transition: 0s;
-        }
-        
-        /* ===== لوگو با افکت رفرش ===== */
-        .logo-refresh {
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .logo-refresh:hover {
-            transform: scale(1.1) rotate(360deg);
-            filter: drop-shadow(0 0 10px rgba(0, 255, 213, 0.5));
-        }
-        
-        .logo-refresh:active {
-            transform: scale(0.95);
-        }
-        
-        /* ===== جداکننده ===== */
-        .separator {
-            background: linear-gradient(135deg, #00ffd5, #3a6ea5, #00e5cc, #1e3a5f);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: bold;
-            animation: separatorGlow 3s ease-in-out infinite;
-        }
-        
-        @keyframes separatorGlow {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.3); }
-        }
-        
-        /* ===== نقاط نویگیشن بخش‌ها ===== */
-        .section-dot {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        }
-        
-        .section-dot:hover {
-            background: rgba(0, 255, 213, 0.4);
-            transform: scale(1.3);
-        }
-        
-        .section-dot .dot-inner {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: white;
-            transition: all 0.4s ease;
-        }
-        
-        .section-dot.active {
-            background: linear-gradient(135deg, #00ffd5 0%, #1e3a5f 100%);
-            transform: scale(1.2);
-            box-shadow: 0 0 15px rgba(0, 255, 213, 0.5);
-        }
-        
-        .section-dot.active .dot-inner {
-            width: 8px;
-            height: 8px;
-        }
-        
-        .section-dot::before {
-            content: attr(title);
-            position: absolute;
-            right: 25px;
-            background: rgba(10, 22, 40, 0.9);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            pointer-events: none;
-            border: 1px solid rgba(0, 255, 213, 0.2);
-        }
-        
-        .section-dot:hover::before {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        /* ===== رنگ‌های فیروزه‌ای ===== */
-        .text-turquoise {
-            color: #00ffd5;
-        }
-        
-        .border-turquoise {
-            border-color: #00ffd5;
-        }
-        
-        /* ===== استایل دکمه‌های دفترچه تلفن - طراحی جدید ===== */
-        /* دکمه اصلی دفترچه تلفن */
-        #contactBookBtn {
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        #contactBookBtn:hover {
-            transform: scale(1.15) rotate(5deg);
-        }
-        
-        #contactBookBtn.active {
-            background: linear-gradient(135deg, #00ffd5 0%, #1e3a5f 100%);
-            transform: scale(1.1);
-        }
-        
-        /* کانتینر دکمه‌های راه ارتباطی */
-        #contactButtons {
-            pointer-events: none;
-        }
-        
-        #contactButtons.active {
-            pointer-events: auto;
-        }
-        
-        /* هر دکمه راه ارتباطی */
-        .contact-btn {
-            transform: translateY(100px) scale(0);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-        
-        .contact-btn.show {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-        }
-        
-        /* تاخیر برای هر دکمه (انیمیشن پله‌ای) */
-        .contact-btn:nth-child(1).show { transition-delay: 0.05s; }
-        .contact-btn:nth-child(2).show { transition-delay: 0.1s; }
-        .contact-btn:nth-child(3).show { transition-delay: 0.15s; }
-        .contact-btn:nth-child(4).show { transition-delay: 0.2s; }
-        .contact-btn:nth-child(5).show { transition-delay: 0.25s; }
-        .contact-btn:nth-child(6).show { transition-delay: 0.3s; }
-        .contact-btn:nth-child(7).show { transition-delay: 0.35s; }
-        
-        .contact-btn:hover {
-            transform: translateY(0) scale(1.15);
-            box-shadow: 0 0 25px rgba(0, 255, 213, 0.6);
-        }
-        
-        /* Tooltip برای دکمه‌های راه ارتباطی */
-        .contact-btn::before {
-            content: attr(data-tooltip);
-            position: absolute;
-            right: 60px;
-            background: rgba(10, 22, 40, 0.95);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            pointer-events: none;
-            border: 1px solid rgba(0, 255, 213, 0.3);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        .contact-btn:hover::before {
-            opacity: 1;
-            visibility: visible;
-            right: 65px;
-        }
-        
-        /* ===== بهبود ریسپانسیو - حل مشکل کناره‌های خالی در موبایل ===== */
-        @media (max-width: 1024px) {
-            .max-w-6xl {
-                max-width: 100%;
-                padding-left: 1.5rem;
-                padding-right: 1.5rem;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            /* کاهش اندازه بلوب‌های پس‌زمینه در موبایل */
-            .bg-blob {
-                filter: blur(80px);
-                opacity: 0.3;
-            }
-            
-            .bg-blob-1 {
-                width: 300px;
-                height: 300px;
-            }
-            
-            .bg-blob-2 {
-                width: 250px;
-                height: 250px;
-            }
-            
-            .bg-blob-3 {
-                width: 200px;
-                height: 200px;
-            }
-            
-            .bg-blob-4 {
-                width: 175px;
-                height: 175px;
-            }
-            
-            .bg-blob-5 {
-                width: 225px;
-                height: 225px;
-            }
-            
-            .bg-blob-6 {
-                width: 190px;
-                height: 190px;
-            }
-            
-            .blob {
-                filter: blur(40px);
-                opacity: 0.3;
-            }
-            
-            #home .blob {
-                width: 150px !important;
-                height: 150px !important;
-            }
-            
-            /* بهبود فوتر در موبایل */
-            footer p {
-                font-size: 0.75rem;
-                line-height: 1.6;
-            }
-            
-            /* بهبود فاصله‌ها در موبایل */
-            .grid.grid-cols-2 {
-                gap: 0.75rem;
-            }
-            
-            .glass-card.p-4 {
-                padding: 0.75rem;
-            }
-            
-            .glass-card .text-3xl {
-                font-size: 1.5rem;
-            }
-            
-            /* بهبود تجارب کاری در موبایل */
-            #experience .pr-16 {
-                padding-right: 3rem;
-            }
-            
-            #experience .right-4 {
-                right: 0.5rem;
-            }
-            
-            #experience .right-6 {
-                right: 1rem;
-            }
-            
-            /* بهبود تب‌های پروژه در موبایل */
-            .project-tab {
-                padding: 0.5rem 1rem;
-                font-size: 0.875rem;
-            }
-            
-            /* بهبود بخش تماس در موبایل */
-            #contact .w-14 {
-                width: 3rem;
-                height: 3rem;
-            }
-            
-            #contact .w-14 i {
-                font-size: 1.25rem;
-            }
-            
-            #contact .glass-card {
-                padding: 0.75rem;
-            }
-            
-            #contact .glass-card span {
-                font-size: 0.75rem;
-                word-break: break-all;
-            }
-            
-            /* بهبود مهارت‌ها در موبایل */
-            #skills .grid-cols-3 {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            #skills .glass-card i {
-                font-size: 2rem;
-            }
-            
-            #skills .glass-card .text-sm {
-                font-size: 0.7rem;
-            }
-            
-            /* کاهش اندازه ذرات نئونی */
-            .neon-particle {
-                width: 2px;
-                height: 2px;
-            }
-            
-            /* بهبود دکمه‌های شناور در موبایل */
-            #backToTop,
-            #contactBookBtn {
-                bottom: 1rem !important;
-                width: 2.75rem;
-                height: 2.75rem;
-            }
-            
-            #backToTop {
-                left: 1rem !important;
-            }
-            
-            #contactBookBtn {
-                left: 1rem !important;
-            }
-            
-            /* جابجایی دکمه‌ها در موبایل */
-            #contactButtons {
-                bottom: 4.5rem !important;
-                left: 1rem !important;
-            }
-            
-            .contact-btn {
-                width: 2.5rem;
-                height: 2.5rem;
-            }
-            
-            .contact-btn i {
-                font-size: 1.1rem;
-            }
-            
-            /* مخفی کردن tooltip در موبایل */
-            .contact-btn::before {
-                display: none;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            #skills .grid-cols-3 {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .text-5xl {
-                font-size: 2.25rem;
-            }
-            
-            .text-4xl {
-                font-size: 1.75rem;
-            }
-            
-            .text-2xl {
-                font-size: 1.25rem;
-            }
-            
-            .text-xl {
-                font-size: 1rem;
-            }
-            
-            section {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
-            
-            .social-icon {
-                font-size: 1.25rem !important;
-            }
-            
-            #home .flex.gap-3 {
-                gap: 0.5rem;
-            }
-        }
-        
-        @media (max-width: 360px) {
-            .text-5xl {
-                font-size: 1.875rem;
-            }
-            
-            .text-4xl {
-                font-size: 1.5rem;
-            }
-            
-            #skills .grid-cols-3,
-            #skills .grid-cols-2 {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.5rem;
-            }
-            
-            #skills .glass-card {
-                padding: 0.5rem;
-            }
-            
-            #skills .glass-card i {
-                font-size: 1.5rem;
-            }
-        }
-        
-        /* ===== استایل‌های پرینت برای دسترسی‌پذیری ===== */
-        @media print {
-            .neon-particles,
-            #animated-bg,
-            #backToTop,
-            #contactBookBtn,
-            #contactButtons,
-            #sectionDots {
-                display: none !important;
-            }
-            
-            body {
-                background: white !important;
-                color: black !important;
-            }
-        }
-        
-        /* ===== تنظیمات برای کاربران با ترجیح حرکت کمتر ===== */
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-    </style>
+.reset-colors {
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: 10px;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  margin: 0;
+  padding: 24px;
+  padding-top: 30px;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+h1 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 18px;
+  color: var(--accent);
+  font-weight: bold;
+  text-shadow: 0 2px 4px var(--shadow-color);
+}
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.group { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+
+/* گروه دکمه‌های دیباگ و فرمت */
+.action-group {
+  display: flex;
+  background: var(--button-bg);
+  border-radius: 10px;
+  box-shadow: 0 0 12px var(--shadow-color);
+  overflow: hidden;
+  border: 1px solid var(--accent);
+}
+
+.action-group button {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  border-right: 1px solid rgba(0,0,0,0.1);
+}
+
+.action-group button:last-child {
+  border-right: none;
+}
+
+.action-group button i {
+  color: var(--icon-color);
+  transition: color 0.25s ease;
+}
+
+.action-group button:hover {
+  background: var(--accent);
+  transform: scale(1.05);
+  box-shadow: 0 0 18px var(--glow-color);
+}
+
+.action-group button:hover i {
+  color: white;
+}
+
+.device-button, .action-btn {
+  width: 44px; height: 44px; border-radius: 10px; border: none;
+  background: var(--button-bg);
+  display: inline-flex; justify-content: center; align-items: center;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 0 12px var(--shadow-color);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.device-button i, .action-btn i { color: var(--icon-color); }
+.device-button:hover, .action-btn:hover {
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 0 18px var(--glow-color);
+}
+.device-button.active {
+  background: var(--accent);
+}
+.device-button.active i {
+  color: white;
+}
+
+/* دکمه پاپ‌آپ */
+.popup-button {
+  width: 44px; height: 44px; border-radius: 10px; border: none;
+  background: var(--button-bg);
+  display: inline-flex; justify-content: center; align-items: center;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 0 12px var(--shadow-color);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+}
+.popup-button i { color: var(--icon-color); }
+.popup-button:hover {
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 0 18px var(--glow-color);
+}
+
+/* منوی پاپ‌آپ */
+.popup-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--button-bg);
+  border-radius: 10px;
+  box-shadow: 0 0 12px var(--shadow-color);
+  padding: 8px;
+  z-index: 100;
+  display: none;
+  min-width: 180px;
+  border: 1px solid var(--accent);
+}
+.popup-menu.open {
+  display: block;
+}
+.popup-menu button {
+  width: 100%;
+  margin: 4px 0;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: none;
+  background: var(--button-bg);
+  color: var(--text-color);
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.25s ease;
+}
+.popup-menu button i {
+  color: var(--icon-color);
+  width: 20px;
+  text-align: center;
+}
+.popup-menu button:hover {
+  background: var(--accent);
+  color: #fff;
+}
+.popup-menu button:hover i {
+  color: #fff;
+}
+.popup-menu .size-info {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-right: auto;
+}
+
+.dropdown { position: relative; }
+.dropdown-content {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  background: var(--button-bg); border-radius: 10px; box-shadow: 0 0 12px var(--shadow-color);
+  padding: 8px; z-index: 10; display: none; min-width: 160px;
+}
+.dropdown.open .dropdown-content { display: block; }
+.dropdown-content button {
+  width: 100%; margin: 4px 0; padding: 8px 10px; font-size: 14px;
+  border: none; background: var(--button-bg); color: var(--text-color);
+  cursor: pointer; border-radius: 10px;
+}
+.dropdown-content button:hover { background: var(--accent); color: #fff; }
+select, input[type="number"] {
+  padding: 8px 10px; border-radius: 10px; border: 1px solid var(--accent);
+  background: var(--button-bg); color: var(--text-color); font-size: 14px;
+  box-shadow: 0 0 8px var(--shadow-color);
+}
+
+/* استایل برای پنل ارتفاع */
+.height-panel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: var(--button-bg);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 8px var(--shadow-color);
+  font-size: 14px;
+}
+
+.height-panel input {
+  width: 70px;
+  border: none;
+  background: transparent;
+  color: var(--text-color);
+  font-size: 14px;
+  text-align: center;
+}
+
+.height-panel input:focus {
+  outline: none;
+}
+
+/* سیستم تب */
+.tabs-container {
+  margin-top: 16px;
+  background: var(--button-bg);
+  border: 1px solid var(--accent);
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 0 12px var(--shadow-color);
+  overflow: hidden;
+}
+
+.tabs-header {
+  display: flex;
+  background: var(--bg-color);
+  border-bottom: 1px solid var(--accent);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tabs-header::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(0,0,0,0.05);
+  border-right: 1px solid var(--accent);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  max-width: 200px;
+  position: relative;
+  white-space: nowrap;
+}
+
+.tab.active {
+  background: var(--button-bg);
+  border-bottom: 2px solid var(--accent);
+}
+
+.tab:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.tab.active:hover {
+  background: var(--button-bg);
+  color: var(--text-color);
+}
+
+.tab-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: inherit;
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+  min-width: 60px;
+}
+
+.tab-name.editing {
+  background: rgba(255,255,255,0.3);
+  border: 1px solid var(--accent);
+  cursor: text;
+}
+
+.tab-close {
+  margin-right: 6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255,0,0,0.7);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+  flex-shrink: 0;
+}
+
+.tab-close:hover {
+  opacity: 1;
+  background: #ff0000;
+}
+
+.add-tab {
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 16px;
+  transition: all 0.3s ease;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.add-tab:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.editor {
+  width: 100%; min-height: 220px;
+  padding: 12px; border-radius: 0 0 10px 10px; border: none;
+  background: var(--button-bg); color: var(--text-color);
+  font-family: monospace; font-size: 14px; resize: vertical;
+  border-top: 1px solid var(--accent);
+}
+.preview-wrap {
+  margin-top: 16px;
+  background: var(--button-bg);
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  box-shadow: 0 0 12px var(--shadow-color);
+  overflow: hidden;
+}
+.preview-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 12px; border-bottom: 1px solid var(--accent);
+  font-size: 13px;
+}
+.chip {
+  padding: 4px 8px; border-radius: 10px;
+  background: rgba(0,0,0,0.06);
+  border: 1px solid var(--accent);
+  font-size: 12px;
+}
+iframe {
+  display: block;
+  width: 100%;
+  height: 220px;
+  background: #fff;
+  border: none;
+}
+
+/* فوتر */
+footer { 
+  text-align: center; 
+  margin-top: 18px; 
+  font-size: 13px; 
+  opacity: 0.85;
+  line-height: 1.8;
+}
+
+footer .separator {
+  color: var(--accent);
+  text-shadow: 0 0 8px var(--shadow-color);
+  font-weight: bold;
+  margin: 0 2px;
+}
+
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--accent);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.3s ease;
+}
+.notification.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* مودال دیباگ */
+.debug-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.debug-content {
+  background: var(--button-bg);
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+  box-shadow: 0 0 20px var(--shadow-color);
+}
+
+.debug-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--accent);
+}
+
+.debug-header h3 {
+  margin: 0;
+}
+
+.debug-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+.debug-info {
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-color);
+  white-space: pre-wrap;
+}
+
+@media (max-width: 768px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .group {
+    justify-content: center;
+  }
+  .color-controls {
+    position: relative;
+    top: auto;
+    left: auto;
+    opacity: 1;
+    margin-bottom: 10px;
+  }
+  body {
+    padding-top: 50px;
+  }
+}
+</style>
 </head>
-<body class="text-white overflow-x-hidden">
-
-<!-- ===== ذرات نئونی شناور (جلوه بصری) ===== -->
-<div class="neon-particles" aria-hidden="true">
-    <div class="neon-particle" style="left: 10%; animation-delay: 0s;"></div>
-    <div class="neon-particle" style="left: 20%; animation-delay: 2s;"></div>
-    <div class="neon-particle" style="left: 30%; animation-delay: 4s;"></div>
-    <div class="neon-particle" style="left: 40%; animation-delay: 1s;"></div>
-    <div class="neon-particle" style="left: 50%; animation-delay: 3s;"></div>
-    <div class="neon-particle" style="left: 60%; animation-delay: 5s;"></div>
-    <div class="neon-particle" style="left: 70%; animation-delay: 2.5s;"></div>
-    <div class="neon-particle" style="left: 80%; animation-delay: 4.5s;"></div>
-    <div class="neon-particle" style="left: 90%; animation-delay: 1.5s;"></div>
-    <div class="neon-particle" style="left: 15%; animation-delay: 6s;"></div>
-    <div class="neon-particle" style="left: 35%; animation-delay: 7s;"></div>
-    <div class="neon-particle" style="left: 55%; animation-delay: 8s;"></div>
-    <div class="neon-particle" style="left: 75%; animation-delay: 9s;"></div>
-    <div class="neon-particle" style="left: 95%; animation-delay: 10s;"></div>
+<body>
+<!-- نوار رنگی -->
+<div class="color-bar" id="colorBar"></div>
+<div class="color-controls">
+  <input type="color" id="primaryColorPicker" class="color-picker" value="#2563eb" title="رنگ اصلی">
+  <input type="color" id="secondaryColorPicker" class="color-picker" value="#00aaff" title="رنگ فرعی">
+  <button class="reset-colors" id="resetColors" title="بازگشت به حالت پیشفرض">
+    <i class="fas fa-undo"></i>
+  </button>
 </div>
 
-<!-- ===== پس‌زمینه پویا با بلوب‌های متحرک ===== -->
-<div id="animated-bg" aria-hidden="true">
-    <div class="bg-blob bg-blob-1"></div>
-    <div class="bg-blob bg-blob-2"></div>
-    <div class="bg-blob bg-blob-3"></div>
-    <div class="bg-blob bg-blob-4"></div>
-    <div class="bg-blob bg-blob-5"></div>
-    <div class="bg-blob bg-blob-6"></div>
+<h1 id="title">SMART HTML Viewer</h1>
+<div class="toolbar">
+  <div class="group">
+    <button class="device-button active" data-device="laptop" title="لپ‌تاپ"><i class="fas fa-laptop"></i></button>
+    <button class="device-button" data-device="tablet" title="تبلت"><i class="fas fa-tablet-alt"></i></button>
+    <button class="device-button" data-device="mobile" title="موبایل"><i class="fas fa-mobile-alt"></i></button>
+    
+    <!-- دکمه پاپ‌آپ پیش‌نمایش -->
+    <div class="dropdown" id="popupDropdown">
+      <button class="popup-button" title="باز کردن در پنجره جدید"><i class="fas fa-external-link-alt"></i></button>
+      <div class="popup-menu" id="popupMenu">
+        <button data-popup="laptop">
+          <i class="fas fa-laptop"></i>
+          <span>لپ‌تاپ</span>
+          <span class="size-info">1366×768</span>
+        </button>
+        <button data-popup="tablet">
+          <i class="fas fa-tablet-alt"></i>
+          <span>تبلت</span>
+          <span class="size-info">768×1024</span>
+        </button>
+        <button data-popup="mobile">
+          <i class="fas fa-mobile-alt"></i>
+          <span>موبایل</span>
+          <span class="size-info">375×667</span>
+        </button>
+      </div>
+    </div>
+    
+    <div class="height-panel">
+      <span id="heightLabel">ارتفاع:</span>
+      <input id="heightInput" type="number" min="200" max="1200" step="20" value="220">
+      <span>px</span>
+    </div>
+    <button class="action-btn" id="autoHeightBtn" title="تنظیم خودکار ارتفاع"><i class="fas fa-arrows-alt-v"></i></button>
+    <div class="action-group">
+      <button id="debugBtn" title="دیباگ کد"><i class="fas fa-bug"></i></button>
+      <button id="formatBtn" title="مرتب‌سازی کد"><i class="fas fa-align-left"></i></button>
+    </div>
+  </div>
+  <div class="group">
+    <button class="action-btn" id="runBtn" title="اجرای کد"><i class="fas fa-play"></i></button>
+    <button class="action-btn" id="copyBtn" title="کپی"><i class="fas fa-copy"></i></button>
+    <div class="dropdown" id="downloadDropdown">
+      <button class="action-btn" title="دانلود"><i class="fas fa-download"></i></button>
+      <div class="dropdown-content">
+        <button data-type="html">دانلود HTML</button>
+        <button data-type="txt">دانلود TXT</button>
+      </div>
+    </div>
+    <select id="languageSelect" title="زبان">
+      <option value="fa">فارسی</option>
+      <option value="en">English</option>
+      <option value="ar">العربية</option>
+      <option value="fr">Français</option>
+      <option value="es">Español</option>
+      <option value="zh">中文</option>
+      <option value="de">Deutsch</option>
+    </select>
+    <button class="action-btn" id="infoBtn" title="اطلاعات"><i class="fas fa-info-circle"></i></button>
+    <button class="action-btn" id="themeToggle" title="تغییر حالت"><i class="fas fa-moon"></i></button>
+  </div>
 </div>
-
-<!-- ===== نوار نویگیشن بالای صفحه ===== -->
-<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" role="navigation" aria-label="منوی اصلی">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4">
-        <div class="flex justify-between items-center">
-            <!-- لوگو با قابلیت رفرش صفحه با کلیک -->
-            <div class="flex items-center">
-                <img src="https://raw.githubusercontent.com/Nima-Shaheswarzadeh/Nima-Shaheswarzadeh.github.io/main/Picture/Nima%20LOGO.png" 
-                     alt="لوگوی نیما شهسوارزاده" 
-                     class="w-10 h-10 rounded-full object-cover logo-refresh neon-glow"
-                     onclick="location.reload()"
-                     title="کلیک برای رفرش صفحه"
-                     loading="lazy">
-            </div>
-            
-            <!-- منوی دسکتاپ با افکت بلور -->
-            <div id="desktopMenu" class="hidden md:flex gap-2 acrylic-blur rounded-full px-6 py-2">
-                <a href="#home" class="nav-link relative text-gray-300 hover:text-turquoise transition px-3 py-1">خانه</a>
-                <a href="#about" class="nav-link relative text-gray-300 hover:text-turquoise transition px-3 py-1">درباره من</a>
-                <a href="#skills" class="nav-link relative text-gray-300 hover:text-turquoise transition px-3 py-1">مهارت‌ها</a>
-                <a href="#projects" class="nav-link relative text-gray-300 hover:text-turquoise transition px-3 py-1">پروژه‌ها</a>
-                <a href="#experience" class="nav-link relative text-gray-300 hover:text-turquoise transition px-3 py-1">تجارب</a>
-                <a href="#contact" class="nav-link relative text-gray-300 hover:text-turquoise transition px-3 py-1">تماس</a>
-            </div>
-            
-            <!-- دکمه باز کردن منوی موبایل -->
-            <button id="menuBtn" class="md:hidden text-2xl acrylic-blur p-2 rounded-lg" aria-label="باز کردن منو" aria-expanded="false">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-        
-        <!-- منوی موبایل با افکت بلور (به صورت پیش‌فرض مخفی) -->
-        <div id="mobileMenu" class="hidden md:hidden mt-4 pb-4 acrylic-blur rounded-2xl" role="menu">
-            <div class="flex flex-col gap-4 p-4">
-                <a href="#home" class="text-gray-300 hover:text-turquoise transition hover:bg-white/10 px-4 py-2 rounded-lg" role="menuitem">خانه</a>
-                <a href="#about" class="text-gray-300 hover:text-turquoise transition hover:bg-white/10 px-4 py-2 rounded-lg" role="menuitem">درباره من</a>
-                <a href="#skills" class="text-gray-300 hover:text-turquoise transition hover:bg-white/10 px-4 py-2 rounded-lg" role="menuitem">مهارت‌ها</a>
-                <a href="#projects" class="text-gray-300 hover:text-turquoise transition hover:bg-white/10 px-4 py-2 rounded-lg" role="menuitem">پروژه‌ها</a>
-                <a href="#experience" class="text-gray-300 hover:text-turquoise transition hover:bg-white/10 px-4 py-2 rounded-lg" role="menuitem">تجارب</a>
-                <a href="#contact" class="text-gray-300 hover:text-turquoise transition hover:bg-white/10 px-4 py-2 rounded-lg" role="menuitem">تماس</a>
-            </div>
-        </div>
+<!-- سیستم تب -->
+<div class="tabs-container">
+  <div class="tabs-header" id="tabsHeader">
+    <div class="tab active" data-tab="0">
+      <span class="tab-name">فایل جدید</span>
+      <button class="tab-close">&times;</button>
     </div>
-</nav>
-
-<!-- ===== بخش صفحه اصلی (Hero Section) ===== -->
-<section id="home" class="min-h-screen flex items-center justify-center relative overflow-hidden">
-    <!-- بلوب‌های انیمیشن‌دار با رنگ‌های فیروزه‌ای -->
-    <div class="blob w-72 h-72 bg-cyan-500 top-20 right-20" aria-hidden="true"></div>
-    <div class="blob w-96 h-96 bg-teal-400 bottom-20 left-20" style="animation-delay: 2s;" aria-hidden="true"></div>
-    <div class="blob w-64 h-64 bg-blue-800 top-1/2 left-1/2" style="animation-delay: 4s;" aria-hidden="true"></div>
-    
-    <div class="relative z-10 text-center px-4 sm:px-6">
-        <!-- عکس پروفایل با انیمیشن شناور -->
-        <div class="mb-8 scale-in float-animation">
-            <img src="https://raw.githubusercontent.com/Nima-Shaheswarzadeh/Nima-Shaheswarzadeh.github.io/main/Picture/Nima%20Person%201.1.png" 
-                 alt="عکس پروفایل نیما شهسوارزاده" 
-                 class="w-32 h-32 sm:w-40 sm:h-40 rounded-full mx-auto border-4 border-turquoise shadow-2xl object-cover pulse-animation neon-glow"
-                 style="border-color: #00ffd5;"
-                 loading="eager">
-        </div>
-        
-        <!-- متن خوشامدگویی -->
-        <p class="text-turquoise text-base sm:text-lg mb-4 fade-in neon-text-glow" style="transition-delay: 0.2s; color: #00ffd5;">خوش اومدین ، من</p>
-        <h1 class="text-4xl sm:text-5xl md:text-7xl font-black mb-4 fade-in" style="transition-delay: 0.4s;">
-            <span class="gradient-text">نیما شهسوارزاده</span>
-        </h1>
-        
-        <!-- افکت تایپینگ برای نمایش مهارت‌ها -->
-        <div class="text-lg sm:text-xl md:text-2xl text-gray-400 mb-8 h-8 fade-in" style="transition-delay: 0.6s;">
-            <span id="typingText" class="typing-effect pl-2"></span>
-        </div>
-        
-        <!-- دکمه بیشتر بدانید - باز کردن منو -->
-        <div class="flex gap-4 justify-center mb-12 fade-in" style="transition-delay: 0.8s;">
-            <button id="moreInfoBtn" class="gradient-bg px-6 sm:px-8 py-3 rounded-full font-bold hover:opacity-90 transition transform hover:scale-105 text-sm sm:text-base neon-glow">
-                <i class="fas fa-bars ml-2"></i>
-                بیشتر بدانید
-            </button>
-        </div>
-        
-        <!-- آیکون‌های شبکه‌های اجتماعی -->
-        <div class="flex gap-3 sm:gap-4 justify-center flex-wrap fade-in" style="transition-delay: 1s;">
-            <!-- ایتا -->
-            <a href="https://eitaa.com/Nima_Shaheswarzadeh" target="_blank" rel="noopener noreferrer" class="social-icon text-xl sm:text-2xl text-gray-400 hover:text-turquoise" title="ایتا" aria-label="پروفایل ایتا">
-                <i class="fas fa-comment-dots"></i>
-            </a>
-            <!-- تلگرام -->
-            <a href="https://t.me/Nima_Shaheswarzadeh" target="_blank" rel="noopener noreferrer" class="social-icon text-xl sm:text-2xl text-gray-400 hover:text-turquoise" title="تلگرام" aria-label="پروفایل تلگرام">
-                <i class="fab fa-telegram"></i>
-            </a>
-            <!-- واتساپ -->
-            <a href="https://wa.me/989371164025" target="_blank" rel="noopener noreferrer" class="social-icon text-xl sm:text-2xl text-gray-400 hover:text-turquoise" title="واتساپ" aria-label="پروفایل واتساپ">
-                <i class="fab fa-whatsapp"></i>
-            </a>
-            <!-- جیمیل -->
-            <a href="mailto:Nima.Shaheswarzadeh@gmail.com" class="social-icon text-xl sm:text-2xl text-gray-400 hover:text-turquoise" title="ایمیل" aria-label="ارسال ایمیل">
-                <i class="fas fa-envelope"></i>
-            </a>
-            <!-- گیت هاب -->
-            <a href="https://github.com/Nima-Shaheswarzadeh" target="_blank" rel="noopener noreferrer" class="social-icon text-xl sm:text-2xl text-gray-400 hover:text-turquoise" title="گیت‌هاب" aria-label="پروفایل گیت‌هاب">
-                <i class="fab fa-github"></i>
-            </a>
-            <!-- دونیت - حمایت مالی -->
-            <a href="https://daramet.com/Nima-Sh" target="_blank" rel="noopener noreferrer" class="social-icon text-xl sm:text-2xl text-gray-400 hover:text-turquoise" title="حمایت مالی" aria-label="حمایت مالی">
-                <i class="fas fa-heart"></i>
-            </a>
-            <!-- تماس تلفنی -->
-            <a href="tel:09371164025" class="social-icon text-xl sm:text-2xl text-gray-400 hover:text-turquoise" title="تماس" aria-label="تماس تلفنی">
-                <i class="fas fa-phone"></i>
-            </a>
-        </div>
+    <button class="add-tab" id="addTabBtn">
+      <i class="fas fa-plus"></i>
+    </button>
+  </div>
+  <textarea id="htmlInput" class="editor" placeholder="کد HTML خود را اینجا بنویسید..."></textarea>
+</div>
+<div class="preview-wrap">
+  <div class="preview-header">
+    <div class="left">
+      <span id="previewLabel" class="chip">پیش‌نمایش</span>
+      <span id="deviceLabel" class="chip">عرض: 100%</span>
     </div>
-    
-    <!-- نشانگر اسکرول پایین صفحه -->
-    <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce" aria-hidden="true">
-        <i class="fas fa-chevron-down text-2xl" style="color: #00ffd5;"></i>
-    </div>
-</section>
-
-<!-- ===== بخش درباره من ===== -->
-<section id="about" class="py-16 sm:py-20 px-4 sm:px-6 section-animate">
-    <div class="max-w-6xl mx-auto">
-        <div class="fade-in text-center mb-12 sm:mb-16">
-            <h2 class="text-3xl sm:text-4xl font-bold mb-4 section-title">درباره <span class="gradient-text">من</span></h2>
-            <div class="w-24 h-1 gradient-bg mx-auto rounded-full neon-glow"></div>
-        </div>
-        
-        <div class="grid md:grid-cols-2 gap-8 sm:gap-12 items-center">
-            <!-- تصویر درباره من -->
-            <div class="fade-in-left">
-                <div class="relative rotate-in">
-                    <div class="absolute inset-0 gradient-bg rounded-2xl transform rotate-6 neon-glow"></div>
-                    <img src="https://raw.githubusercontent.com/Nima-Shaheswarzadeh/Nima-Shaheswarzadeh.github.io/main/Picture/Nima%20Person%209.16.png" 
-                         alt="تصویر نیما شهسوارزاده" 
-                         class="relative rounded-2xl shadow-2xl w-full object-cover hover:scale-105 transition-transform duration-500"
-                         loading="lazy">
-                </div>
-            </div>
-            
-            <!-- متن و آمار -->
-            <div class="fade-in-right">
-                <h3 class="text-xl sm:text-2xl font-bold mb-4">یکمی از خودم . . .</h3>
-                <p class="text-gray-400 leading-relaxed mb-6 text-sm sm:text-base">
-                    من یک توسعه‌دهنده و طراح با علاقه به تکنولوژی هستم. 
-                    علاقه‌مند به یادگیری تکنولوژی‌های جدید و ساختن محصولاتی که تجربه کاربری عالی ارائه می‌دهند.
-                </p>
-                <p class="text-gray-400 leading-relaxed mb-8 text-sm sm:text-base">
-                    تمرکز اصلی من روی Unity، C# و طراحی گرافیک است. 
-                    به کار خلاقانه و حل مسائل پیچیده علاقه‌مندم.
-                </p>
-                
-                <!-- آمار و ارقام -->
-                <div class="grid grid-cols-2 gap-3 sm:gap-4 mb-8">
-                    <div class="glass-card p-3 sm:p-4 rounded-xl text-center card-hover">
-                        <div class="text-2xl sm:text-3xl font-bold gradient-text">+۵</div>
-                        <div class="text-gray-400 text-xs sm:text-sm">مشتری راضی</div>
-                    </div>
-                    <div class="glass-card p-3 sm:p-4 rounded-xl text-center card-hover">
-                        <div class="text-2xl sm:text-3xl font-bold gradient-text">+۵</div>
-                        <div class="text-gray-400 text-xs sm:text-sm">پروژه موفق</div>
-                    </div>
-                    <div class="glass-card p-3 sm:p-4 rounded-xl text-center card-hover">
-                        <div class="text-2xl sm:text-3xl font-bold gradient-text">+۱</div>
-                        <div class="text-gray-400 text-xs sm:text-sm">سال تجربه</div>
-                    </div>
-                    <div class="glass-card p-3 sm:p-4 rounded-xl text-center card-hover">
-                        <div class="text-2xl sm:text-3xl font-bold gradient-text">+۲</div>
-                        <div class="text-gray-400 text-xs sm:text-sm">جایزه</div>
-                    </div>
-                </div>
-                
-                <!-- دکمه دانلود رزومه -->
-                <a href="https://raw.githubusercontent.com/Nima-Shaheswarzadeh/Nima-Shaheswarzadeh.github.io/main/Picture/Nima%20Rezome.jpeg" 
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   class="inline-flex items-center gap-2 gradient-bg px-6 py-3 rounded-full font-bold hover:opacity-90 transition hover:scale-105 text-sm sm:text-base neon-glow">
-                    <i class="fas fa-download"></i>
-                    دانلود رزومه
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ===== بخش مهارت‌های فنی و ابزارها ===== -->
-<section id="skills" class="py-16 sm:py-20 px-4 sm:px-6 section-animate">
-    <div class="max-w-6xl mx-auto">
-        <div class="fade-in text-center mb-12 sm:mb-16">
-            <h2 class="text-3xl sm:text-4xl font-bold mb-4 section-title">مهارت‌های <span class="gradient-text">من</span></h2>
-            <div class="w-24 h-1 gradient-bg mx-auto rounded-full neon-glow"></div>
-        </div>
-        
-        <div class="grid md:grid-cols-2 gap-8 sm:gap-12">
-            <!-- مهارت‌های فنی با نوار پیشرفت -->
-            <div class="fade-in-left">
-                <h3 class="text-lg sm:text-xl font-bold mb-6 flex items-center gap-2">
-                    <i class="fas fa-code" style="color: #00ffd5;"></i>
-                    مهارت‌های فنی
-                </h3>
-                
-                <div class="space-y-5 sm:space-y-6">
-                    <!-- HTML - 30% -->
-                    <div class="scale-in" style="transition-delay: 0.1s;">
-                        <div class="flex justify-between mb-2 text-sm sm:text-base">
-                            <span>HTML</span>
-                            <span style="color: #00ffd5;">30%</span>
-                        </div>
-                        <div class="h-3 bg-gray-700/50 rounded-full overflow-hidden">
-                            <div class="skill-bar h-full gradient-bg rounded-full" data-width="30%"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- CSS / JavaScript - 40% -->
-                    <div class="scale-in" style="transition-delay: 0.2s;">
-                        <div class="flex justify-between mb-2 text-sm sm:text-base">
-                            <span>CSS / JavaScript</span>
-                            <span style="color: #00ffd5;">40%</span>
-                        </div>
-                        <div class="h-3 bg-gray-700/50 rounded-full overflow-hidden">
-                            <div class="skill-bar h-full gradient-bg rounded-full" data-width="40%"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Python - 50% -->
-                    <div class="scale-in" style="transition-delay: 0.3s;">
-                        <div class="flex justify-between mb-2 text-sm sm:text-base">
-                            <span>Python</span>
-                            <span style="color: #00ffd5;">50%</span>
-                        </div>
-                        <div class="h-3 bg-gray-700/50 rounded-full overflow-hidden">
-                            <div class="skill-bar h-full gradient-bg rounded-full" data-width="50%"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- C# / Unity - 60% -->
-                    <div class="scale-in" style="transition-delay: 0.4s;">
-                        <div class="flex justify-between mb-2 text-sm sm:text-base">
-                            <span>C# / Unity</span>
-                            <span style="color: #00ffd5;">60%</span>
-                        </div>
-                        <div class="h-3 bg-gray-700/50 rounded-full overflow-hidden">
-                            <div class="skill-bar h-full gradient-bg rounded-full" data-width="60%"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Photoshop / AI - 70% -->
-                    <div class="scale-in" style="transition-delay: 0.5s;">
-                        <div class="flex justify-between mb-2 text-sm sm:text-base">
-                            <span>Photoshop / ai</span>
-                            <span style="color: #00ffd5;">70%</span>
-                        </div>
-                        <div class="h-3 bg-gray-700/50 rounded-full overflow-hidden">
-                            <div class="skill-bar h-full gradient-bg rounded-full" data-width="70%"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Scratch - 80% -->
-                    <div class="scale-in" style="transition-delay: 0.6s;">
-                        <div class="flex justify-between mb-2 text-sm sm:text-base">
-                            <span>Scratch</span>
-                            <span style="color: #00ffd5;">80%</span>
-                        </div>
-                        <div class="h-3 bg-gray-700/50 rounded-full overflow-hidden">
-                            <div class="skill-bar h-full gradient-bg rounded-full" data-width="80%"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Visual Studio / VS Code - 90% -->
-                    <div class="scale-in" style="transition-delay: 0.7s;">
-                        <div class="flex justify-between mb-2 text-sm sm:text-base">
-                            <span>Visual Studio / VS Code</span>
-                            <span style="color: #00ffd5;">90%</span>
-                        </div>
-                        <div class="h-3 bg-gray-700/50 rounded-full overflow-hidden">
-                            <div class="skill-bar h-full gradient-bg rounded-full" data-width="90%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- ابزارها و تکنولوژی‌ها -->
-            <div class="fade-in-right">
-                <h3 class="text-lg sm:text-xl font-bold mb-6 flex items-center gap-2">
-                    <i class="fas fa-tools" style="color: #00ffd5;"></i>
-                    ابزارها و تکنولوژی‌ها
-                </h3>
-                
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-                    <div class="glass-card p-3 sm:p-4 rounded-xl text-center card-hover scale-in" style="transition-delay: 0.1s;">
-                        <i class="fab fa-html5 text-3xl sm:text-4xl text-orange-500 mb-2"></i>
-                        <div class="text-xs sm:text-sm">HTML</div>
-                    </div>
-                    <div class="glass-card p-3 sm:p-4 rounded-xl text-center card-hover scale-in" style="transition-delay: 0.15s;">
-                        <i class="fab fa-css3-alt text-3xl sm:text-4xl text-blue-400 mb-2"></i>
-                        <div class="text-xs sm:text-sm">CSS</div>
-                    </div>
-                    <div class="glass-card p-3 sm:p-4 rounded-xl text-center card-hover scale-in" style="transition-delay: 0.2s;">
-                        <i class="fab fa-js text-3xl sm:text-4xl text-yellow-400 mb-2"></i>
-                        <div class="text-xs sm:text-sm">JavaScript</div>
-                    </div>
-                    <div class="glass-card p-3 sm:p-4 rounded-xl text-center card-hover scale-in" style="transition-delay: 0.25s;">
-                        <i class="fab fa-python text-3xl sm:text-4xl text-blue-300 mb-2"></i>
-                        <div class="text-xs sm:text-sm">Python</div>
-                    </div>
-                    <div class="glass-card p-3 sm:p-4 rounded-xl text-center card-hover scale-in" style="transition-delay: 0.3s;">
-                        <i class="fas fa-code text-3xl sm:text-4xl mb-2" style="color: #00ffd5;"></i>
-                        <div class="text-xs sm:text-sm">#C</div>
-                    </div>
-                    <div class="glass-card p-3 sm:p-4 rounded-xl text-center card-hover scale-in" style="transition-delay: 0.35s;">
-                        <i class="fas fa-image text-3xl sm:text-4xl text-blue-500 mb-2"></i>
-                        <div class="text-xs sm:text-sm">Photoshop</div>
-                    </div>
-                    <div class="glass-card p-3 sm:p-4 rounded-xl text-center card-hover scale-in" style="transition-delay: 0.4s;">
-                        <i class="fas fa-robot text-3xl sm:text-4xl text-purple-400 mb-2"></i>
-                        <div class="text-xs sm:text-sm">AI</div>
-                    </div>
-                    <div class="glass-card p-3 sm:p-4 rounded-xl text-center card-hover scale-in" style="transition-delay: 0.45s;">
-                        <i class="fab fa-github text-3xl sm:text-4xl text-gray-300 mb-2"></i>
-                        <div class="text-xs sm:text-sm">GitHub</div>
-                    </div>
-                    <div class="glass-card p-3 sm:p-4 rounded-xl text-center card-hover scale-in" style="transition-delay: 0.5s;">
-                        <i class="fab fa-unity text-3xl sm:text-4xl text-gray-300 mb-2"></i>
-                        <div class="text-xs sm:text-sm">Unity</div>
-                    </div>
-                    <div class="glass-card p-3 sm:p-4 rounded-xl text-center card-hover scale-in" style="transition-delay: 0.55s;">
-                        <i class="fas fa-cat text-3xl sm:text-4xl text-orange-400 mb-2"></i>
-                        <div class="text-xs sm:text-sm">Scratch</div>
-                    </div>
-                    <!-- Visual Studio -->
-                    <div class="glass-card p-3 sm:p-4 rounded-xl text-center card-hover scale-in" style="transition-delay: 0.6s;">
-                        <i class="fas fa-laptop-code text-3xl sm:text-4xl text-purple-500 mb-2"></i>
-                        <div class="text-xs sm:text-sm">Visual Studio</div>
-                    </div>
-                    <!-- Visual Studio Code -->
-                    <div class="glass-card p-3 sm:p-4 rounded-xl text-center card-hover scale-in" style="transition-delay: 0.65s;">
-                        <i class="fas fa-file-code text-3xl sm:text-4xl text-blue-500 mb-2"></i>
-                        <div class="text-xs sm:text-sm">VS Code</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ===== بخش پروژه‌ها با سیستم تب ===== -->
-<section id="projects" class="py-16 sm:py-20 px-4 sm:px-6 section-animate">
-    <div class="max-w-6xl mx-auto">
-        <div class="fade-in text-center mb-12 sm:mb-16">
-            <h2 class="text-3xl sm:text-4xl font-bold mb-4 section-title">پروژه‌های <span class="gradient-text">من</span></h2>
-            <div class="w-24 h-1 gradient-bg mx-auto rounded-full neon-glow"></div>
-        </div>
-        
-        <!-- تب‌های انتخاب پروژه -->
-        <div class="fade-in flex justify-center gap-2 sm:gap-4 mb-8 flex-wrap" role="tablist">
-            <button class="project-tab active px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-gray-800/50 font-bold transition hover:scale-105 text-sm sm:text-base" data-tab="project1" role="tab" aria-selected="true">
-                پروژه اول
-            </button>
-            <button class="project-tab px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-gray-800/50 font-bold transition hover:scale-105 text-sm sm:text-base" data-tab="project2" role="tab" aria-selected="false">
-                پروژه دوم
-            </button>
-            <button class="project-tab px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-gray-800/50 font-bold transition hover:scale-105 text-sm sm:text-base" data-tab="project3" role="tab" aria-selected="false">
-                پروژه سوم
-            </button>
-        </div>
-        
-        <!-- محتوای پروژه‌ها -->
-        <div class="scale-in">
-            <!-- پروژه اول - SMART HTML Viewer -->
-            <article id="project1" class="project-content active" role="tabpanel">
-                <div class="glass-card rounded-2xl overflow-hidden max-w-2xl mx-auto card-hover">
-                    <img src="https://raw.githubusercontent.com/Nima-Shaheswarzadeh/SMART-HTML-Viewer/main/Welcome-Page/Welcome-Page.jpeg" 
-                         alt="پروژه SMART HTML Viewer" 
-                         class="w-full h-48 sm:h-64 object-cover"
-                         loading="lazy">
-                    <div class="p-4 sm:p-6">
-                        <h3 class="text-xl sm:text-2xl font-bold mb-3">SMART HTML Viewer</h3>
-                        <p class="text-gray-400 mb-6 text-sm sm:text-base">بیننده پیشرفته فایل اچ تی ام ال هوشمند</p>
-                        <a href="https://github.com/Nima-Shaheswarzadeh/SMART-HTML-Viewer/blob/main/Welcome-Page/Welcome-Page.html" 
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           class="inline-flex items-center gap-2 gradient-bg px-5 sm:px-6 py-2 sm:py-3 rounded-full font-bold hover:opacity-90 transition hover:scale-105 text-sm sm:text-base neon-glow">
-                            <i class="fas fa-external-link-alt"></i>
-                            رفتن به پروژه
-                        </a>
-                    </div>
-                </div>
-            </article>
-            
-            <!-- پروژه دوم - Smartule Weekly Schedule -->
-            <article id="project2" class="project-content" role="tabpanel">
-                <div class="glass-card rounded-2xl overflow-hidden max-w-2xl mx-auto card-hover">
-                    <img src="https://raw.githubusercontent.com/Nima-Shaheswarzadeh/Smartule-weekly-schedule/main/Welcome%20Page/Welcome-Page.jpeg" 
-                         alt="پروژه Smartule Weekly Schedule" 
-                         class="w-full h-48 sm:h-64 object-cover"
-                         loading="lazy">
-                    <div class="p-4 sm:p-6">
-                        <h3 class="text-xl sm:text-2xl font-bold mb-3">Smartule Weekly Schedule</h3>
-                        <p class="text-gray-400 mb-6 text-sm sm:text-base">برنامه هفتگی پیشرفته هوشمند</p>
-                        <a href="#" 
-                           class="inline-flex items-center gap-2 gradient-bg px-5 sm:px-6 py-2 sm:py-3 rounded-full font-bold hover:opacity-90 transition hover:scale-105 text-sm sm:text-base neon-glow">
-                            <i class="fas fa-external-link-alt"></i>
-                            رفتن به پروژه
-                        </a>
-                    </div>
-                </div>
-            </article>
-            
-            <!-- پروژه سوم - تستی -->
-            <article id="project3" class="project-content" role="tabpanel">
-                <div class="glass-card rounded-2xl overflow-hidden max-w-2xl mx-auto card-hover">
-                    <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600" 
-                         alt="پروژه تستی ۳" 
-                         class="w-full h-48 sm:h-64 object-cover"
-                         loading="lazy">
-                    <div class="p-4 sm:p-6">
-                        <h3 class="text-xl sm:text-2xl font-bold mb-3">پروژه تستی شماره ۳</h3>
-                        <p class="text-gray-400 mb-6 text-sm sm:text-base">این یک پروژه تستی است که به زودی تکمیل خواهد شد.</p>
-                        <a href="#" 
-                           class="inline-flex items-center gap-2 gradient-bg px-5 sm:px-6 py-2 sm:py-3 rounded-full font-bold hover:opacity-90 transition hover:scale-105 text-sm sm:text-base neon-glow">
-                            <i class="fas fa-external-link-alt"></i>
-                            رفتن به پروژه
-                        </a>
-                    </div>
-                </div>
-            </article>
-        </div>
-    </div>
-</section>
-
-<!-- ===== بخش تجربه‌های کاری با تایم‌لاین ===== -->
-<section id="experience" class="py-16 sm:py-20 px-4 sm:px-6 section-animate">
-    <div class="max-w-4xl mx-auto">
-        <div class="fade-in text-center mb-12 sm:mb-16">
-            <h2 class="text-3xl sm:text-4xl font-bold mb-4 section-title">تجربه‌های <span class="gradient-text">کاری</span></h2>
-            <div class="w-24 h-1 gradient-bg mx-auto rounded-full neon-glow"></div>
-        </div>
-        
-        <div class="relative">
-            <!-- خط تایم‌لاین عمودی -->
-            <div class="absolute right-4 sm:right-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-cyan-400 to-blue-800" style="background: linear-gradient(to bottom, #00ffd5, #1e3a5f);" aria-hidden="true"></div>
-            
-            <!-- آیتم‌های تجربه کاری -->
-            <div class="space-y-10 sm:space-y-12">
-                <!-- تجربه اول - IR Streets -->
-                <article class="fade-in-right relative pr-12 sm:pr-16">
-                    <div class="absolute right-2 sm:right-4 w-5 h-5 rounded-full gradient-bg border-4 border-gray-900 pulse-animation neon-glow" aria-hidden="true"></div>
-                    <div class="glass-card p-4 sm:p-6 rounded-2xl card-hover">
-                        <div class="flex flex-wrap justify-between items-start mb-2 gap-2">
-                            <h3 class="text-lg sm:text-xl font-bold">IR Streets</h3>
-                            <span style="color: #00ffd5;" class="text-xs sm:text-sm">۱۴۰۴</span>
-                        </div>
-                        <p class="mb-3 text-sm sm:text-base" style="color: #3a6ea5;">Unami</p>
-                        <p class="text-gray-400 text-sm sm:text-base">بازی ایرانی «خیابان‌های ایران» تولیدشده در استودیو بازی‌سازی یونامی، با هدف شرکت در رقابت بازی‌سازان ایرانی و کمک به پیشرفت صنعت ملی گیم ساخته شده است.</p>
-                    </div>
-                </article>
-                
-                <!-- تجربه دوم - Game Nub -->
-                <article class="fade-in-right relative pr-12 sm:pr-16" style="transition-delay: 0.2s;">
-                    <div class="absolute right-2 sm:right-4 w-5 h-5 rounded-full gradient-bg border-4 border-gray-900 pulse-animation neon-glow" aria-hidden="true"></div>
-                    <div class="glass-card p-4 sm:p-6 rounded-2xl card-hover">
-                        <div class="flex flex-wrap justify-between items-start mb-2 gap-2">
-                            <h3 class="text-lg sm:text-xl font-bold">Game Nub</h3>
-                            <span style="color: #00ffd5;" class="text-xs sm:text-sm">۱۴۰۳ تا ۱۴۰۴</span>
-                        </div>
-                        <p class="mb-3 text-sm sm:text-base" style="color: #3a6ea5;">افزونه‌های گیم ناب</p>
-                        <p class="text-gray-400 text-sm sm:text-base">ساخت افزونه‌های سفارشی برای سایت گیم ناب</p>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ===== بخش تماس با من ===== -->
-<section id="contact" class="py-16 sm:py-20 px-4 sm:px-6 section-animate">
-    <div class="max-w-6xl mx-auto">
-        <div class="fade-in text-center mb-12 sm:mb-16">
-            <h2 class="text-3xl sm:text-4xl font-bold mb-4 section-title">تماس با <span class="gradient-text">من</span></h2>
-            <div class="w-24 h-1 gradient-bg mx-auto rounded-full neon-glow"></div>
-            <p class="text-gray-400 mt-6 text-sm sm:text-base">آماده همکاری در پروژه‌های جدید هستم. با من در ارتباط باشید!</p>
-        </div>
-        
-        <div class="grid md:grid-cols-2 gap-8 sm:gap-12 items-center">
-            <!-- سمت راست - تصویر کارت ویزیت -->
-            <div class="fade-in-left order-2 md:order-1">
-                <img src="https://raw.githubusercontent.com/Nima-Shaheswarzadeh/Nima-Shaheswarzadeh.github.io/main/Picture/Nima%20Card.png" 
-                     alt="کارت ویزیت نیما شهسوارزاده" 
-                     class="rounded-2xl shadow-2xl w-full max-w-md mx-auto hover:scale-105 transition-transform duration-500 float-animation neon-glow"
-                     loading="lazy">
-            </div>
-            
-            <!-- سمت چپ - اطلاعات تماس -->
-            <div class="fade-in-right order-1 md:order-2">
-                <div class="space-y-4 sm:space-y-6">
-                    <!-- ایمیل -->
-                    <a href="mailto:Nima.Shaheswarzadeh@gmail.com" class="flex items-center gap-3 sm:gap-4 glass-card p-3 sm:p-4 rounded-xl card-hover" aria-label="ارسال ایمیل">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 gradient-bg rounded-full flex items-center justify-center flex-shrink-0 neon-glow">
-                            <i class="fas fa-envelope text-xl sm:text-2xl"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <h3 class="font-bold text-sm sm:text-base">ایمیل</h3>
-                            <span class="text-gray-400 text-xs sm:text-sm break-all">Nima.Shaheswarzadeh@gmail.com</span>
-                        </div>
-                    </a>
-                    
-                    <!-- تلفن -->
-                    <a href="tel:09371164025" class="flex items-center gap-3 sm:gap-4 glass-card p-3 sm:p-4 rounded-xl card-hover" aria-label="تماس تلفنی">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 gradient-bg rounded-full flex items-center justify-center flex-shrink-0 neon-glow">
-                            <i class="fas fa-phone text-xl sm:text-2xl"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <h3 class="font-bold text-sm sm:text-base">تلفن</h3>
-                            <span class="text-gray-400 text-xs sm:text-sm">۰۹۳۷۱۱۶۴۰۲۵</span>
-                        </div>
-                    </a>
-                    
-                    <!-- تلگرام -->
-                    <a href="https://t.me/Nima_Shaheswarzadeh" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 sm:gap-4 glass-card p-3 sm:p-4 rounded-xl card-hover" aria-label="تلگرام">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 gradient-bg rounded-full flex items-center justify-center flex-shrink-0 neon-glow">
-                            <i class="fab fa-telegram text-xl sm:text-2xl"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <h3 class="font-bold text-sm sm:text-base">تلگرام</h3>
-                            <span class="text-gray-400 text-xs sm:text-sm">@Nima_Shaheswarzadeh</span>
-                        </div>
-                    </a>
-                    
-                    <!-- واتساپ -->
-                    <a href="https://wa.me/989371164025" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 sm:gap-4 glass-card p-3 sm:p-4 rounded-xl card-hover" aria-label="واتساپ">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 gradient-bg rounded-full flex items-center justify-center flex-shrink-0 neon-glow">
-                            <i class="fab fa-whatsapp text-xl sm:text-2xl"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <h3 class="font-bold text-sm sm:text-base">واتساپ</h3>
-                            <span class="text-gray-400 text-xs sm:text-sm">+98 937 116 4025</span>
-                        </div>
-                    </a>
-                    
-                    <!-- گیت‌هاب -->
-                    <a href="https://github.com/Nima-Shaheswarzadeh" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 sm:gap-4 glass-card p-3 sm:p-4 rounded-xl card-hover" aria-label="گیت‌هاب">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 gradient-bg rounded-full flex items-center justify-center flex-shrink-0 neon-glow">
-                            <i class="fab fa-github text-xl sm:text-2xl"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <h3 class="font-bold text-sm sm:text-base">گیت‌هاب</h3>
-                            <span class="text-gray-400 text-xs sm:text-sm break-all">github.com/Nima-Shaheswarzadeh</span>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ===== فوتر سایت ===== -->
-<footer id="footer" class="py-8 px-4 sm:px-6 border-t border-gray-800/50">
-    <div class="max-w-6xl mx-auto text-center">
-        <p class="text-gray-400 mb-4 text-sm sm:text-base">تمامی حقوق مادی و معنوی برای نیما شهسوارزاده محفوظ است <span class="separator">|•|</span> 2026 - 1405</p>
-        <p class="text-gray-500 text-xs sm:text-sm">HTML <span class="separator">|•|</span> CSS <span class="separator">|•|</span> JavaScript <span class="separator">|•|</span> Tailwind CSS <span class="separator">|•|</span> Font Awesome <span class="separator">|•|</span> Claude AI</p>
-    </div>
+    <span id="heightDisplay" class="chip">ارتفاع: 220px</span>
+  </div>
+  <iframe id="preview"></iframe>
+</div>
+<footer>
+  <strong>SMART HTML Viewer</strong> by <strong>Nima.Sh</strong>
+  <br>
+  HTML <span class="separator">|•|</span> CSS <span class="separator">|•|</span> JavaScript
 </footer>
 
-<!-- ===== دکمه برگشت به بالای صفحه (Scroll to Top) ===== -->
-<button id="backToTop" class="fixed bottom-6 left-6 sm:bottom-8 sm:left-8 w-10 h-10 sm:w-12 sm:h-12 acrylic-blur-light rounded-full flex items-center justify-center opacity-0 invisible transition-all duration-300 hover:scale-110 shadow-lg z-50 neon-glow" aria-label="برگشت به بالا">
-    <i class="fas fa-arrow-up text-white"></i>
-</button>
+<div id="notification" class="notification"></div>
 
-<!-- ===== دکمه دفترچه تلفن (Contact Book Button) - ویژگی جدید ===== -->
-<button id="contactBookBtn" class="fixed bottom-20 left-6 sm:bottom-24 sm:left-8 w-10 h-10 sm:w-12 sm:h-12 acrylic-blur-light rounded-full flex items-center justify-center opacity-0 invisible transition-all duration-300 hover:scale-110 shadow-lg z-50 neon-glow" aria-label="دفترچه تلفن" title="راه‌های ارتباطی">
-    <i class="fas fa-address-book text-white"></i>
-</button>
-
-<!-- ===== دکمه‌های راه ارتباطی (7 دکمه) - ویژگی جدید ===== -->
-<div id="contactButtons" class="fixed bottom-36 left-6 sm:bottom-40 sm:left-8 flex flex-col gap-3 z-40">
-    <!-- دکمه 1: ایتا -->
-    <a href="https://eitaa.com/Nima_Shaheswarzadeh" target="_blank" rel="noopener noreferrer" 
-       class="contact-btn w-10 h-10 sm:w-12 sm:h-12 acrylic-blur-light rounded-full flex items-center justify-center shadow-lg neon-glow relative" 
-       data-tooltip="ایتا" aria-label="ایتا">
-        <i class="fas fa-comment-dots text-white"></i>
-    </a>
-    
-    <!-- دکمه 2: تلگرام -->
-    <a href="https://t.me/Nima_Shaheswarzadeh" target="_blank" rel="noopener noreferrer" 
-       class="contact-btn w-10 h-10 sm:w-12 sm:h-12 acrylic-blur-light rounded-full flex items-center justify-center shadow-lg neon-glow relative" 
-       data-tooltip="تلگرام" aria-label="تلگرام">
-        <i class="fab fa-telegram text-white"></i>
-    </a>
-    
-    <!-- دکمه 3: واتساپ -->
-    <a href="https://wa.me/989371164025" target="_blank" rel="noopener noreferrer" 
-       class="contact-btn w-10 h-10 sm:w-12 sm:h-12 acrylic-blur-light rounded-full flex items-center justify-center shadow-lg neon-glow relative" 
-       data-tooltip="واتساپ" aria-label="واتساپ">
-        <i class="fab fa-whatsapp text-white"></i>
-    </a>
-    
-    <!-- دکمه 4: ایمیل -->
-    <a href="mailto:Nima.Shaheswarzadeh@gmail.com" 
-       class="contact-btn w-10 h-10 sm:w-12 sm:h-12 acrylic-blur-light rounded-full flex items-center justify-center shadow-lg neon-glow relative" 
-       data-tooltip="ایمیل" aria-label="ایمیل">
-        <i class="fas fa-envelope text-white"></i>
-    </a>
-    
-    <!-- دکمه 5: گیت‌هاب -->
-    <a href="https://github.com/Nima-Shaheswarzadeh" target="_blank" rel="noopener noreferrer" 
-       class="contact-btn w-10 h-10 sm:w-12 sm:h-12 acrylic-blur-light rounded-full flex items-center justify-center shadow-lg neon-glow relative" 
-       data-tooltip="گیت‌هاب" aria-label="گیت‌هاب">
-        <i class="fab fa-github text-white"></i>
-    </a>
-    
-    <!-- دکمه 6: حمایت مالی -->
-    <a href="https://daramet.com/Nima-Sh" target="_blank" rel="noopener noreferrer" 
-       class="contact-btn w-10 h-10 sm:w-12 sm:h-12 acrylic-blur-light rounded-full flex items-center justify-center shadow-lg neon-glow relative" 
-       data-tooltip="حمایت مالی" aria-label="حمایت مالی">
-        <i class="fas fa-heart text-white"></i>
-    </a>
-    
-    <!-- دکمه 7: تماس تلفنی -->
-    <a href="tel:09371164025" 
-       class="contact-btn w-10 h-10 sm:w-12 sm:h-12 acrylic-blur-light rounded-full flex items-center justify-center shadow-lg neon-glow relative" 
-       data-tooltip="تماس" aria-label="تماس">
-        <i class="fas fa-phone text-white"></i>
-    </a>
+<!-- مودال دیباگ -->
+<div id="debugModal" class="debug-modal">
+  <div class="debug-content">
+    <div class="debug-header">
+      <h3 id="debugTitle">اطلاعات دیباگ کد</h3>
+      <button class="debug-close" id="debugClose">&times;</button>
+    </div>
+    <div id="debugInfo" class="debug-info"></div>
+  </div>
 </div>
 
-<!-- ===== نشانگر بخش‌ها (Section Navigation Dots) ===== -->
-<nav id="sectionDots" class="fixed right-4 sm:right-6 top-1/2 transform -translate-y-1/2 z-50 hidden md:flex flex-col gap-3" aria-label="ناوبری بخش‌ها">
-    <a href="#home" class="section-dot active" data-section="home" title="خانه" aria-label="رفتن به بخش خانه">
-        <span class="dot-inner"></span>
-    </a>
-    <a href="#about" class="section-dot" data-section="about" title="درباره من" aria-label="رفتن به بخش درباره من">
-        <span class="dot-inner"></span>
-    </a>
-    <a href="#skills" class="section-dot" data-section="skills" title="مهارت‌ها" aria-label="رفتن به بخش مهارت‌ها">
-        <span class="dot-inner"></span>
-    </a>
-    <a href="#projects" class="section-dot" data-section="projects" title="پروژه‌ها" aria-label="رفتن به بخش پروژه‌ها">
-        <span class="dot-inner"></span>
-    </a>
-    <a href="#experience" class="section-dot" data-section="experience" title="تجارب" aria-label="رفتن به بخش تجارب">
-        <span class="dot-inner"></span>
-    </a>
-    <a href="#contact" class="section-dot" data-section="contact" title="تماس" aria-label="رفتن به بخش تماس">
-        <span class="dot-inner"></span>
-    </a>
-</nav>
-
 <script>
-    // ===== سیستم صدای کلیک - برای تجربه کاربری بهتر =====
-    // این بخش افکت صوتی برای کلیک‌ها ایجاد می‌کند
-    let audioContext = null;
+// ==================== سیستم صدا ====================
+const SoundManager = {
+  audioContext: null,
+  enabled: true,
+  
+  init() {
+    try {
+      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) {
+      console.log('Web Audio API not supported');
+      this.enabled = false;
+    }
+  },
+  
+  // صدای کلیک ساده
+  click() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(800, 0.05, 'sine', 0.3);
+  },
+  
+  // صدای هاور
+  hover() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(600, 0.03, 'sine', 0.1);
+  },
+  
+  // صدای موفقیت
+  success() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(523, 0.1, 'sine', 0.3);
+    setTimeout(() => this.playTone(659, 0.1, 'sine', 0.3), 100);
+    setTimeout(() => this.playTone(784, 0.15, 'sine', 0.3), 200);
+  },
+  
+  // صدای تغییر تب
+  tabSwitch() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(440, 0.08, 'triangle', 0.25);
+  },
+  
+  // صدای اضافه کردن تب
+  tabAdd() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(880, 0.1, 'sine', 0.3);
+  },
+  
+  // صدای حذف تب
+  tabClose() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(300, 0.15, 'sine', 0.25);
+  },
+  
+  // صدای تغییر تم
+  themeToggle() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(400, 0.1, 'square', 0.15);
+    setTimeout(() => this.playTone(600, 0.1, 'square', 0.15), 100);
+  },
+  
+  // صدای تغییر دستگاه
+  deviceChange() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(500, 0.08, 'triangle', 0.2);
+    setTimeout(() => this.playTone(700, 0.08, 'triangle', 0.2), 80);
+  },
+  
+  // صدای کپی
+  copy() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(1000, 0.05, 'sine', 0.25);
+    setTimeout(() => this.playTone(1200, 0.05, 'sine', 0.25), 50);
+  },
+  
+  // صدای دانلود
+  download() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(600, 0.1, 'sine', 0.3);
+    setTimeout(() => this.playTone(400, 0.15, 'sine', 0.3), 100);
+  },
+  
+  // صدای اجرای کد
+  run() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(392, 0.08, 'sine', 0.25);
+    setTimeout(() => this.playTone(523, 0.08, 'sine', 0.25), 80);
+    setTimeout(() => this.playTone(659, 0.1, 'sine', 0.25), 160);
+  },
+  
+  // صدای باز شدن منو
+  menuOpen() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(350, 0.06, 'sine', 0.2);
+  },
+  
+  // صدای بستن منو/مودال
+  menuClose() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(250, 0.06, 'sine', 0.2);
+  },
+  
+  // صدای دیباگ
+  debug() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(220, 0.1, 'sawtooth', 0.15);
+    setTimeout(() => this.playTone(330, 0.1, 'sawtooth', 0.15), 100);
+  },
+  
+  // صدای فرمت کد
+  format() {
+    if (!this.enabled || !this.audioContext) return;
+    for (let i = 0; i < 4; i++) {
+      setTimeout(() => this.playTone(400 + i * 100, 0.05, 'sine', 0.2), i * 50);
+    }
+  },
+  
+  // صدای تغییر رنگ
+  colorChange() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(550, 0.05, 'sine', 0.15);
+  },
+  
+  // صدای ریست
+  reset() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(800, 0.08, 'sine', 0.25);
+    setTimeout(() => this.playTone(600, 0.08, 'sine', 0.25), 80);
+    setTimeout(() => this.playTone(400, 0.1, 'sine', 0.25), 160);
+  },
+  
+  // صدای پاپ‌آپ
+  popup() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(700, 0.1, 'sine', 0.3);
+    setTimeout(() => this.playTone(900, 0.1, 'sine', 0.3), 100);
+  },
+  
+  // صدای تایپ
+  typing() {
+    if (!this.enabled || !this.audioContext) return;
+    this.playTone(600 + Math.random() * 200, 0.02, 'sine', 0.1);
+  },
+  
+  // پخش تن
+  playTone(frequency, duration, type = 'sine', volume = 0.3) {
+    if (!this.audioContext) return;
     
-    // راه‌اندازی AudioContext (برای پخش صدا)
-    function initAudioContext() {
-        if (!audioContext) {
-            try {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            } catch (e) {
-                console.log('Audio not supported');
-            }
-        }
-        return audioContext;
+    // Resume audio context if suspended
+    if (this.audioContext.state === 'suspended') {
+      this.audioContext.resume();
     }
     
-    // پخش صدای کلیک
-    function playClickSound() {
-        const ctx = initAudioContext();
-        if (!ctx || ctx.state === 'suspended') return;
-        
-        try {
-            // ایجاد نوسان‌ساز برای صدا
-            const oscillator = ctx.createOscillator();
-            const gainNode = ctx.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(ctx.destination);
-            
-            // تنظیمات صدا
-            oscillator.frequency.value = 800; // فرکانس صدا
-            oscillator.type = 'sine'; // نوع موج صدا
-            
-            // کاهش تدریجی صدا
-            gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
-            
-            oscillator.start(ctx.currentTime);
-            oscillator.stop(ctx.currentTime + 0.1);
-        } catch (e) {
-            // در صورت خطا، بی‌صدا ادامه بده
-        }
-    }
+    const oscillator = this.audioContext.createOscillator();
+    const gainNode = this.audioContext.createGain();
     
-    // فعال‌سازی صدا با اولین کلیک کاربر
-    document.addEventListener('click', function enableAudio() {
-        const ctx = initAudioContext();
-        if (ctx && ctx.state === 'suspended') {
-            ctx.resume();
-        }
-    }, { once: true });
+    oscillator.connect(gainNode);
+    gainNode.connect(this.audioContext.destination);
     
-    // افزودن صدای کلیک به المان‌های قابل کلیک
-    document.addEventListener('click', (e) => {
-        const clickableElements = ['A', 'BUTTON', 'INPUT', 'LABEL'];
-        const isClickable = clickableElements.includes(e.target.tagName) || 
-                           e.target.closest('a') || 
-                           e.target.closest('button') ||
-                           e.target.classList.contains('clickable') ||
-                           e.target.classList.contains('project-tab') ||
-                           e.target.classList.contains('social-icon') ||
-                           e.target.classList.contains('card-hover') ||
-                           e.target.classList.contains('glass-card') ||
-                           e.target.classList.contains('logo-refresh');
-        
-        if (isClickable && audioContext && audioContext.state === 'running') {
-            playClickSound();
-        }
-    });
+    oscillator.type = type;
+    oscillator.frequency.setValueAtTime(frequency, this.audioContext.currentTime);
     
-    // ===== افکت تایپینگ در صفحه اصلی =====
-    // متن‌هایی که به صورت تایپ شده نمایش داده می‌شوند
-    const texts = ['علاقمند به تکنولوژی هستم !', 'طراح وب هستم !', 'متخصص یونیتی هستم !', 'آشنا به C# هستم !', 'گرافیست هستم !', 'طراح عکس هستم !'];
-    let textIndex = 0;
-    let charIndex = 0;
-    let isDeleting = false;
-    const typingElement = document.getElementById('typingText');
+    gainNode.gain.setValueAtTime(volume, this.audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
     
-    // تابع افکت تایپینگ
-    function typeEffect() {
-        const currentText = texts[textIndex];
-        
-        if (isDeleting) {
-            // حذف کاراکترها
-            typingElement.textContent = currentText.substring(0, charIndex - 1);
-            charIndex--;
-        } else {
-            // اضافه کردن کاراکترها
-            typingElement.textContent = currentText.substring(0, charIndex + 1);
-            charIndex++;
-        }
-        
-        let typeSpeed = isDeleting ? 50 : 100;
-        
-        // تعویض بین نوشتن و حذف
-        if (!isDeleting && charIndex === currentText.length) {
-            typeSpeed = 2000; // مکث در انتها
-            isDeleting = true;
-        } else if (isDeleting && charIndex === 0) {
-            isDeleting = false;
-            textIndex = (textIndex + 1) % texts.length; // متن بعدی
-            typeSpeed = 500;
-        }
-        
-        setTimeout(typeEffect, typeSpeed);
-    }
-    
-    // شروع افکت تایپینگ
-    typeEffect();
-    
-    // ===== منوی موبایل =====
-    const menuBtn = document.getElementById('menuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const desktopMenu = document.getElementById('desktopMenu');
-    
-    // باز/بسته کردن منوی موبایل
-    menuBtn.addEventListener('click', () => {
-        const isHidden = mobileMenu.classList.toggle('hidden');
-        menuBtn.innerHTML = isHidden 
-            ? '<i class="fas fa-bars"></i>' 
-            : '<i class="fas fa-times"></i>';
-        menuBtn.setAttribute('aria-expanded', !isHidden);
-    });
-    
-    // بستن منوی موبایل با کلیک روی لینک‌ها
-    mobileMenu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            mobileMenu.classList.add('hidden');
-            menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-            menuBtn.setAttribute('aria-expanded', 'false');
-        });
-    });
-    
-    // ===== دکمه "بیشتر بدانید" =====
-    const moreInfoBtn = document.getElementById('moreInfoBtn');
-    
-    moreInfoBtn.addEventListener('click', () => {
-        // در موبایل منو را باز کن
-        if (window.innerWidth < 768) {
-            mobileMenu.classList.remove('hidden');
-            menuBtn.innerHTML = '<i class="fas fa-times"></i>';
-            menuBtn.setAttribute('aria-expanded', 'true');
-        }
-        // اسکرول به بالا
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        
-        // افکت نورانی روی منو
-        const menu = window.innerWidth >= 768 ? desktopMenu : mobileMenu;
-        menu.style.transform = 'scale(1.05)';
-        menu.style.boxShadow = '0 0 30px rgba(0, 255, 213, 0.5)';
-        setTimeout(() => {
-            menu.style.transform = 'scale(1)';
-            menu.style.boxShadow = 'none';
-        }, 500);
-    });
-    
-    // ===== پس‌زمینه شفاف نویگیشن در اسکرول =====
-    const navbar = document.getElementById('navbar');
-    
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            navbar.classList.add('acrylic-blur', 'shadow-lg');
-        } else {
-            navbar.classList.remove('acrylic-blur', 'shadow-lg');
-        }
-    }, { passive: true });
-    
-    // ===== دکمه برگشت به بالا (Back to Top) =====
-    const backToTop = document.getElementById('backToTop');
-    
-    // نمایش/مخفی کردن دکمه بر اساس اسکرول
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 500) {
-            backToTop.classList.remove('opacity-0', 'invisible');
-            backToTop.classList.add('opacity-100', 'visible');
-        } else {
-            backToTop.classList.add('opacity-0', 'invisible');
-            backToTop.classList.remove('opacity-100', 'visible');
-        }
-    }, { passive: true });
-    
-    // کلیک برای اسکرول به بالا
-    backToTop.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-    
-    // ===== دکمه دفترچه تلفن و دکمه‌های راه ارتباطی - ویژگی جدید =====
-    const contactBookBtn = document.getElementById('contactBookBtn');
-    const contactButtons = document.getElementById('contactButtons');
-    const contactBtns = document.querySelectorAll('.contact-btn');
-    let isContactBookOpen = false;
-    
-    // نمایش/مخفی کردن دکمه دفترچه تلفن بر اساس اسکرول (scroll-aware)
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 500) {
-            contactBookBtn.classList.remove('opacity-0', 'invisible');
-            contactBookBtn.classList.add('opacity-100', 'visible');
-        } else {
-            contactBookBtn.classList.add('opacity-0', 'invisible');
-            contactBookBtn.classList.remove('opacity-100', 'visible');
-            // بستن منوی دکمه‌ها هنگام رفتن به بالای صفحه
-            if (isContactBookOpen) {
-                toggleContactButtons();
-            }
-        }
-    }, { passive: true });
-    
-    // تابع باز/بسته کردن دکمه‌های راه ارتباطی
-    function toggleContactButtons() {
-        isContactBookOpen = !isContactBookOpen;
-        
-        // تغییر وضعیت دکمه اصلی
-        contactBookBtn.classList.toggle('active');
-        contactButtons.classList.toggle('active');
-        
-        if (isContactBookOpen) {
-            // نمایش دکمه‌ها با انیمیشن پله‌ای (stagger)
-            contactBtns.forEach((btn, index) => {
-                setTimeout(() => {
-                    btn.classList.add('show');
-                }, index * 50);
-            });
-            // پخش صدای باز شدن
-            playClickSound();
-        } else {
-            // مخفی کردن دکمه‌ها به صورت معکوس
-            contactBtns.forEach((btn, index) => {
-                setTimeout(() => {
-                    btn.classList.remove('show');
-                }, (contactBtns.length - index - 1) * 50);
-            });
-            // پخش صدای بسته شدن
-            playClickSound();
-        }
-    }
-    
-    // کلیک روی دکمه دفترچه تلفن
-    contactBookBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        toggleContactButtons();
-    });
-    
-    // پخش صدا هنگام کلیک روی دکمه‌های راه ارتباطی
-    contactBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            playClickSound();
-        });
-    });
-    
-    // ===== انیمیشن‌های پیشرفته در اسکرول =====
-    const animatedElements = document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right, .scale-in, .rotate-in, .section-animate, .section-title');
-    
-    // Observer برای شناسایی المان‌های قابل مشاهده
-    const animationObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, { 
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    });
-    
-    // اعمال observer به المان‌ها
-    animatedElements.forEach(el => animationObserver.observe(el));
-    
-    // ===== انیمیشن نوار مهارت‌ها =====
-    const skillBars = document.querySelectorAll('.skill-bar');
-    
-    // Observer برای شروع انیمیشن نوار مهارت
-    const skillObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const width = entry.target.dataset.width;
-                entry.target.style.width = width;
-            }
-        });
-    }, { threshold: 0.5 });
-    
-    // اعمال observer به نوارهای مهارت
-    skillBars.forEach(bar => {
-        bar.style.width = '0%';
-        skillObserver.observe(bar);
-    });
-    
-    // ===== سیستم تب‌های پروژه =====
-    const projectTabs = document.querySelectorAll('.project-tab');
-    const projectContents = document.querySelectorAll('.project-content');
-    
-    // کلیک روی تب‌ها
-    projectTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            // حذف active از همه تب‌ها
-            projectTabs.forEach(t => {
-                t.classList.remove('active');
-                t.setAttribute('aria-selected', 'false');
-            });
-            projectContents.forEach(c => c.classList.remove('active'));
-            
-            // فعال کردن تب انتخاب شده
-            tab.classList.add('active');
-            tab.setAttribute('aria-selected', 'true');
-            const targetId = tab.dataset.tab;
-            document.getElementById(targetId).classList.add('active');
-        });
-    });
-    
-    // ===== اسکرول نرم برای لینک‌های داخلی =====
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                const offsetTop = target.offsetTop - 80;
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-    
-    // ===== افکت پارالکس ساده برای پس‌زمینه =====
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            window.requestAnimationFrame(() => {
-                const scrolled = window.pageYOffset;
-                const blobs = document.querySelectorAll('.bg-blob');
-                
-                // حرکت بلوب‌ها با سرعت‌های مختلف
-                blobs.forEach((blob, index) => {
-                    const speed = (index + 1) * 0.05;
-                    blob.style.transform = `translateY(${scrolled * speed}px)`;
-                });
-                ticking = false;
-            });
-            ticking = true;
-        }
-    }, { passive: true });
-    
-    // ===== فعال‌سازی انیمیشن‌های اولیه =====
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            document.querySelectorAll('#home .fade-in, #home .scale-in').forEach(el => {
-                el.classList.add('visible');
-            });
-        }, 300);
-    });
-    
-    // ===== سیستم نشانگر بخش‌ها (Section Dots) =====
-    const sectionDots = document.querySelectorAll('.section-dot');
-    const allSections = document.querySelectorAll('section');
-    
-    // به‌روزرسانی نقطه فعال بر اساس بخش فعلی
-    function updateActiveDot() {
-        let currentSection = '';
-        
-        allSections.forEach(section => {
-            const sectionTop = section.offsetTop - 200;
-            const sectionHeight = section.offsetHeight;
-            
-            if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
-                currentSection = section.getAttribute('id');
-            }
-        });
-        
-        // فعال کردن نقطه مربوط به بخش فعلی
-        sectionDots.forEach(dot => {
-            dot.classList.remove('active');
-            if (dot.dataset.section === currentSection) {
-                dot.classList.add('active');
-            }
-        });
-    }
-    
-    // به‌روزرسانی در اسکرول
-    window.addEventListener('scroll', updateActiveDot, { passive: true });
-    
-    // کلیک روی نقاط برای رفتن به بخش مربوطه
-    sectionDots.forEach(dot => {
-        dot.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetId = dot.getAttribute('href');
-            const target = document.querySelector(targetId);
-            if (target) {
-                const offsetTop = target.offsetTop - 80;
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-    
-    // ===== انیمیشن reveal برای المان‌ها =====
-    const revealElements = document.querySelectorAll('.reveal-up, .stagger-animate');
-    
-    const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, { 
-        threshold: 0.15,
-        rootMargin: '0px 0px -100px 0px'
-    });
-    
-    revealElements.forEach(el => revealObserver.observe(el));
-</script>
+    oscillator.start(this.audioContext.currentTime);
+    oscillator.stop(this.audioContext.currentTime + duration);
+  }
+};
 
+// راه‌اندازی سیستم صدا
+SoundManager.init();
+
+document.addEventListener('DOMContentLoaded', () => {
+  const titleEl = document.getElementById('title');
+  const inputEl = document.getElementById('htmlInput');
+  const iframeEl = document.getElementById('preview');
+  const heightInput = document.getElementById('heightInput');
+  const heightLabel = document.getElementById('heightLabel');
+  const heightDisplay = document.getElementById('heightDisplay');
+  const deviceLabel = document.getElementById('deviceLabel');
+  const previewLabel = document.getElementById('previewLabel');
+  const langSelect = document.getElementById('languageSelect');
+  const themeToggle = document.getElementById('themeToggle');
+  const runBtn = document.getElementById('runBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const dropdown = document.getElementById('downloadDropdown');
+  const notification = document.getElementById('notification');
+  const infoBtn = document.getElementById('infoBtn');
+  const debugTitle = document.getElementById('debugTitle');
+  
+  // عناصر جدید
+  const autoHeightBtn = document.getElementById('autoHeightBtn');
+  const debugBtn = document.getElementById('debugBtn');
+  const formatBtn = document.getElementById('formatBtn');
+  const primaryColorPicker = document.getElementById('primaryColorPicker');
+  const secondaryColorPicker = document.getElementById('secondaryColorPicker');
+  const resetColors = document.getElementById('resetColors');
+  const debugModal = document.getElementById('debugModal');
+  const debugClose = document.getElementById('debugClose');
+  const debugInfo = document.getElementById('debugInfo');
+  const addTabBtn = document.getElementById('addTabBtn');
+  
+  // عناصر پاپ‌آپ
+  const popupDropdown = document.getElementById('popupDropdown');
+  const popupMenu = document.getElementById('popupMenu');
+
+  // تنظیمات ابعاد پنجره برای هر دستگاه
+  const deviceDimensions = {
+    laptop: { width: 1366, height: 768, name: 'لپ‌تاپ', nameEn: 'Laptop' },
+    tablet: { width: 768, height: 1024, name: 'تبلت', nameEn: 'Tablet' },
+    mobile: { width: 375, height: 667, name: 'موبایل', nameEn: 'Mobile' }
+  };
+
+  // متن‌های چندزبانه
+  const translations = {
+    fa: {
+      title: 'SMART HTML Viewer',
+      placeholder: 'کد HTML خود را اینجا بنویسید...',
+      preview: 'پیش‌نمایش',
+      height: 'ارتفاع',
+      heightLabel: 'ارتفاع:',
+      width: 'عرض',
+      copied: 'کد کپی شد!',
+      downloadHtml: 'دانلود HTML',
+      downloadTxt: 'دانلود TXT',
+      laptop: 'لپ‌تاپ',
+      tablet: 'تبلت',
+      mobile: 'موبایل',
+      formatted: 'کد مرتب‌سازی شد!',
+      autoHeight: 'ارتفاع خودکار تنظیم شد!',
+      run: 'اجرای کد',
+      copy: 'کپی',
+      download: 'دانلود',
+      language: 'زبان',
+      info: 'اطلاعات',
+      theme: 'تغییر حالت',
+      debug: 'دیباگ کد',
+      format: 'مرتب‌سازی کد',
+      autoHeightTitle: 'تنظیم خودکار ارتفاع',
+      primaryColor: 'رنگ اصلی',
+      secondaryColor: 'رنگ فرعی',
+      resetColorsTitle: 'بازگشت به حالت پیشفرض',
+      newFile: 'فایل جدید',
+      debugInfo: 'اطلاعات دیباگ کد',
+      codeStats: 'آمار کد',
+      lines: 'تعداد خطوط',
+      characters: 'تعداد کاراکترها',
+      htmlTags: 'تگ‌های HTML',
+      cssStyles: 'استایل‌های CSS',
+      jsScripts: 'اسکریپت‌های JS',
+      tagCheck: 'بررسی تگ‌ها',
+      unclosedTags: 'تگ‌های بسته نشده',
+      allTagsClosed: 'همه تگ‌ها به درستی بسته شده‌اند',
+      suggestions: 'پیشنهادات',
+      addDoctype: 'DOCTYPE اضافه کنید',
+      addCharset: 'charset تعریف کنید',
+      addTitle: 'عنوان صفحه اضافه کنید',
+      useSeparateCss: 'از CSS جداگانه استفاده کنید',
+      openInNewWindow: 'باز کردن در پنجره جدید',
+      popupOpened: 'پنجره پیش‌نمایش باز شد!'
+    },
+    en: {
+      title: 'SMART HTML Viewer',
+      placeholder: 'Write your HTML code here...',
+      preview: 'Preview',
+      height: 'Height',
+      heightLabel: 'Height:',
+      width: 'Width',
+      copied: 'Code copied!',
+      downloadHtml: 'Download HTML',
+      downloadTxt: 'Download TXT',
+      laptop: 'Laptop',
+      tablet: 'Tablet',
+      mobile: 'Mobile',
+      formatted: 'Code formatted!',
+      autoHeight: 'Auto height applied!',
+      run: 'Run code',
+      copy: 'Copy',
+      download: 'Download',
+      language: 'Language',
+      info: 'Info',
+      theme: 'Toggle theme',
+      debug: 'Debug code',
+      format: 'Format code',
+      autoHeightTitle: 'Auto adjust height',
+      primaryColor: 'Primary color',
+      secondaryColor: 'Secondary color',
+      resetColorsTitle: 'Reset to default',
+      newFile: 'New File',
+      debugInfo: 'Debug Information',
+      codeStats: 'Code Stats',
+      lines: 'Lines',
+      characters: 'Characters',
+      htmlTags: 'HTML Tags',
+      cssStyles: 'CSS Styles',
+      jsScripts: 'JS Scripts',
+      tagCheck: 'Tag Check',
+      unclosedTags: 'Unclosed tags',
+      allTagsClosed: 'All tags are properly closed',
+      suggestions: 'Suggestions',
+      addDoctype: 'Add DOCTYPE',
+      addCharset: 'Define charset',
+      addTitle: 'Add page title',
+      useSeparateCss: 'Use separate CSS',
+      openInNewWindow: 'Open in new window',
+      popupOpened: 'Preview window opened!'
+    },
+    ar: {
+      title: 'عارض HTML الذكي',
+      placeholder: 'اكتب كود HTML هنا...',
+      preview: 'معاينة',
+      height: 'الارتفاع',
+      heightLabel: 'الارتفاع:',
+      width: 'العرض',
+      copied: 'تم نسخ الكود!',
+      downloadHtml: 'تحميل HTML',
+      downloadTxt: 'تحميل TXT',
+      laptop: 'حاسوب محمول',
+      tablet: 'جهاز لوحي',
+      mobile: 'هاتف',
+      formatted: 'تم تنسيق الكود!',
+      autoHeight: 'تم تطبيق الارتفاع التلقائي!',
+      run: 'تشغيل الكود',
+      copy: 'نسخ',
+      download: 'تحميل',
+      language: 'اللغة',
+      info: 'معلومات',
+      theme: 'تبديل السمة',
+      debug: 'تصحيح الكود',
+      format: 'تنسيق الكود',
+      autoHeightTitle: 'ضبط الارتفاع تلقائياً',
+      primaryColor: 'اللون الأساسي',
+      secondaryColor: 'اللون الثانوي',
+      resetColorsTitle: 'إعادة التعيين',
+      newFile: 'ملف جديد',
+      debugInfo: 'معلومات التصحيح',
+      codeStats: 'إحصائيات الكود',
+      lines: 'الأسطر',
+      characters: 'الأحرف',
+      htmlTags: 'علامات HTML',
+      cssStyles: 'أنماط CSS',
+      jsScripts: 'سكربتات JS',
+      tagCheck: 'فحص العلامات',
+      unclosedTags: 'علامات غير مغلقة',
+      allTagsClosed: 'جميع العلامات مغلقة بشكل صحيح',
+      suggestions: 'اقتراحات',
+      addDoctype: 'أضف DOCTYPE',
+      addCharset: 'حدد charset',
+      addTitle: 'أضف عنوان الصفحة',
+      useSeparateCss: 'استخدم CSS منفصل',
+      openInNewWindow: 'فتح في نافذة جديدة',
+      popupOpened: 'تم فتح نافذة المعاينة!'
+    },
+    fr: {
+      title: 'Visionneuse HTML SMART',
+      placeholder: 'Écrivez votre code HTML ici...',
+      preview: 'Aperçu',
+      height: 'Hauteur',
+      heightLabel: 'Hauteur:',
+      width: 'Largeur',
+      copied: 'Code copié!',
+      downloadHtml: 'Télécharger HTML',
+      downloadTxt: 'Télécharger TXT',
+      laptop: 'Ordinateur portable',
+      tablet: 'Tablette',
+      mobile: 'Mobile',
+      formatted: 'Code formaté!',
+      autoHeight: 'Hauteur automatique appliquée!',
+      run: 'Exécuter le code',
+      copy: 'Copier',
+      download: 'Télécharger',
+      language: 'Langue',
+      info: 'Info',
+      theme: 'Changer le thème',
+      debug: 'Déboguer le code',
+      format: 'Formater le code',
+      autoHeightTitle: 'Ajuster la hauteur automatiquement',
+      primaryColor: 'Couleur principale',
+      secondaryColor: 'Couleur secondaire',
+      resetColorsTitle: 'Réinitialiser',
+      newFile: 'Nouveau fichier',
+      debugInfo: 'Informations de débogage',
+      codeStats: 'Statistiques du code',
+      lines: 'Lignes',
+      characters: 'Caractères',
+      htmlTags: 'Balises HTML',
+      cssStyles: 'Styles CSS',
+      jsScripts: 'Scripts JS',
+      tagCheck: 'Vérification des balises',
+      unclosedTags: 'Balises non fermées',
+      allTagsClosed: 'Toutes les balises sont correctement fermées',
+      suggestions: 'Suggestions',
+      addDoctype: 'Ajouter DOCTYPE',
+      addCharset: 'Définir charset',
+      addTitle: 'Ajouter un titre de page',
+      useSeparateCss: 'Utiliser un CSS séparé',
+      openInNewWindow: 'Ouvrir dans une nouvelle fenêtre',
+      popupOpened: 'Fenêtre d\'aperçu ouverte!'
+    },
+    es: {
+      title: 'Visor HTML INTELIGENTE',
+      placeholder: 'Escribe tu código HTML aquí...',
+      preview: 'Vista previa',
+      height: 'Altura',
+      heightLabel: 'Altura:',
+      width: 'Ancho',
+      copied: '¡Código copiado!',
+      downloadHtml: 'Descargar HTML',
+      downloadTxt: 'Descargar TXT',
+      laptop: 'Portátil',
+      tablet: 'Tableta',
+      mobile: 'Móvil',
+      formatted: '¡Código formateado!',
+      autoHeight: '¡Altura automática aplicada!',
+      run: 'Ejecutar código',
+      copy: 'Copiar',
+      download: 'Descargar',
+      language: 'Idioma',
+      info: 'Info',
+      theme: 'Cambiar tema',
+      debug: 'Depurar código',
+      format: 'Formatear código',
+      autoHeightTitle: 'Ajustar altura automáticamente',
+      primaryColor: 'Color principal',
+      secondaryColor: 'Color secundario',
+      resetColorsTitle: 'Restablecer',
+      newFile: 'Nuevo archivo',
+      debugInfo: 'Información de depuración',
+      codeStats: 'Estadísticas del código',
+      lines: 'Líneas',
+      characters: 'Caracteres',
+      htmlTags: 'Etiquetas HTML',
+      cssStyles: 'Estilos CSS',
+      jsScripts: 'Scripts JS',
+      tagCheck: 'Verificación de etiquetas',
+      unclosedTags: 'Etiquetas sin cerrar',
+      allTagsClosed: 'Todas las etiquetas están correctamente cerradas',
+      suggestions: 'Sugerencias',
+      addDoctype: 'Agregar DOCTYPE',
+      addCharset: 'Definir charset',
+      addTitle: 'Agregar título de página',
+      useSeparateCss: 'Usar CSS separado',
+      openInNewWindow: 'Abrir en nueva ventana',
+      popupOpened: '¡Ventana de vista previa abierta!'
+    },
+    zh: {
+      title: '智能 HTML 查看器',
+      placeholder: '在此处编写您的 HTML 代码...',
+      preview: '预览',
+      height: '高度',
+      heightLabel: '高度:',
+      width: '宽度',
+      copied: '代码已复制！',
+      downloadHtml: '下载 HTML',
+      downloadTxt: '下载 TXT',
+      laptop: '笔记本电脑',
+      tablet: '平板电脑',
+      mobile: '手机',
+      formatted: '代码已格式化！',
+      autoHeight: '自动高度已应用！',
+      run: '运行代码',
+      copy: '复制',
+      download: '下载',
+      language: '语言',
+      info: '信息',
+      theme: '切换主题',
+      debug: '调试代码',
+      format: '格式化代码',
+      autoHeightTitle: '自动调整高度',
+      primaryColor: '主色',
+      secondaryColor: '次要颜色',
+      resetColorsTitle: '重置',
+      newFile: '新文件',
+      debugInfo: '调试信息',
+      codeStats: '代码统计',
+      lines: '行数',
+      characters: '字符数',
+      htmlTags: 'HTML标签',
+      cssStyles: 'CSS样式',
+      jsScripts: 'JS脚本',
+      tagCheck: '标签检查',
+      unclosedTags: '未闭合标签',
+      allTagsClosed: '所有标签已正确闭合',
+      suggestions: '建议',
+      addDoctype: '添加 DOCTYPE',
+      addCharset: '定义 charset',
+      addTitle: '添加页面标题',
+      useSeparateCss: '使用单独的 CSS',
+      openInNewWindow: '在新窗口中打开',
+      popupOpened: '预览窗口已打开！'
+    },
+    de: {
+      title: 'SMART HTML Viewer',
+      placeholder: 'Schreiben Sie Ihren HTML-Code hier...',
+      preview: 'Vorschau',
+      height: 'Höhe',
+      heightLabel: 'Höhe:',
+      width: 'Breite',
+      copied: 'Code kopiert!',
+      downloadHtml: 'HTML herunterladen',
+      downloadTxt: 'TXT herunterladen',
+      laptop: 'Laptop',
+      tablet: 'Tablet',
+      mobile: 'Handy',
+      formatted: 'Code formatiert!',
+      autoHeight: 'Automatische Höhe angewendet!',
+      run: 'Code ausführen',
+      copy: 'Kopieren',
+      download: 'Herunterladen',
+      language: 'Sprache',
+      info: 'Info',
+      theme: 'Thema wechseln',
+      debug: 'Code debuggen',
+      format: 'Code formatieren',
+      autoHeightTitle: 'Höhe automatisch anpassen',
+      primaryColor: 'Hauptfarbe',
+      secondaryColor: 'Sekundärfarbe',
+      resetColorsTitle: 'Zurücksetzen',
+      newFile: 'Neue Datei',
+      debugInfo: 'Debug-Informationen',
+      codeStats: 'Code-Statistiken',
+      lines: 'Zeilen',
+      characters: 'Zeichen',
+      htmlTags: 'HTML-Tags',
+      cssStyles: 'CSS-Stile',
+      jsScripts: 'JS-Skripte',
+      tagCheck: 'Tag-Prüfung',
+      unclosedTags: 'Nicht geschlossene Tags',
+      allTagsClosed: 'Alle Tags sind korrekt geschlossen',
+      suggestions: 'Vorschläge',
+      addDoctype: 'DOCTYPE hinzufügen',
+      addCharset: 'Charset definieren',
+      addTitle: 'Seitentitel hinzufügen',
+      useSeparateCss: 'Separates CSS verwenden',
+      openInNewWindow: 'In neuem Fenster öffnen',
+      popupOpened: 'Vorschaufenster geöffnet!'
+    }
+  };
+
+  let currentLang = 'fa';
+  let currentDevice = 'laptop';
+  
+  // سیستم تب
+  let tabs = [
+    { id: 0, name: 'فایل جدید', content: '', active: true }
+  ];
+  let tabCounter = 1;
+
+  // ذخیره رنگ‌های فعلی
+  let currentPrimaryColor = '#2563eb';
+  let currentSecondaryColor = '#00aaff';
+
+  // تنظیم حالت پیش‌فرض روشن
+  document.body.classList.remove('dark');
+  themeToggle.querySelector('i').className = 'fas fa-moon';
+
+  // تغییر رنگ تم - اصلاح شده
+  function updateThemeColors(primary, secondary) {
+    currentPrimaryColor = primary;
+    currentSecondaryColor = secondary;
+    
+    const root = document.documentElement;
+    
+    // تنظیم رنگ‌ها روی root
+    root.style.setProperty('--primary-color', primary);
+    root.style.setProperty('--secondary-color', secondary);
+    root.style.setProperty('--icon-color', primary);
+    root.style.setProperty('--glow-color', secondary);
+    root.style.setProperty('--accent', primary);
+    root.style.setProperty('--highlight-color', secondary);
+    
+    // به‌روزرسانی سایه‌ها
+    const primaryRgb = hexToRgb(primary);
+    if (primaryRgb) {
+      const shadowColor = `rgba(${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}, 0.35)`;
+      root.style.setProperty('--shadow-color', shadowColor);
+    }
+  }
+
+  function hexToRgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  }
+
+  // نمایش اعلان
+  function showNotification(message) {
+    notification.textContent = message;
+    notification.classList.add('show');
+    setTimeout(() => {
+      notification.classList.remove('show');
+    }, 3000);
+  }
+
+  // به‌روزرسانی زبان - اصلاح شده
+  function updateLanguage(lang) {
+    currentLang = lang;
+    const t = translations[lang];
+    
+    titleEl.textContent = t.title;
+    inputEl.placeholder = t.placeholder;
+    previewLabel.textContent = t.preview;
+    heightLabel.textContent = t.heightLabel;
+    
+    dropdown.querySelector('[data-type="html"]').textContent = t.downloadHtml;
+    dropdown.querySelector('[data-type="txt"]').textContent = t.downloadTxt;
+    
+    // به‌روزرسانی عناوین دکمه‌ها
+    document.querySelector('[data-device="laptop"]').title = t.laptop;
+    document.querySelector('[data-device="tablet"]').title = t.tablet;
+    document.querySelector('[data-device="mobile"]').title = t.mobile;
+    runBtn.title = t.run;
+    copyBtn.title = t.copy;
+    dropdown.querySelector('.action-btn').title = t.download;
+    langSelect.title = t.language;
+    infoBtn.title = t.info;
+    themeToggle.title = t.theme;
+    debugBtn.title = t.debug;
+    formatBtn.title = t.format;
+    autoHeightBtn.title = t.autoHeightTitle;
+    primaryColorPicker.title = t.primaryColor;
+    secondaryColorPicker.title = t.secondaryColor;
+    resetColors.title = t.resetColorsTitle;
+    debugTitle.textContent = t.debugInfo;
+    
+    // به‌روزرسانی دکمه پاپ‌آپ
+    popupDropdown.querySelector('.popup-button').title = t.openInNewWindow;
+    
+    // به‌روزرسانی متن‌های منوی پاپ‌آپ
+    popupMenu.querySelector('[data-popup="laptop"] span:first-of-type').textContent = t.laptop;
+    popupMenu.querySelector('[data-popup="tablet"] span:first-of-type').textContent = t.tablet;
+    popupMenu.querySelector('[data-popup="mobile"] span:first-of-type').textContent = t.mobile;
+    
+    if (lang === 'ar' || lang === 'fa') {
+      document.documentElement.dir = 'rtl';
+      document.documentElement.lang = lang;
+    } else {
+      document.documentElement.dir = 'ltr';
+      document.documentElement.lang = lang;
+    }
+    
+    // به‌روزرسانی نام تب‌ها اگر پیش‌فرض هستند
+    tabs.forEach((tab, index) => {
+      if (tab.name === 'فایل جدید' || tab.name === 'New File' || 
+          tab.name === 'ملف جديد' || tab.name === 'Nouveau fichier' ||
+          tab.name === 'Nuevo archivo' || tab.name === '新文件' || 
+          tab.name === 'Neue Datei' || tab.name.startsWith('فایل ') ||
+          tab.name.startsWith('File ')) {
+        if (index === 0 && tabs.length === 1) {
+          tab.name = t.newFile;
+        }
+      }
+    });
+    renderTabs();
+    
+    updateDeviceLabel();
+    updateHeightDisplay();
+  }
+
+  function updateDeviceLabel() {
+    const t = translations[currentLang];
+    let width = '100%';
+    
+    switch (currentDevice) {
+      case 'tablet':
+        width = '768px';
+        break;
+      case 'mobile':
+        width = '375px';
+        break;
+    }
+    
+    deviceLabel.textContent = `${t.width}: ${width}`;
+  }
+
+  function updateHeightDisplay() {
+    const t = translations[currentLang];
+    heightDisplay.textContent = `${t.height}: ${heightInput.value}px`;
+  }
+
+  function changeDevice(device) {
+    currentDevice = device;
+    
+    document.querySelectorAll('.device-button').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    
+    document.querySelector(`[data-device="${device}"]`).classList.add('active');
+    
+    switch (device) {
+      case 'laptop':
+        iframeEl.style.width = '100%';
+        iframeEl.style.maxWidth = 'none';
+        break;
+      case 'tablet':
+        iframeEl.style.width = '768px';
+        iframeEl.style.maxWidth = '100%';
+        break;
+      case 'mobile':
+        iframeEl.style.width = '375px';
+        iframeEl.style.maxWidth = '100%';
+        break;
+    }
+    
+    updateDeviceLabel();
+  }
+
+  function runCode() {
+    const htmlCode = inputEl.value;
+    const iframe = iframeEl;
+    
+    iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(htmlCode);
+  }
+
+  // تابع باز کردن پنجره پاپ‌آپ
+  function openPreviewPopup(device) {
+    const dimensions = deviceDimensions[device];
+    const t = translations[currentLang];
+    const deviceName = currentLang === 'fa' || currentLang === 'ar' ? dimensions.name : dimensions.nameEn;
+    const windowTitle = `${deviceName} - SMART HTML Viewer`;
+    
+    // تنظیمات پنجره
+    const windowFeatures = [
+      `width=${dimensions.width}`,
+      `height=${dimensions.height}`,
+      'resizable=yes',
+      'scrollbars=yes',
+      'menubar=no',
+      'toolbar=no',
+      'location=no',
+      'status=yes'
+    ].join(',');
+    
+    // باز کردن پنجره جدید
+    const popupWindow = window.open('', windowTitle, windowFeatures);
+    
+    if (popupWindow) {
+      // محتوای HTML فعلی
+      const htmlContent = inputEl.value;
+      
+      // نوشتن محتوا در پنجره جدید
+      popupWindow.document.open();
+      popupWindow.document.write(htmlContent);
+      popupWindow.document.close();
+      
+      // تنظیم عنوان پنجره
+      popupWindow.document.title = windowTitle;
+      
+      // نمایش اعلان
+      showNotification(t.popupOpened);
+      
+      // بستن منوی پاپ‌آپ
+      popupMenu.classList.remove('open');
+    } else {
+      // اگر پاپ‌آپ بلاک شده بود
+      alert('لطفاً اجازه باز شدن پنجره‌های پاپ‌آپ را بدهید.');
+    }
+  }
+
+  async function copyCode() {
+    try {
+      await navigator.clipboard.writeText(inputEl.value);
+      showNotification(translations[currentLang].copied);
+    } catch (err) {
+      inputEl.select();
+      document.execCommand('copy');
+      showNotification(translations[currentLang].copied);
+    }
+  }
+
+  function downloadFile(type) {
+    const content = inputEl.value;
+    const filename = type === 'html' ? 'code.html' : 'code.txt';
+    const mimeType = type === 'html' ? 'text/html' : 'text/plain';
+    
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // تنظیم خودکار ارتفاع
+  function autoAdjustHeight() {
+    const lines = inputEl.value.split('\n').length;
+    const newHeight = Math.max(220, Math.min(800, lines * 20 + 40));
+    heightInput.value = newHeight;
+    iframeEl.style.height = newHeight + 'px';
+    updateHeightDisplay();
+    showNotification(translations[currentLang].autoHeight);
+  }
+
+  // مرتب‌سازی کد
+  function formatCode() {
+    let code = inputEl.value;
+    
+    // مرتب‌سازی ساده HTML
+    code = code
+      .replace(/>\s*</g, '>\n<')
+      .replace(/^\s+|\s+$/gm, '')
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line.length > 0)
+      .join('\n');
+    
+    // اضافه کردن ایندنت
+    const lines = code.split('\n');
+    let indentLevel = 0;
+    const formattedLines = [];
+    
+    lines.forEach(line => {
+      if (line.match(/^<\//) && !line.match(/<[^\/][^>]*>[^<]*<\/[^>]+>/)) {
+        indentLevel = Math.max(0, indentLevel - 1);
+      }
+      
+      formattedLines.push('  '.repeat(indentLevel) + line);
+      
+      if (line.match(/<[^\/!][^>]*[^\/]>/) && !line.match(/<\//) && !line.match(/\/>/)) {
+        indentLevel++;
+      }
+    });
+    
+    inputEl.value = formattedLines.join('\n');
+    saveCurrentTab();
+    runCode();
+    showNotification(translations[currentLang].formatted);
+  }
+
+  // دیباگ کد
+  function debugCode() {
+    const t = translations[currentLang];
+    const code = inputEl.value;
+    const lines = code.split('\n');
+    
+    let debugOutput = `📊 ${t.codeStats}:\n`;
+    debugOutput += `━━━━━━━━━━━━━━\n`;
+    debugOutput += `📝 ${t.lines}: ${lines.length}\n`;
+    debugOutput += `🔤 ${t.characters}: ${code.length}\n`;
+    debugOutput += `🏷️  ${t.htmlTags}: ${(code.match(/<[^>]+>/g) || []).length}\n`;
+    debugOutput += `🎨 ${t.cssStyles}: ${(code.match(/[^{}]+{[^}]*}/g) || []).length}\n`;
+    debugOutput += `⚙️  ${t.jsScripts}: ${(code.match(/<script[\s\S]*?<\/script>/gi) || []).length}\n\n`;
+    
+    debugOutput += `🔍 ${t.tagCheck}:\n`;
+    debugOutput += `━━━━━━━━━━━━━━\n`;
+    
+    const openTags = (code.match(/<([a-zA-Z][a-zA-Z0-9]*)[^>]*(?<!\/)\s*>/g) || [])
+      .map(tag => {
+        const match = tag.match(/<([a-zA-Z][a-zA-Z0-9]*)/);
+        return match ? match[1].toLowerCase() : null;
+      })
+      .filter(Boolean);
+    
+    const closeTags = (code.match(/<\/([a-zA-Z][a-zA-Z0-9]*)>/g) || [])
+      .map(tag => {
+        const match = tag.match(/<\/([a-zA-Z][a-zA-Z0-9]*)>/);
+        return match ? match[1].toLowerCase() : null;
+      })
+      .filter(Boolean);
+    
+    const selfClosingTags = ['img', 'br', 'hr', 'input', 'meta', 'link', 'area', 'base', 'col', 'embed', 'param', 'source', 'track', 'wbr'];
+    
+    const openCount = {};
+    const closeCount = {};
+    
+    openTags.forEach(tag => {
+      if (!selfClosingTags.includes(tag)) {
+        openCount[tag] = (openCount[tag] || 0) + 1;
+      }
+    });
+    
+    closeTags.forEach(tag => {
+      closeCount[tag] = (closeCount[tag] || 0) + 1;
+    });
+    
+    const unclosedTags = [];
+    for (const tag in openCount) {
+      const diff = openCount[tag] - (closeCount[tag] || 0);
+      if (diff > 0) {
+        unclosedTags.push(`${tag} (${diff})`);
+      }
+    }
+    
+    if (unclosedTags.length > 0) {
+      debugOutput += `⚠️  ${t.unclosedTags}: ${unclosedTags.join(', ')}\n`;
+    } else {
+      debugOutput += `✅ ${t.allTagsClosed}\n`;
+    }
+    
+    debugOutput += `\n🎯 ${t.suggestions}:\n`;
+    debugOutput += `━━━━━━━━━━━━━━\n`;
+    
+    if (!code.includes('<!DOCTYPE html>') && !code.includes('<!doctype html>')) {
+      debugOutput += `💡 ${t.addDoctype}\n`;
+    }
+    if (!code.includes('<meta charset=')) {
+      debugOutput += `💡 ${t.addCharset}\n`;
+    }
+    if (!code.includes('<title>')) {
+      debugOutput += `💡 ${t.addTitle}\n`;
+    }
+    if (code.includes('style=')) {
+      debugOutput += `💡 ${t.useSeparateCss}\n`;
+    }
+    
+    debugInfo.textContent = debugOutput;
+    debugModal.style.display = 'flex';
+  }
+
+  // Event Listeners
+  
+  // دکمه‌های دستگاه
+  document.querySelectorAll('.device-button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      SoundManager.deviceChange();
+      const device = btn.dataset.device;
+      changeDevice(device);
+    });
+  });
+
+  // منوی پاپ‌آپ
+  popupDropdown.querySelector('.popup-button').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = popupMenu.classList.contains('open');
+    if (isOpen) {
+      SoundManager.menuClose();
+    } else {
+      SoundManager.menuOpen();
+    }
+    popupMenu.classList.toggle('open');
+  });
+  
+  // دکمه‌های پاپ‌آپ
+  popupMenu.querySelectorAll('[data-popup]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      SoundManager.popup();
+      const device = btn.dataset.popup;
+      openPreviewPopup(device);
+    });
+  });
+
+  heightInput.addEventListener('input', () => {
+    SoundManager.click();
+    const height = heightInput.value;
+    iframeEl.style.height = height + 'px';
+    updateHeightDisplay();
+  });
+
+  // دکمه‌های جدید
+  autoHeightBtn.addEventListener('click', () => {
+    SoundManager.success();
+    autoAdjustHeight();
+  });
+  
+  debugBtn.addEventListener('click', () => {
+    SoundManager.debug();
+    debugCode();
+  });
+  
+  formatBtn.addEventListener('click', () => {
+    SoundManager.format();
+    formatCode();
+  });
+
+  // مودال دیباگ
+  debugClose.addEventListener('click', () => {
+    SoundManager.menuClose();
+    debugModal.style.display = 'none';
+  });
+  
+  debugModal.addEventListener('click', (e) => {
+    if (e.target === debugModal) {
+      SoundManager.menuClose();
+      debugModal.style.display = 'none';
+    }
+  });
+
+  // انتخابگر رنگ
+  primaryColorPicker.addEventListener('input', (e) => {
+    SoundManager.colorChange();
+    updateThemeColors(e.target.value, secondaryColorPicker.value);
+  });
+
+  secondaryColorPicker.addEventListener('input', (e) => {
+    SoundManager.colorChange();
+    updateThemeColors(primaryColorPicker.value, e.target.value);
+  });
+
+  // بازگشت به رنگ‌های پیشفرض
+  resetColors.addEventListener('click', () => {
+    SoundManager.reset();
+    const isDark = document.body.classList.contains('dark');
+    if (isDark) {
+      primaryColorPicker.value = '#00ff7f';
+      secondaryColorPicker.value = '#32cd32';
+      updateThemeColors('#00ff7f', '#32cd32');
+    } else {
+      primaryColorPicker.value = '#2563eb';
+      secondaryColorPicker.value = '#00aaff';
+      updateThemeColors('#2563eb', '#00aaff');
+    }
+  });
+
+  runBtn.addEventListener('click', () => {
+    SoundManager.run();
+    runCode();
+  });
+  
+  copyBtn.addEventListener('click', () => {
+    SoundManager.copy();
+    copyCode();
+  });
+
+  dropdown.addEventListener('click', (e) => {
+    if (e.target.classList.contains('action-btn') || e.target.closest('.action-btn')) {
+      const isOpen = dropdown.classList.contains('open');
+      if (isOpen) {
+        SoundManager.menuClose();
+      } else {
+        SoundManager.menuOpen();
+      }
+      dropdown.classList.toggle('open');
+    }
+  });
+
+  dropdown.querySelectorAll('[data-type]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      SoundManager.download();
+      downloadFile(btn.dataset.type);
+      dropdown.classList.remove('open');
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!dropdown.contains(e.target)) {
+      dropdown.classList.remove('open');
+    }
+    if (!popupDropdown.contains(e.target)) {
+      popupMenu.classList.remove('open');
+    }
+  });
+
+  langSelect.addEventListener('change', () => {
+    SoundManager.click();
+    updateLanguage(langSelect.value);
+  });
+
+  themeToggle.addEventListener('click', () => {
+    SoundManager.themeToggle();
+    document.body.classList.toggle('dark');
+    const isDark = document.body.classList.contains('dark');
+    themeToggle.querySelector('i').className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+    
+    // تغییر رنگ‌های انتخابگر بر اساس تم و اعمال فوری
+    if (isDark) {
+      primaryColorPicker.value = '#00ff7f';
+      secondaryColorPicker.value = '#32cd32';
+      updateThemeColors('#00ff7f', '#32cd32');
+    } else {
+      primaryColorPicker.value = '#2563eb';
+      secondaryColorPicker.value = '#00aaff';
+      updateThemeColors('#2563eb', '#00aaff');
+    }
+  });
+
+  infoBtn.addEventListener('click', () => {
+    SoundManager.click();
+    window.open('https://nima-shaheswarzadeh.github.io', '_blank');
+  });
+
+  // سیستم تب - توابع
+  
+  // ذخیره محتوای تب فعلی
+  function saveCurrentTab() {
+    const activeTab = tabs.find(tab => tab.active);
+    if (activeTab) {
+      activeTab.content = inputEl.value;
+    }
+  }
+
+  // تغییر تب فعال
+  function switchTab(tabId) {
+    saveCurrentTab();
+    
+    // تغییر وضعیت تب‌ها
+    tabs.forEach(tab => tab.active = false);
+    const targetTab = tabs.find(tab => tab.id === tabId);
+    if (targetTab) {
+      targetTab.active = true;
+      inputEl.value = targetTab.content;
+      runCode();
+    }
+    
+    renderTabs();
+  }
+
+  // رندر کردن تب‌ها
+  function renderTabs() {
+    const tabsHeader = document.getElementById('tabsHeader');
+    
+    // پاک کردن تب‌های موجود (به جز دکمه اضافه کردن)
+    const existingTabs = tabsHeader.querySelectorAll('.tab');
+    existingTabs.forEach(tab => tab.remove());
+    
+    // اضافه کردن تب‌ها قبل از دکمه add
+    tabs.forEach((tab, index) => {
+      const tabEl = document.createElement('div');
+      tabEl.className = `tab ${tab.active ? 'active' : ''}`;
+      tabEl.dataset.tab = tab.id;
+      
+      const tabName = document.createElement('span');
+      tabName.className = 'tab-name';
+      tabName.textContent = tab.name;
+      
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'tab-close';
+      closeBtn.innerHTML = '&times;';
+      
+      tabEl.appendChild(tabName);
+      tabEl.appendChild(closeBtn);
+      
+      // کلیک روی تب
+      tabEl.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('tab-close') && 
+            !e.target.classList.contains('tab-name') &&
+            !e.target.classList.contains('editing')) {
+          SoundManager.tabSwitch();
+          switchTab(tab.id);
+        }
+      });
+      
+      // دابل کلیک برای ویرایش نام
+      tabName.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        SoundManager.click();
+        startEditingTabName(tabName, tab);
+      });
+      
+      // کلیک روی نام تب برای انتخاب (نه ویرایش)
+      tabName.addEventListener('click', (e) => {
+        if (!tabName.classList.contains('editing')) {
+          e.stopPropagation();
+          SoundManager.tabSwitch();
+          switchTab(tab.id);
+        }
+      });
+      
+      // بستن تب
+      if (tabs.length > 1) {
+        closeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          SoundManager.tabClose();
+          closeTab(tab.id);
+        });
+      } else {
+        closeBtn.style.display = 'none';
+      }
+      
+      tabsHeader.insertBefore(tabEl, addTabBtn);
+    });
+  }
+  
+  // شروع ویرایش نام تب
+  function startEditingTabName(tabNameEl, tab) {
+    tabNameEl.classList.add('editing');
+    tabNameEl.contentEditable = true;
+    tabNameEl.focus();
+    
+    // انتخاب تمام متن
+    const range = document.createRange();
+    range.selectNodeContents(tabNameEl);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    
+    const finishEditing = () => {
+      tabNameEl.classList.remove('editing');
+      tabNameEl.contentEditable = false;
+      const newName = tabNameEl.textContent.trim();
+      tab.name = newName || translations[currentLang].newFile;
+      tabNameEl.textContent = tab.name;
+      SoundManager.success();
+    };
+    
+    tabNameEl.addEventListener('blur', finishEditing, { once: true });
+    
+    tabNameEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        tabNameEl.blur();
+      } else if (e.key === 'Escape') {
+        tabNameEl.textContent = tab.name;
+        tabNameEl.blur();
+      }
+    });
+  }
+
+  // اضافه کردن تب جدید
+  function addNewTab() {
+    saveCurrentTab();
+    
+    // غیرفعال کردن همه تب‌ها
+    tabs.forEach(tab => tab.active = false);
+    
+    const t = translations[currentLang];
+    
+    // ایجاد تب جدید
+    const newTab = {
+      id: tabCounter++,
+      name: `${t.newFile} ${tabCounter}`,
+      content: '',
+      active: true
+    };
+    
+    tabs.push(newTab);
+    inputEl.value = '';
+    runCode();
+    renderTabs();
+  }
+
+  // بستن تب
+  function closeTab(tabId) {
+    if (tabs.length <= 1) return;
+    
+    const tabIndex = tabs.findIndex(tab => tab.id === tabId);
+    const wasActive = tabs[tabIndex].active;
+    
+    tabs.splice(tabIndex, 1);
+    
+    // اگر تب فعال حذف شد، تب بعدی یا قبلی را فعال کن
+    if (wasActive && tabs.length > 0) {
+      const nextIndex = Math.min(tabIndex, tabs.length - 1);
+      tabs[nextIndex].active = true;
+      inputEl.value = tabs[nextIndex].content;
+      runCode();
+    }
+    
+    renderTabs();
+  }
+
+  // Event Listener برای دکمه اضافه کردن تب
+  addTabBtn.addEventListener('click', () => {
+    SoundManager.tabAdd();
+    addNewTab();
+  });
+
+  // ذخیره تغییرات هنگام تایپ
+  let timeout;
+  inputEl.addEventListener('input', () => {
+    saveCurrentTab();
+    clearTimeout(timeout);
+    timeout = setTimeout(runCode, 500);
+  });
+  
+  // صدای تایپ برای ویرایشگر (اختیاری - هر 5 کاراکتر)
+  let charCount = 0;
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.key.length === 1) {
+      charCount++;
+      if (charCount % 5 === 0) {
+        SoundManager.typing();
+      }
+    }
+  });
+
+  updateLanguage('fa');
+  changeDevice('laptop');
+  
+  // محتوای پیشفرض تب اول
+  tabs[0].content = `<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <!-- ================== تنظیمات پایه ================== -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMART HTML Viewer - نمایشگر هوشمند HTML</title>
+
+  <style>
+    /* ================== Reset ================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      overflow-x: hidden;
+      background: radial-gradient(circle at 20% 30%, #1e1f27, #0a0a0d 80%);
+    }
+
+    /* ================== پس‌زمینه متحرک نئونی ================== */
+    .tech-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(0,0,255,0.15);
+      filter: blur(60px);
+      animation: move 20s infinite ease-in-out alternate;
+    }
+
+    @keyframes move {
+      0%   { transform: translate(0,0) scale(1); }
+      25%  { transform: translate(70px,-50px) scale(1.2); }
+      50%  { transform: translate(-50px,90px) scale(1.3); }
+      75%  { transform: translate(80px,-40px) scale(1.1); }
+      100% { transform: translate(0,0) scale(1); }
+    }
+
+    /* ================== کارت اصلی ================== */
+    .container {
+      max-width: 900px;
+      margin: 60px auto;
+      padding: 50px;
+      border-radius: 25px;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      box-shadow: 
+        0 10px 40px rgba(0,0,255,0.3),
+        0 10px 60px rgba(128,0,255,0.3);
+      animation: fadeIn 1.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity:0; transform:translateY(30px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* ================== لوگو (افکت اصلی نئونی) ================== */
+    .logo {
+      font-family: 'Asym', sans-serif;
+      font-size: 3rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #00f5a0, #7b2ff7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: logoMove 4s infinite ease-in-out;
+    }
+
+    @keyframes logoMove {
+      0% {
+        transform: scale(1) rotate(0deg);
+        text-shadow: 0 0 15px #00f5a0, 0 0 25px #7b2ff7;
+      }
+      25% {
+        transform: scale(1.05) rotate(2deg);
+        text-shadow: 0 0 20px #00f5a0, 0 0 30px #7b2ff7;
+      }
+      50% {
+        transform: scale(1.1) rotate(-2deg);
+        text-shadow: 0 0 25px #00f5a0, 0 0 35px #7b2ff7;
+      }
+      75% {
+        transform: scale(1.05) rotate(1deg);
+        text-shadow: 0 0 20px #00f5a0, 0 0 30px #7b2ff7;
+      }
+      100% {
+        transform: scale(1) rotate(0deg);
+        text-shadow: 0 0 15px #00f5a0, 0 0 25px #7b2ff7;
+      }
+    }
+
+    /* ================== زیرعنوان ================== */
+    .subtitle {
+      font-size: 1.15rem;
+      opacity: 0.9;
+      margin-bottom: 40px;
+      color: #dcdcdc;
+      text-shadow: 0 0 5px #1E3A8A, 0 0 10px #7C3AED;
+    }
+
+    /* ================== گرید ویژگی‌ها ================== */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 25px;
+      margin: 40px 0;
+    }
+
+    /* ================== کارت ویژگی ================== */
+    .feature-card {
+      background: rgba(0,0,0,0.25);
+      padding: 25px;
+      border-radius: 25px;
+      border: 1px solid rgba(0,0,255,0.2);
+      transition: 0.5s ease;
+      box-shadow: 0 4px 15px rgba(0,0,255,0.3);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px) scale(1.05);
+      background: rgba(0,0,255,0.15);
+      box-shadow: 0 10px 35px rgba(0,0,255,0.5);
+    }
+
+    .feature-icon {
+      font-size: 2.4rem;
+      margin-bottom: 10px;
+      animation: float 3s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .feature-title {
+      font-size: 1.15rem;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #00f5d4;
+      text-shadow: 0 0 5px #1E3A8A, 0 0 10px #7C3AED;
+    }
+
+    /* ================== دکمه‌ها ================== */
+    .cta-button {
+      display: inline-block;
+      margin: 20px 10px;
+      padding: 15px 40px;
+      border-radius: 25px;
+      background: linear-gradient(45deg,#1E3A8A,#7C3AED);
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-decoration: none;
+      transition: 0.5s ease;
+      box-shadow: 0 0 25px rgba(30,58,138,0.5);
+    }
+
+    .cta-button:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 50px rgba(30,58,138,0.8);
+    }
+
+    /* ================== متن پایانی ================== */
+    .credits {
+      margin-top: 50px;
+      opacity: 0.9;
+      font-size: 0.95rem;
+      color: #b0b0b0;
+      text-shadow: 0 0 5px #1E3A8A, 0 0 10px #7C3AED;
+    }
+
+    /* ================== واکنش‌گرایی ================== */
+    @media (max-width: 600px) {
+      .logo { font-size: 2.4rem; }
+      .container { padding: 25px; }
+      .feature-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ================== پس‌زمینه ================== -->
+  <div class="tech-bg">
+    <div class="circle" style="width:250px;height:250px;top:20%;left:10%;"></div>
+    <div class="circle" style="width:400px;height:400px;top:50%;left:70%;"></div>
+    <div class="circle" style="width:300px;height:300px;top:80%;left:20%;"></div>
+    <div class="circle" style="width:350px;height:350px;top:30%;left:80%;"></div>
+    <div class="circle" style="width:200px;height:200px;top:70%;left:50%;"></div>
+  </div>
+
+  <!-- ================== محتوای اصلی ================== -->
+  <div class="container">
+
+    <div class="logo">SMART HTML Viewer</div>
+
+    <div class="subtitle">
+      ابزار سبک، واکنش‌گرا و چندزبانه برای تست، پیش‌نمایش و دیباگ کدهای HTML ✨
+    </div>
+
+    <!-- ===== ۹ ویژگی ===== -->
+    <div class="feature-grid">
+
+      <div class="feature-card"><div class="feature-icon">🔥</div><div class="feature-title">اجرای زنده</div><div>نمایش تغییرات کد در لحظه</div></div>
+      <div class="feature-card"><div class="feature-icon">🔊</div><div class="feature-title">Sound FX</div><div>افکت صوتی با Web Audio API</div></div>
+      <div class="feature-card"><div class="feature-icon">🐛</div><div class="feature-title">دیباگر</div><div>تشخیص خطا و پیشنهاد اصلاح</div></div>
+      <div class="feature-card"><div class="feature-icon">📑</div><div class="feature-title">مدیریت تب</div><div>چند فایل همزمان</div></div>
+      <div class="feature-card"><div class="feature-icon">🧹</div><div class="feature-title">فرمت کد</div><div>مرتب‌سازی خودکار</div></div>
+      <div class="feature-card"><div class="feature-icon">📱</div><div class="feature-title">Responsive</div><div>تست موبایل و تبلت</div></div>
+      <div class="feature-card"><div class="feature-icon">🪟</div><div class="feature-title">Popup</div><div>پیش‌نمایش جداگانه</div></div>
+      <div class="feature-card"><div class="feature-icon">💾</div><div class="feature-title">خروجی</div><div>دانلود و کپی سریع</div></div>
+      <div class="feature-card"><div class="feature-icon">🌍</div><div class="feature-title">چندزبانه</div><div>پشتیبانی از 7 زبان</div></div>
+
+    </div>
+
+    <!-- ===== دکمه‌ها ===== -->
+    <a href="https://nima-shaheswarzadeh.github.io/SMART-HTML-Viewer/" target="_blank" class="cta-button">🚀 شروع کنید</a>
+    <a href="https://github.com/Nima-Shaheswarzadeh/SMART-HTML-Viewer" target="_blank" class="cta-button">📂 مشاهده کد منبع</a>
+
+    <!-- ===== Credits ===== -->
+    <div class="credits">
+      SMART HTML Viewer by Nima.Sh <br>
+      HTML |•| CSS |•| JavaScript
+    </div>
+
+  </div>
+
+</body>
+</html>
+`;
+  
+  inputEl.value = tabs[0].content;
+  renderTabs();
+  runCode();
+});
+</script>
 </body>
 </html>
